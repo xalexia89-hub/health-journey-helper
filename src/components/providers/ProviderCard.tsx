@@ -20,6 +20,12 @@ interface ProviderCardProps {
   className?: string;
 }
 
+const typeLabels: Record<string, string> = {
+  doctor: 'Γιατρός',
+  clinic: 'Κλινική',
+  hospital: 'Νοσοκομείο'
+};
+
 export function ProviderCard({
   name,
   specialty,
@@ -41,7 +47,7 @@ export function ProviderCard({
   };
 
   const formatPrice = (min?: number, max?: number) => {
-    if (!min && !max) return 'Price varies';
+    if (!min && !max) return 'Τιμή κατόπιν συνεννόησης';
     if (min === max) return `€${min}`;
     return `€${min} - €${max}`;
   };
@@ -72,7 +78,7 @@ export function ProviderCard({
                 )}
               </div>
               <Badge variant="secondary" className={cn("shrink-0 text-xs capitalize", typeColors[type])}>
-                {type}
+                {typeLabels[type]}
               </Badge>
             </div>
 
@@ -96,7 +102,7 @@ export function ProviderCard({
               </span>
               {isVerified && (
                 <Badge variant="outline" className="text-xs border-success text-success">
-                  Verified
+                  Πιστοποιημένος
                 </Badge>
               )}
             </div>

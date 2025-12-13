@@ -99,14 +99,14 @@ const MedicalRecords = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to save medical records',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία αποθήκευσης ιατρικού ιστορικού',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Saved',
-        description: 'Your medical records have been updated'
+        title: 'Αποθηκεύτηκε',
+        description: 'Το ιατρικό σας ιστορικό ενημερώθηκε'
       });
     }
     setSaving(false);
@@ -123,7 +123,7 @@ const MedicalRecords = () => {
   if (!record) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Medical records not found</p>
+        <p className="text-muted-foreground">Δεν βρέθηκε ιατρικό ιστορικό</p>
       </div>
     );
   }
@@ -132,12 +132,12 @@ const MedicalRecords = () => {
     <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Medical Records</h1>
-          <p className="text-muted-foreground">Manage your health information</p>
+          <h1 className="text-2xl font-bold">Ιατρικό Ιστορικό</h1>
+          <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? 'Αποθήκευση...' : 'Αποθήκευση Αλλαγών'}
         </Button>
       </div>
 
@@ -145,19 +145,19 @@ const MedicalRecords = () => {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="allergies" className="text-xs sm:text-sm">
             <AlertTriangle className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Allergies</span>
+            <span className="hidden sm:inline">Αλλεργίες</span>
           </TabsTrigger>
           <TabsTrigger value="conditions" className="text-xs sm:text-sm">
             <Stethoscope className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Conditions</span>
+            <span className="hidden sm:inline">Παθήσεις</span>
           </TabsTrigger>
           <TabsTrigger value="medications" className="text-xs sm:text-sm">
             <Pill className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Medications</span>
+            <span className="hidden sm:inline">Φάρμακα</span>
           </TabsTrigger>
           <TabsTrigger value="surgeries" className="text-xs sm:text-sm">
             <Scissors className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Surgeries</span>
+            <span className="hidden sm:inline">Χειρουργεία</span>
           </TabsTrigger>
         </TabsList>
 
@@ -166,13 +166,13 @@ const MedicalRecords = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <AlertTriangle className="h-5 w-5 text-health-warning" />
-                Allergies
+                Αλλεργίες
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add allergy (e.g., Penicillin, Peanuts)"
+                  placeholder="Προσθήκη αλλεργίας (π.χ., Πενικιλίνη, Φιστίκια)"
                   value={newAllergy}
                   onChange={(e) => setNewAllergy(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addItem('allergies', newAllergy, setNewAllergy)}
@@ -194,7 +194,7 @@ const MedicalRecords = () => {
                   </Badge>
                 ))}
                 {(!record.allergies || record.allergies.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No allergies recorded</p>
+                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί αλλεργίες</p>
                 )}
               </div>
             </CardContent>
@@ -206,13 +206,13 @@ const MedicalRecords = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Stethoscope className="h-5 w-5 text-primary" />
-                Chronic Conditions
+                Χρόνιες Παθήσεις
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add condition (e.g., Diabetes, Hypertension)"
+                  placeholder="Προσθήκη πάθησης (π.χ., Διαβήτης, Υπέρταση)"
                   value={newCondition}
                   onChange={(e) => setNewCondition(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addItem('chronic_conditions', newCondition, setNewCondition)}
@@ -234,7 +234,7 @@ const MedicalRecords = () => {
                   </Badge>
                 ))}
                 {(!record.chronic_conditions || record.chronic_conditions.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No conditions recorded</p>
+                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί παθήσεις</p>
                 )}
               </div>
             </CardContent>
@@ -246,13 +246,13 @@ const MedicalRecords = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Pill className="h-5 w-5 text-health-info" />
-                Current Medications
+                Τρέχοντα Φάρμακα
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add medication (e.g., Metformin 500mg)"
+                  placeholder="Προσθήκη φαρμάκου (π.χ., Μετφορμίνη 500mg)"
                   value={newMedication}
                   onChange={(e) => setNewMedication(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addItem('current_medications', newMedication, setNewMedication)}
@@ -274,7 +274,7 @@ const MedicalRecords = () => {
                   </Badge>
                 ))}
                 {(!record.current_medications || record.current_medications.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No medications recorded</p>
+                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί φάρμακα</p>
                 )}
               </div>
             </CardContent>
@@ -286,13 +286,13 @@ const MedicalRecords = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Scissors className="h-5 w-5 text-health-danger" />
-                Past Surgeries
+                Προηγούμενα Χειρουργεία
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add surgery (e.g., Appendectomy 2020)"
+                  placeholder="Προσθήκη χειρουργείου (π.χ., Σκωληκοειδεκτομή 2020)"
                   value={newSurgery}
                   onChange={(e) => setNewSurgery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addItem('past_surgeries', newSurgery, setNewSurgery)}
@@ -314,7 +314,7 @@ const MedicalRecords = () => {
                   </Badge>
                 ))}
                 {(!record.past_surgeries || record.past_surgeries.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No surgeries recorded</p>
+                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί χειρουργεία</p>
                 )}
               </div>
             </CardContent>
@@ -327,12 +327,12 @@ const MedicalRecords = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="h-5 w-5" />
-            Additional Notes
+            Επιπλέον Σημειώσεις
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
-            placeholder="Add any additional medical information or notes..."
+            placeholder="Προσθέστε επιπλέον ιατρικές πληροφορίες ή σημειώσεις..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}

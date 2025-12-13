@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, Clock, MapPin, AlertCircle } from 'lucide-react';
 import { format, parseISO, isPast, isToday } from 'date-fns';
+import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -44,6 +45,13 @@ const statusColors = {
   confirmed: 'bg-primary/10 text-primary border-primary/20',
   completed: 'bg-health-success/10 text-health-success border-health-success/20',
   cancelled: 'bg-health-danger/10 text-health-danger border-health-danger/20'
+};
+
+const statusLabels = {
+  pending: 'Σε αναμονή',
+  confirmed: 'Επιβεβαιωμένο',
+  completed: 'Ολοκληρωμένο',
+  cancelled: 'Ακυρωμένο'
 };
 
 const Appointments = () => {
@@ -93,14 +101,14 @@ const Appointments = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to cancel appointment',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ακύρωσης ραντεβού',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Appointment Cancelled',
-        description: 'Your appointment has been cancelled successfully.'
+        title: 'Ραντεβού Ακυρώθηκε',
+        description: 'Το ραντεβού σας ακυρώθηκε επιτυχώς.'
       });
       fetchAppointments();
     }
@@ -139,14 +147,14 @@ const Appointments = () => {
                   </p>
                 </div>
                 <Badge className={statusColors[appointment.status]}>
-                  {appointment.status}
+                  {statusLabels[appointment.status]}
                 </Badge>
               </div>
 
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {format(appointmentDate, 'PPP')}
+                  {format(appointmentDate, 'PPP', { locale: el })}
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
@@ -167,29 +175,29 @@ const Appointments = () => {
                     size="sm" 
                     onClick={() => navigate(`/providers/${appointment.provider.id}`)}
                   >
-                    View Provider
+                    Προβολή Παρόχου
                   </Button>
                   
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button size="sm" variant="outline" className="text-health-danger">
-                        Cancel
+                        Ακύρωση
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Cancel Appointment?</AlertDialogTitle>
+                        <AlertDialogTitle>Ακύρωση Ραντεβού;</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to cancel your appointment with {appointment.provider.name} on {format(appointmentDate, 'PPP')}?
+                          Είστε σίγουροι ότι θέλετε να ακυρώσετε το ραντεβού σας με {appointment.provider.name} στις {format(appointmentDate, 'PPP', { locale: el })};
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Keep Appointment</AlertDialogCancel>
+                        <AlertDialogCancel>Διατήρηση Ραντεβού</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => handleCancel(appointment.id)}
                           className="bg-health-danger hover:bg-health-danger/90"
                         >
-                          Cancel Appointment
+                          Ακύρωση Ραντεβού
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -214,17 +222,17 @@ const Appointments = () => {
   return (
     <div className="space-y-6 pb-24">
       <div>
-        <h1 className="text-2xl font-bold">My Appointments</h1>
-        <p className="text-muted-foreground">Manage your healthcare appointments</p>
+        <h1 className="text-2xl font-bold">Τα Ραντεβού μου</h1>
+        <p className="text-muted-foreground">Διαχειριστείτε τα ραντεβού υγείας σας</p>
       </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upcoming">
-            Upcoming ({upcomingAppointments.length})
+            Επερχόμενα ({upcomingAppointments.length})
           </TabsTrigger>
           <TabsTrigger value="past">
-            Past ({pastAppointments.length})
+            Παρελθόντα ({pastAppointments.length})
           </TabsTrigger>
         </TabsList>
 
@@ -233,9 +241,9 @@ const Appointments = () => {
             <Card>
               <CardContent className="py-8 text-center">
                 <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">No upcoming appointments</p>
+                <p className="text-muted-foreground mb-4">Δεν υπάρχουν επερχόμενα ραντεβού</p>
                 <Button onClick={() => navigate('/providers')}>
-                  Find a Doctor
+                  Βρείτε Γιατρό
                 </Button>
               </CardContent>
             </Card>
@@ -250,7 +258,7 @@ const Appointments = () => {
           {pastAppointments.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">No past appointments</p>
+                <p className="text-muted-foreground">Δεν υπάρχουν παρελθόντα ραντεβού</p>
               </CardContent>
             </Card>
           ) : (
