@@ -22,7 +22,7 @@ const mockStories = [
   {
     id: "2",
     name: "Κλινική Υγεία",
-    avatarUrl: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=150&h=150&fit=crop",
+    avatarUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=150&h=150&fit=crop",
     hasNewStory: true,
     isOwn: false,
     type: "clinic" as const,
