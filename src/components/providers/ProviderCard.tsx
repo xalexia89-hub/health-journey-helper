@@ -27,10 +27,28 @@ const typeLabels: Record<string, string> = {
   hospital: 'Νοσοκομείο'
 };
 
-// Default cover images for clinics and hospitals
-const defaultCoverImages: Record<string, string> = {
-  clinic: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
-  hospital: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&h=400&fit=crop',
+// Default cover images for clinics and hospitals (multiple options)
+const clinicImages = [
+  'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&h=400&fit=crop',
+];
+
+const hospitalImages = [
+  'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=400&fit=crop',
+];
+
+// Get a consistent image based on provider name (so same provider always gets same image)
+const getDefaultCoverImage = (type: string, name: string): string => {
+  const images = type === 'clinic' ? clinicImages : hospitalImages;
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return images[hash % images.length];
 };
 
 export function ProviderCard({
@@ -61,7 +79,7 @@ export function ProviderCard({
   };
 
   const isClinicOrHospital = type === 'clinic' || type === 'hospital';
-  const coverImage = coverImageUrl || (isClinicOrHospital ? defaultCoverImages[type] : undefined);
+  const coverImage = coverImageUrl || (isClinicOrHospital ? getDefaultCoverImage(type, name) : undefined);
 
   // Card with cover image for clinics and hospitals
   if (isClinicOrHospital) {
