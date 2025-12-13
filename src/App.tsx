@@ -19,6 +19,7 @@ import Appointments from "./pages/Appointments";
 import MedicalRecords from "./pages/MedicalRecords";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Feed from "./pages/Feed";
 import NotFound from "./pages/NotFound";
 
 // Doctor Pages
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/records" element={<MedicalRecords />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/feed" element={<Feed />} />
             </Route>
 
             {/* Doctor routes */}
