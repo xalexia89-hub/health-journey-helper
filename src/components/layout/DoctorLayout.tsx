@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 const navItems = [
   { path: '/doctor', icon: LayoutDashboard, label: 'Dashboard' },
@@ -66,11 +67,14 @@ export const DoctorLayout = () => {
           <Menu className="h-6 w-6" />
         </Button>
         <Logo size="sm" />
-        <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-            D
-          </AvatarFallback>
-        </Avatar>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+              D
+            </AvatarFallback>
+          </Avatar>
+        </div>
       </header>
 
       {/* Sidebar */}
