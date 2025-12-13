@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 interface Provider {
   id: string;
   name: string;
-  type: 'doctor' | 'clinic' | 'hospital';
+  type: 'doctor' | 'clinic' | 'hospital' | 'nurse';
   specialty: string | null;
   description: string | null;
   avatar_url: string | null;
@@ -43,7 +43,8 @@ interface AvailabilitySlot {
 const typeLabels: Record<string, string> = {
   doctor: 'Γιατρός',
   clinic: 'Κλινική',
-  hospital: 'Νοσοκομείο'
+  hospital: 'Νοσοκομείο',
+  nurse: 'Νοσηλευτής/τρια'
 };
 
 const ProviderDetail = () => {
@@ -114,22 +115,23 @@ const ProviderDetail = () => {
     
     setBooking(true);
     try {
-      const { error } = await supabase.from('appointments').insert({
+      const { data, error } = await supabase.from('appointments').insert({
         patient_id: user.id,
         provider_id: provider.id,
         appointment_date: format(selectedDate, 'yyyy-MM-dd'),
         appointment_time: selectedTime,
         status: 'pending'
-      });
+      }).select('id').single();
 
       if (error) throw error;
 
       toast({
         title: 'Ραντεβού Κλείστηκε',
-        description: `Το ραντεβού σας με ${provider.name} στις ${format(selectedDate, 'PPP', { locale: el })} στις ${selectedTime} έχει κλειστεί.`
+        description: 'Προχωρήστε στην πληρωμή για επιβεβαίωση.'
       });
       
-      navigate('/appointments');
+      // Navigate to payment page
+      navigate(`/payment/${data.id}`);
     } catch (error) {
       toast({
         title: 'Αποτυχία Κράτησης',
