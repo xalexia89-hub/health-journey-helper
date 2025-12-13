@@ -54,23 +54,35 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <div className="p-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+    <div className="min-h-screen bg-mesh-futuristic relative overflow-hidden flex flex-col">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 bg-grid-futuristic opacity-60" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 gradient-glow animate-pulse-soft opacity-60" />
+      <div className="absolute bottom-1/4 right-0 w-80 h-80 gradient-glow animate-pulse-soft opacity-40" style={{ animationDelay: '1s' }} />
+      
+      {/* Floating Orbs */}
+      <div className="absolute top-20 right-10 w-3 h-3 rounded-full bg-accent/60 animate-float shadow-glow-accent" />
+      <div className="absolute top-40 left-20 w-2 h-2 rounded-full bg-primary/50 animate-float" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute bottom-40 right-1/4 w-4 h-4 rounded-full bg-accent/40 animate-float" style={{ animationDelay: '1.5s' }} />
+      
+      <div className="relative z-10 p-4">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="hover-glow">
           <ArrowLeft className="h-5 w-5" />
         </Button>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center px-6 pb-8">
-        <div className="mb-8 text-center">
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-6 pb-8">
+        <div className="mb-8 text-center animate-fade-in">
           <Logo size="lg" className="justify-center mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">Καλώς ήρθατε</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Καλώς ήρθατε
+          </h1>
           <p className="text-muted-foreground mt-1">
             Συνδεθείτε για να συνεχίσετε
           </p>
         </div>
 
-        <Card className="border-0 shadow-soft">
+        <Card className="border-0 glass-futuristic shadow-futuristic animate-slide-up">
           <CardContent className="pt-6">
             <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-4">
               <div className="space-y-2">
@@ -80,7 +92,7 @@ export default function Auth() {
                   type="email"
                   placeholder="you@example.com"
                   {...signInForm.register('email')}
-                  className="h-12 rounded-xl"
+                  className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
                 />
                 {signInForm.formState.errors.email && (
                   <p className="text-sm text-destructive">{signInForm.formState.errors.email.message}</p>
@@ -95,7 +107,7 @@ export default function Auth() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     {...signInForm.register('password')}
-                    className="h-12 rounded-xl pr-10"
+                    className="h-12 rounded-xl pr-10 bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
                   />
                   <Button
                     type="button"
@@ -112,7 +124,11 @@ export default function Auth() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full h-12 rounded-xl gradient-futuristic hover:shadow-neon transition-all duration-300 border-0" 
+                disabled={loading}
+              >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Σύνδεση
               </Button>
@@ -122,7 +138,7 @@ export default function Auth() {
       </div>
 
       {/* Medical Disclaimer */}
-      <div className="px-6 py-4 bg-muted/50 border-t border-border">
+      <div className="relative z-10 px-6 py-4 glass border-t border-primary/20">
         <p className="text-xs text-center text-muted-foreground">
           <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή δεν αντικαθιστά επαγγελματικές ιατρικές συμβουλές.
         </p>
