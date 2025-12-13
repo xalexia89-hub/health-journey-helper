@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Phone, MapPin, Calendar, Droplet, Save } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Droplet, Save, Camera, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
 
 interface ProfileData {
   id: string;
@@ -32,6 +31,8 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user) fetchProfile();
@@ -46,6 +47,77 @@ const Profile = () => {
 
     if (data) setProfile(data);
     setLoading(false);
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user || !profile) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Μη έγκυρο αρχείο',
+        description: 'Παρακαλώ επιλέξτε μια εικόνα',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Αρχείο πολύ μεγάλο',
+        description: 'Η εικόνα πρέπει να είναι μικρότερη από 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadingAvatar(true);
+
+    try {
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile({ ...profile, avatar_url: avatarUrl });
+
+      toast({
+        title: 'Επιτυχία!',
+        description: 'Η φωτογραφία προφίλ ενημερώθηκε',
+      });
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      toast({
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ανεβάσματος φωτογραφίας',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   const handleSave = async () => {
@@ -67,14 +139,14 @@ const Profile = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update profile',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ενημέρωσης προφίλ',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Profile Updated',
-        description: 'Your profile has been saved successfully'
+        title: 'Προφίλ ενημερώθηκε',
+        description: 'Τα στοιχεία σας αποθηκεύτηκαν επιτυχώς'
       });
     }
     setSaving(false);
@@ -97,7 +169,7 @@ const Profile = () => {
   if (!profile) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Profile not found</p>
+        <p className="text-muted-foreground">Το προφίλ δεν βρέθηκε</p>
       </div>
     );
   }
@@ -106,12 +178,12 @@ const Profile = () => {
     <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">My Profile</h1>
-          <p className="text-muted-foreground">Manage your personal information</p>
+          <h1 className="text-2xl font-bold">Το Προφίλ μου</h1>
+          <p className="text-muted-foreground">Διαχειριστείτε τα προσωπικά σας στοιχεία</p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save'}
+          {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
         </Button>
       </div>
 
@@ -119,15 +191,54 @@ const Profile = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="text-xl bg-primary/10 text-primary">
-                {profile.full_name?.charAt(0) || profile.email.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h2 className="text-xl font-semibold">{profile.full_name || 'Your Name'}</h2>
+            <div className="relative group">
+              <Avatar className="h-24 w-24 ring-4 ring-primary/20">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback className="text-2xl bg-primary/10 text-primary">
+                  {profile.full_name?.charAt(0) || profile.email.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleAvatarUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-not-allowed"
+              >
+                {uploadingAvatar ? (
+                  <Loader2 className="h-6 w-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+              </button>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold">{profile.full_name || 'Το Όνομά σας'}</h2>
               <p className="text-muted-foreground">{profile.email}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingAvatar}
+              >
+                {uploadingAvatar ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Ανέβασμα...
+                  </>
+                ) : (
+                  <>
+                    <Camera className="h-4 w-4 mr-2" />
+                    Αλλαγή φωτογραφίας
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -138,18 +249,18 @@ const Profile = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Personal Information
+            Προσωπικά Στοιχεία
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">Ονοματεπώνυμο</Label>
               <Input
                 id="fullName"
                 value={profile.full_name || ''}
                 onChange={(e) => updateField('full_name', e.target.value)}
-                placeholder="Enter your full name"
+                placeholder="Εισάγετε το ονοματεπώνυμό σας"
               />
             </div>
             
@@ -167,21 +278,21 @@ const Profile = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Τηλέφωνο</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="phone"
                   value={profile.phone || ''}
                   onChange={(e) => updateField('phone', e.target.value)}
-                  placeholder="+1 234 567 8900"
+                  placeholder="+30 69X XXX XXXX"
                   className="pl-10"
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="dob">Date of Birth</Label>
+              <Label htmlFor="dob">Ημερομηνία Γέννησης</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -201,19 +312,19 @@ const Profile = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Droplet className="h-5 w-5 text-health-danger" />
-            Medical Information
+            <Droplet className="h-5 w-5 text-destructive" />
+            Ιατρικές Πληροφορίες
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label>Blood Type</Label>
+            <Label>Ομάδα Αίματος</Label>
             <Select
               value={profile.blood_type || ''}
               onValueChange={(value) => updateField('blood_type', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select blood type" />
+                <SelectValue placeholder="Επιλέξτε ομάδα αίματος" />
               </SelectTrigger>
               <SelectContent>
                 {bloodTypes.map((type) => (
@@ -232,38 +343,38 @@ const Profile = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5" />
-            Address
+            Διεύθυνση
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="address">Street Address</Label>
+            <Label htmlFor="address">Οδός</Label>
             <Input
               id="address"
               value={profile.address || ''}
               onChange={(e) => updateField('address', e.target.value)}
-              placeholder="Enter your street address"
+              placeholder="Εισάγετε τη διεύθυνσή σας"
             />
           </div>
           
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">Πόλη</Label>
               <Input
                 id="city"
                 value={profile.city || ''}
                 onChange={(e) => updateField('city', e.target.value)}
-                placeholder="Enter your city"
+                placeholder="Εισάγετε την πόλη σας"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
+              <Label htmlFor="country">Χώρα</Label>
               <Input
                 id="country"
                 value={profile.country || ''}
                 onChange={(e) => updateField('country', e.target.value)}
-                placeholder="Enter your country"
+                placeholder="Εισάγετε τη χώρα σας"
               />
             </div>
           </div>
