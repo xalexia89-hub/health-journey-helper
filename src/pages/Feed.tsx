@@ -91,7 +91,7 @@ const mockPosts = [
       isVerified: true,
     },
     content: "📢 Νέα υπηρεσία! Τώρα προσφέρουμε τηλεϊατρική για όλες τις ειδικότητες. Κλείστε ραντεβού online και συνδεθείτε με τους γιατρούς μας από το σπίτι σας.",
-    imageUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=600&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=600&fit=crop",
     likes: 567,
     comments: 89,
     timeAgo: "5 ώρες",
