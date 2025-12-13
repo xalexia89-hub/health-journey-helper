@@ -196,32 +196,46 @@
 }
 
 @layer utilities {
-  /* Glass Morphism */
+  /* Glass Morphism - Futuristic */
   .glass {
-    @apply backdrop-blur-xl border border-border/30;
-    background: linear-gradient(135deg, hsl(var(--card) / 0.8) 0%, hsl(var(--card) / 0.6) 100%);
+    @apply backdrop-blur-xl border border-primary/20;
+    background: linear-gradient(135deg, hsl(var(--card) / 0.85) 0%, hsl(var(--card) / 0.65) 100%);
   }
 
   .glass-strong {
-    @apply backdrop-blur-2xl border border-primary/20;
+    @apply backdrop-blur-2xl border border-primary/30;
     background: linear-gradient(135deg, hsl(var(--card) / 0.95) 0%, hsl(var(--card) / 0.85) 100%);
+    box-shadow: 0 8px 32px hsl(var(--primary) / 0.15);
+  }
+
+  .glass-futuristic {
+    @apply backdrop-blur-xl border border-accent/30;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.08) 0%, hsl(var(--accent) / 0.05) 100%);
+    box-shadow: 
+      0 0 40px -10px hsl(var(--primary) / 0.3),
+      inset 0 0 60px -30px hsl(var(--accent) / 0.2);
   }
   
-  /* Fantasy Gradients */
+  /* Futuristic Gradients */
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--medithos-pink)) 50%, hsl(var(--accent)) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
   }
 
   .gradient-aurora {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--medithos-violet)) 25%, hsl(var(--medithos-pink)) 50%, hsl(var(--accent)) 75%, hsl(var(--medithos-purple-light)) 100%);
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(var(--accent)) 35%, 
+      hsl(var(--medithos-cyan)) 65%, 
+      hsl(var(--medithos-violet-light)) 100%
+    );
   }
 
   .gradient-cosmic {
-    background: linear-gradient(180deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--accent) / 0.08) 50%, transparent 100%);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--accent) / 0.1) 50%, transparent 100%);
   }
 
   .gradient-neon {
-    background: linear-gradient(90deg, hsl(var(--accent)) 0%, hsl(var(--primary)) 50%, hsl(var(--medithos-pink)) 100%);
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--medithos-cyan)) 100%);
   }
   
   .gradient-health {
@@ -232,38 +246,69 @@
     background: linear-gradient(135deg, hsl(var(--medithos-lavender)) 0%, hsl(var(--medithos-lavender-light)) 100%);
   }
 
-  .gradient-sunset {
-    background: linear-gradient(135deg, hsl(var(--medithos-pink)) 0%, hsl(var(--warning)) 50%, hsl(var(--medithos-gold)) 100%);
+  .gradient-futuristic {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(175 60% 35%) 50%, 
+      hsl(var(--accent)) 100%
+    );
+  }
+
+  .gradient-glow {
+    background: radial-gradient(ellipse at center, hsl(var(--accent) / 0.4) 0%, transparent 70%);
+  }
+
+  /* Animated Mesh Background */
+  .bg-mesh-futuristic {
+    background: 
+      radial-gradient(at 20% 30%, hsl(var(--primary) / 0.25) 0px, transparent 50%),
+      radial-gradient(at 80% 20%, hsl(var(--accent) / 0.2) 0px, transparent 50%),
+      radial-gradient(at 40% 80%, hsl(var(--medithos-cyan) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 90% 70%, hsl(var(--primary) / 0.18) 0px, transparent 50%),
+      radial-gradient(at 10% 60%, hsl(var(--accent) / 0.12) 0px, transparent 50%),
+      hsl(var(--background));
+  }
+
+  .bg-grid-futuristic {
+    background-image: 
+      linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   /* Glowing Shadows */
   .shadow-soft {
-    box-shadow: 0 4px 24px -4px hsl(var(--primary) / 0.25);
+    box-shadow: 0 4px 24px -4px hsl(var(--primary) / 0.2);
   }
 
   .shadow-glow {
-    box-shadow: 0 0 50px -10px hsl(var(--primary) / 0.5),
-                0 0 20px -5px hsl(var(--accent) / 0.3);
+    box-shadow: 
+      0 0 50px -10px hsl(var(--primary) / 0.5),
+      0 0 20px -5px hsl(var(--accent) / 0.3);
   }
 
   .shadow-glow-accent {
-    box-shadow: 0 0 40px -8px hsl(var(--accent) / 0.5),
-                0 0 15px -3px hsl(var(--accent) / 0.4);
+    box-shadow: 
+      0 0 40px -8px hsl(var(--accent) / 0.5),
+      0 0 15px -3px hsl(var(--accent) / 0.4);
   }
 
-  .shadow-glow-pink {
-    box-shadow: 0 0 40px -8px hsl(var(--medithos-pink) / 0.5),
-                0 0 15px -3px hsl(var(--medithos-pink) / 0.4);
+  .shadow-neon {
+    box-shadow: 
+      0 0 20px 2px hsl(var(--primary) / 0.4),
+      0 0 40px 4px hsl(var(--accent) / 0.2),
+      inset 0 0 20px hsl(var(--primary) / 0.1);
+  }
+
+  .shadow-futuristic {
+    box-shadow: 
+      0 4px 30px -5px hsl(var(--primary) / 0.35),
+      0 0 50px -15px hsl(var(--accent) / 0.4),
+      inset 0 1px 0 hsl(var(--accent) / 0.1);
   }
 
   .shadow-lavender {
     box-shadow: 0 0 30px -5px hsl(var(--accent) / 0.35);
-  }
-
-  .shadow-neon {
-    box-shadow: 0 0 20px 2px hsl(var(--primary) / 0.4),
-                0 0 40px 4px hsl(var(--accent) / 0.2),
-                inset 0 0 15px hsl(var(--primary) / 0.1);
   }
 
   /* Animated Background */
