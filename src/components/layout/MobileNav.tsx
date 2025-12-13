@@ -3,11 +3,11 @@ import { Home, User, Calendar, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { path: "/dashboard", icon: Home, label: "Home" },
-  { path: "/appointments", icon: Calendar, label: "Appointments" },
-  { path: "/records", icon: FileText, label: "Records" },
-  { path: "/profile", icon: User, label: "Profile" },
-  { path: "/settings", icon: Settings, label: "Settings" },
+  { path: "/dashboard", icon: Home, label: "Αρχική" },
+  { path: "/appointments", icon: Calendar, label: "Ραντεβού" },
+  { path: "/records", icon: FileText, label: "Ιστορικό" },
+  { path: "/profile", icon: User, label: "Προφίλ" },
+  { path: "/settings", icon: Settings, label: "Ρυθμίσεις" },
 ];
 
 export function MobileNav() {

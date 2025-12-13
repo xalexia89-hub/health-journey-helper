@@ -8,6 +8,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
+import { el } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 export function NotificationBell() {
@@ -27,7 +28,7 @@ export function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
-          <h4 className="font-semibold">Notifications</h4>
+          <h4 className="font-semibold">Ειδοποιήσεις</h4>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -36,18 +37,18 @@ export function NotificationBell() {
               className="text-xs"
             >
               <CheckCheck className="h-4 w-4 mr-1" />
-              Mark all read
+              Επισήμανση όλων
             </Button>
           )}
         </div>
         <ScrollArea className="h-[300px]">
           {loading ? (
             <div className="p-4 text-center text-muted-foreground">
-              Loading...
+              Φόρτωση...
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-4 text-center text-muted-foreground">
-              No notifications
+              Δεν υπάρχουν ειδοποιήσεις
             </div>
           ) : (
             <div className="divide-y">
@@ -76,6 +77,7 @@ export function NotificationBell() {
                         {notification.created_at &&
                           formatDistanceToNow(new Date(notification.created_at), {
                             addSuffix: true,
+                            locale: el,
                           })}
                       </p>
                     </div>

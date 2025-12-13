@@ -14,23 +14,23 @@ import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Παρακαλώ εισάγετε ένα έγκυρο email"),
+  password: z.string().min(6, "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες"),
 });
 
 const signUpSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters").max(100),
-  email: z.string().email("Please enter a valid email").max(255),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  fullName: z.string().min(2, "Το ονοματεπώνυμο πρέπει να έχει τουλάχιστον 2 χαρακτήρες").max(100),
+  email: z.string().email("Παρακαλώ εισάγετε ένα έγκυρο email").max(255),
+  password: z.string().min(6, "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες"),
   confirmPassword: z.string(),
   gdprConsent: z.boolean().refine((val) => val === true, {
-    message: "You must consent to data processing",
+    message: "Πρέπει να συναινέσετε στην επεξεργασία δεδομένων",
   }),
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms of service",
+    message: "Πρέπει να αποδεχθείτε τους όρους χρήσης",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Οι κωδικοί δεν ταιριάζουν",
   path: ["confirmPassword"],
 });
 
@@ -76,9 +76,9 @@ export default function Auth() {
 
     if (error) {
       toast({
-        title: "Sign in failed",
+        title: "Αποτυχία σύνδεσης",
         description: error.message === "Invalid login credentials" 
-          ? "Invalid email or password. Please try again." 
+          ? "Λάθος email ή κωδικός. Παρακαλώ δοκιμάστε ξανά." 
           : error.message,
         variant: "destructive",
       });
@@ -95,10 +95,10 @@ export default function Auth() {
     if (error) {
       let message = error.message;
       if (message.includes("already registered")) {
-        message = "This email is already registered. Please sign in instead.";
+        message = "Αυτό το email είναι ήδη εγγεγραμμένο. Παρακαλώ συνδεθείτε.";
       }
       toast({
-        title: "Sign up failed",
+        title: "Αποτυχία εγγραφής",
         description: message,
         variant: "destructive",
       });
@@ -123,12 +123,12 @@ export default function Auth() {
         <div className="mb-8 text-center">
           <Logo size="lg" className="justify-center mb-4" />
           <h1 className="text-2xl font-bold text-foreground">
-            {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+            {mode === 'signin' ? 'Καλώς ήρθατε ξανά' : 'Δημιουργία λογαριασμού'}
           </h1>
           <p className="text-muted-foreground mt-1">
             {mode === 'signin' 
-              ? 'Sign in to continue your health journey' 
-              : 'Start managing your health today'}
+              ? 'Συνδεθείτε για να συνεχίσετε το ταξίδι υγείας σας' 
+              : 'Ξεκινήστε να διαχειρίζεστε την υγεία σας σήμερα'}
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Κωδικός</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -177,16 +177,16 @@ export default function Auth() {
 
                 <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Sign In
+                  Σύνδεση
                 </Button>
               </form>
             ) : (
               <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName">Ονοματεπώνυμο</Label>
                   <Input
                     id="fullName"
-                    placeholder="John Doe"
+                    placeholder="Γιάννης Παπαδόπουλος"
                     {...signUpForm.register('fullName')}
                     className="h-12 rounded-xl"
                   />
@@ -210,7 +210,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signupPassword">Password</Label>
+                  <Label htmlFor="signupPassword">Κωδικός</Label>
                   <div className="relative">
                     <Input
                       id="signupPassword"
@@ -235,7 +235,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword">Επιβεβαίωση Κωδικού</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -256,7 +256,7 @@ export default function Auth() {
                       onCheckedChange={(checked) => signUpForm.setValue('gdprConsent', checked as boolean)}
                     />
                     <Label htmlFor="gdprConsent" className="text-sm leading-relaxed cursor-pointer">
-                      I consent to the processing of my medical data in accordance with GDPR regulations.
+                      Συναινώ στην επεξεργασία των ιατρικών μου δεδομένων σύμφωνα με τον κανονισμό GDPR.
                     </Label>
                   </div>
                   {signUpForm.formState.errors.gdprConsent && (
@@ -270,7 +270,7 @@ export default function Auth() {
                       onCheckedChange={(checked) => signUpForm.setValue('termsAccepted', checked as boolean)}
                     />
                     <Label htmlFor="termsAccepted" className="text-sm leading-relaxed cursor-pointer">
-                      I accept the Terms of Service and Privacy Policy.
+                      Αποδέχομαι τους Όρους Χρήσης και την Πολιτική Απορρήτου.
                     </Label>
                   </div>
                   {signUpForm.formState.errors.termsAccepted && (
@@ -280,20 +280,20 @@ export default function Auth() {
 
                 <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Account
+                  Δημιουργία Λογαριασμού
                 </Button>
               </form>
             )}
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                {mode === 'signin' ? "Don't have an account? " : "Already have an account? "}
+                {mode === 'signin' ? "Δεν έχετε λογαριασμό; " : "Έχετε ήδη λογαριασμό; "}
                 <button
                   type="button"
                   onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
                   className="text-primary font-medium hover:underline"
                 >
-                  {mode === 'signin' ? 'Sign up' : 'Sign in'}
+                  {mode === 'signin' ? 'Εγγραφή' : 'Σύνδεση'}
                 </button>
               </p>
             </div>
@@ -304,7 +304,7 @@ export default function Auth() {
       {/* Medical Disclaimer */}
       <div className="px-6 py-4 bg-muted/50 border-t border-border">
         <p className="text-xs text-center text-muted-foreground">
-          <strong>Medical Disclaimer:</strong> This app is not a substitute for professional medical advice.
+          <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή δεν αντικαθιστά επαγγελματικές ιατρικές συμβουλές.
         </p>
       </div>
     </div>

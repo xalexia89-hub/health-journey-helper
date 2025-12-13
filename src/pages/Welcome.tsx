@@ -6,18 +6,18 @@ import { Heart, Shield, Calendar, ArrowRight } from "lucide-react";
 const features = [
   {
     icon: Heart,
-    title: "Track Your Health",
-    description: "Monitor symptoms and maintain comprehensive medical records",
+    title: "Παρακολουθήστε την Υγεία σας",
+    description: "Καταγράψτε συμπτώματα και διατηρήστε ολοκληρωμένο ιατρικό ιστορικό",
   },
   {
     icon: Shield,
-    title: "Find Trusted Providers",
-    description: "Connect with verified doctors, clinics, and hospitals",
+    title: "Βρείτε Αξιόπιστους Παρόχους",
+    description: "Συνδεθείτε με πιστοποιημένους γιατρούς, κλινικές και νοσοκομεία",
   },
   {
     icon: Calendar,
-    title: "Easy Booking",
-    description: "Schedule appointments and pay securely online",
+    title: "Εύκολη Κράτηση",
+    description: "Προγραμματίστε ραντεβού και πληρώστε με ασφάλεια online",
   },
 ];
 
@@ -33,12 +33,12 @@ export default function Welcome() {
         <div className="flex-1 px-6 flex flex-col justify-center">
           <div className="space-y-4 animate-slide-up">
             <h1 className="text-4xl font-bold text-foreground leading-tight">
-              Your Health,{" "}
-              <span className="text-primary">Simplified</span>
+              Η Υγεία σας,{" "}
+              <span className="text-primary">Απλοποιημένη</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Connect with healthcare providers, track your symptoms, and manage your 
-              medical journey — all in one place.
+              Συνδεθείτε με παρόχους υγείας, παρακολουθήστε τα συμπτώματά σας και διαχειριστείτε 
+              το ιατρικό σας ταξίδι — όλα σε ένα μέρος.
             </p>
           </div>
 
@@ -66,13 +66,13 @@ export default function Welcome() {
         <div className="p-6 space-y-3 bg-gradient-to-t from-background via-background to-transparent">
           <Button asChild size="lg" className="w-full h-14 text-base font-semibold rounded-xl shadow-soft">
             <Link to="/auth?mode=signup">
-              Get Started
+              Ξεκινήστε
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="w-full h-14 text-base font-semibold rounded-xl">
             <Link to="/auth?mode=signin">
-              I already have an account
+              Έχω ήδη λογαριασμό
             </Link>
           </Button>
         </div>
@@ -81,8 +81,8 @@ export default function Welcome() {
       {/* Medical Disclaimer */}
       <div className="px-6 py-4 bg-muted/50 border-t border-border">
         <p className="text-xs text-center text-muted-foreground">
-          <strong>Medical Disclaimer:</strong> This app provides general health information and 
-          is not a substitute for professional medical advice, diagnosis, or treatment.
+          <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή παρέχει γενικές πληροφορίες υγείας και 
+          δεν αντικαθιστά επαγγελματικές ιατρικές συμβουλές, διάγνωση ή θεραπεία.
         </p>
       </div>
     </div>

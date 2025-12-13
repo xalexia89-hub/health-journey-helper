@@ -21,6 +21,12 @@ interface Provider {
   is_verified: boolean | null;
 }
 
+const typeLabels: Record<string, string> = {
+  doctor: 'Γιατροί',
+  clinic: 'Κλινικές',
+  hospital: 'Νοσοκομεία'
+};
+
 export default function Providers() {
   const [searchParams] = useSearchParams();
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -48,7 +54,7 @@ export default function Providers() {
     p.specialty?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const title = typeFilter ? `Find ${typeFilter.charAt(0).toUpperCase() + typeFilter.slice(1)}s` : "Find Providers";
+  const title = typeFilter ? `Εύρεση ${typeLabels[typeFilter] || 'Παρόχων'}` : "Εύρεση Παρόχων";
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -58,7 +64,7 @@ export default function Providers() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or specialty..." className="pl-10 h-12 rounded-xl" />
+            placeholder="Αναζήτηση με όνομα ή ειδικότητα..." className="pl-10 h-12 rounded-xl" />
         </div>
       </div>
 
@@ -89,7 +95,7 @@ export default function Providers() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No providers found</p>
+            <p className="text-muted-foreground">Δεν βρέθηκαν πάροχοι</p>
           </div>
         )}
       </main>

@@ -9,6 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Star, MapPin, Clock, CheckCircle, Phone, Mail } from 'lucide-react';
 import { format, addDays, setHours, setMinutes } from 'date-fns';
+import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 
 interface Provider {
@@ -38,6 +39,12 @@ interface AvailabilitySlot {
   end_time: string;
   slot_duration_minutes: number | null;
 }
+
+const typeLabels: Record<string, string> = {
+  doctor: 'Γιατρός',
+  clinic: 'Κλινική',
+  hospital: 'Νοσοκομείο'
+};
 
 const ProviderDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -118,15 +125,15 @@ const ProviderDetail = () => {
       if (error) throw error;
 
       toast({
-        title: 'Appointment Booked',
-        description: `Your appointment with ${provider.name} on ${format(selectedDate, 'PPP')} at ${selectedTime} has been booked.`
+        title: 'Ραντεβού Κλείστηκε',
+        description: `Το ραντεβού σας με ${provider.name} στις ${format(selectedDate, 'PPP', { locale: el })} στις ${selectedTime} έχει κλειστεί.`
       });
       
       navigate('/appointments');
     } catch (error) {
       toast({
-        title: 'Booking Failed',
-        description: 'Unable to book appointment. Please try again.',
+        title: 'Αποτυχία Κράτησης',
+        description: 'Δεν ήταν δυνατή η κράτηση ραντεβού. Παρακαλώ δοκιμάστε ξανά.',
         variant: 'destructive'
       });
     } finally {
@@ -150,9 +157,9 @@ const ProviderDetail = () => {
   if (!provider) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Provider not found</p>
+        <p className="text-muted-foreground">Ο πάροχος δεν βρέθηκε</p>
         <Button variant="link" onClick={() => navigate('/providers')}>
-          Back to Providers
+          Επιστροφή στους Παρόχους
         </Button>
       </div>
     );
@@ -164,7 +171,7 @@ const ProviderDetail = () => {
     <div className="space-y-6 pb-24">
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
+        Πίσω
       </Button>
 
       {/* Provider Header */}
@@ -194,13 +201,13 @@ const ProviderDetail = () => {
                     <Star className="h-4 w-4 fill-health-warning text-health-warning" />
                     <span className="font-medium">{provider.rating}</span>
                     <span className="text-muted-foreground text-sm">
-                      ({provider.review_count} reviews)
+                      ({provider.review_count} κριτικές)
                     </span>
                   </div>
                 )}
                 
                 <Badge variant="outline" className="capitalize">
-                  {provider.type}
+                  {typeLabels[provider.type]}
                 </Badge>
               </div>
               
@@ -217,7 +224,7 @@ const ProviderDetail = () => {
       {/* Contact & Location */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Contact Information</CardTitle>
+          <CardTitle className="text-lg">Στοιχεία Επικοινωνίας</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {provider.address && (
@@ -245,7 +252,7 @@ const ProviderDetail = () => {
       {provider.description && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">About</CardTitle>
+            <CardTitle className="text-lg">Σχετικά</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{provider.description}</p>
@@ -257,7 +264,7 @@ const ProviderDetail = () => {
       {provider.services && provider.services.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Services</CardTitle>
+            <CardTitle className="text-lg">Υπηρεσίες</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -274,7 +281,7 @@ const ProviderDetail = () => {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Book Appointment
+            Κλείστε Ραντεβού
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -290,12 +297,13 @@ const ProviderDetail = () => {
               fromDate={new Date()}
               toDate={addDays(new Date(), 60)}
               className="rounded-md border"
+              locale={el}
             />
           </div>
 
           {selectedDate && availableTimes.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium">Available Times</p>
+              <p className="text-sm font-medium">Διαθέσιμες Ώρες</p>
               <div className="grid grid-cols-4 gap-2">
                 {availableTimes.map((time) => (
                   <Button
@@ -313,7 +321,7 @@ const ProviderDetail = () => {
 
           {selectedDate && availableTimes.length === 0 && (
             <p className="text-center text-muted-foreground text-sm">
-              No available times for this date
+              Δεν υπάρχουν διαθέσιμες ώρες για αυτή την ημερομηνία
             </p>
           )}
 
@@ -322,7 +330,7 @@ const ProviderDetail = () => {
             disabled={!selectedDate || !selectedTime || booking}
             onClick={handleBooking}
           >
-            {booking ? 'Booking...' : 'Book Appointment'}
+            {booking ? 'Κράτηση...' : 'Κλείστε Ραντεβού'}
           </Button>
         </CardContent>
       </Card>
