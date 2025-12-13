@@ -34,7 +34,9 @@ export default function Providers() {
 
   const fetchProviders = async () => {
     let query = supabase.from('providers').select('*').eq('is_active', true);
-    if (typeFilter) query = query.eq('type', typeFilter);
+    if (typeFilter && ['doctor', 'clinic', 'hospital'].includes(typeFilter)) {
+      query = query.eq('type', typeFilter as 'doctor' | 'clinic' | 'hospital');
+    }
     
     const { data } = await query.order('rating', { ascending: false });
     if (data) setProviders(data as Provider[]);
