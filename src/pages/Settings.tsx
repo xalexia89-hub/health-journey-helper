@@ -55,8 +55,8 @@ const Settings = () => {
   const toggleNotification = (key: keyof typeof notifications) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
     toast({
-      title: 'Settings Updated',
-      description: 'Your notification preferences have been saved.'
+      title: 'Ρυθμίσεις Ενημερώθηκαν',
+      description: 'Οι προτιμήσεις ειδοποιήσεων αποθηκεύτηκαν.'
     });
   };
 
@@ -64,32 +64,32 @@ const Settings = () => {
     setDarkMode(!darkMode);
     document.documentElement.classList.toggle('dark');
     toast({
-      title: darkMode ? 'Light Mode Enabled' : 'Dark Mode Enabled',
-      description: 'Your display preferences have been updated.'
+      title: darkMode ? 'Ενεργοποιήθηκε το Φωτεινό Θέμα' : 'Ενεργοποιήθηκε το Σκοτεινό Θέμα',
+      description: 'Οι προτιμήσεις εμφάνισης ενημερώθηκαν.'
     });
   };
 
   return (
     <div className="space-y-6 pb-24">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your app preferences</p>
+        <h1 className="text-2xl font-bold">Ρυθμίσεις</h1>
+        <p className="text-muted-foreground">Διαχειριστείτε τις προτιμήσεις της εφαρμογής</p>
       </div>
 
-      {/* Notifications */}
+      {/* Ειδοποιήσεις */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Notifications
+            Ειδοποιήσεις
           </CardTitle>
-          <CardDescription>Configure how you want to be notified</CardDescription>
+          <CardDescription>Διαμορφώστε πώς θέλετε να ειδοποιείστε</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Appointment Reminders</Label>
-              <p className="text-sm text-muted-foreground">Get notified before your appointments</p>
+              <Label>Υπενθυμίσεις Ραντεβού</Label>
+              <p className="text-sm text-muted-foreground">Ειδοποίηση πριν τα ραντεβού σας</p>
             </div>
             <Switch
               checked={notifications.appointments}
@@ -101,8 +101,8 @@ const Settings = () => {
           
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Health Reminders</Label>
-              <p className="text-sm text-muted-foreground">Medication and check-up reminders</p>
+              <Label>Υπενθυμίσεις Υγείας</Label>
+              <p className="text-sm text-muted-foreground">Υπενθυμίσεις φαρμάκων και ελέγχων</p>
             </div>
             <Switch
               checked={notifications.reminders}
@@ -114,8 +114,8 @@ const Settings = () => {
           
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Marketing Communications</Label>
-              <p className="text-sm text-muted-foreground">Receive health tips and offers</p>
+              <Label>Ενημερωτικές Επικοινωνίες</Label>
+              <p className="text-sm text-muted-foreground">Λήψη συμβουλών υγείας και προσφορών</p>
             </div>
             <Switch
               checked={notifications.marketing}
@@ -125,19 +125,19 @@ const Settings = () => {
         </CardContent>
       </Card>
 
-      {/* Communication Channels */}
+      {/* Κανάλια Επικοινωνίας */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Smartphone className="h-5 w-5" />
-            Communication Channels
+            Κανάλια Επικοινωνίας
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-muted-foreground" />
-              <Label>Email Notifications</Label>
+              <Label>Ειδοποιήσεις Email</Label>
             </div>
             <Switch
               checked={notifications.email}
@@ -150,7 +150,7 @@ const Settings = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Smartphone className="h-5 w-5 text-muted-foreground" />
-              <Label>SMS Notifications</Label>
+              <Label>Ειδοποιήσεις SMS</Label>
             </div>
             <Switch
               checked={notifications.sms}
@@ -160,19 +160,19 @@ const Settings = () => {
         </CardContent>
       </Card>
 
-      {/* Appearance */}
+      {/* Εμφάνιση */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            Appearance
+            Εμφάνιση
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Dark Mode</Label>
-              <p className="text-sm text-muted-foreground">Switch between light and dark themes</p>
+              <Label>Σκοτεινό Θέμα</Label>
+              <p className="text-sm text-muted-foreground">Εναλλαγή μεταξύ φωτεινού και σκοτεινού θέματος</p>
             </div>
             <Switch
               checked={darkMode}
@@ -182,102 +182,102 @@ const Settings = () => {
         </CardContent>
       </Card>
 
-      {/* Privacy & Security */}
+      {/* Απόρρητο & Ασφάλεια */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            Privacy & Security
+            Απόρρητο & Ασφάλεια
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <Button variant="ghost" className="w-full justify-between">
-            <span>Change Password</span>
+            <span>Αλλαγή Κωδικού</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="ghost" className="w-full justify-between">
-            <span>Two-Factor Authentication</span>
+            <span>Ταυτοποίηση Δύο Παραγόντων</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="ghost" className="w-full justify-between">
-            <span>Data Privacy Settings</span>
+            <span>Ρυθμίσεις Απορρήτου Δεδομένων</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </CardContent>
       </Card>
 
-      {/* Help & Legal */}
+      {/* Βοήθεια & Νομικά */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5" />
-            Help & Legal
+            Βοήθεια & Νομικά
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <Button variant="ghost" className="w-full justify-between">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4" />
-              <span>Help Center</span>
+              <span>Κέντρο Βοήθειας</span>
             </div>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="ghost" className="w-full justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              <span>Terms of Service</span>
+              <span>Όροι Χρήσης</span>
             </div>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button variant="ghost" className="w-full justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              <span>Privacy Policy</span>
+              <span>Πολιτική Απορρήτου</span>
             </div>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </CardContent>
       </Card>
 
-      {/* Language */}
+      {/* Γλώσσα */}
       <Card>
         <CardContent className="pt-6">
           <Button variant="ghost" className="w-full justify-between">
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
-              <span>Language</span>
+              <span>Γλώσσα</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <span>English</span>
+              <span>Ελληνικά</span>
               <ChevronRight className="h-4 w-4" />
             </div>
           </Button>
         </CardContent>
       </Card>
 
-      {/* Sign Out */}
+      {/* Αποσύνδεση */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="destructive" className="w-full">
             <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            Αποσύνδεση
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Sign Out</AlertDialogTitle>
+            <AlertDialogTitle>Αποσύνδεση</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to sign out of your account?
+              Είστε σίγουροι ότι θέλετε να αποσυνδεθείτε από τον λογαριασμό σας;
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSignOut}>Sign Out</AlertDialogAction>
+            <AlertDialogCancel>Ακύρωση</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut}>Αποσύνδεση</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* App Version */}
+      {/* Έκδοση Εφαρμογής */}
       <p className="text-center text-sm text-muted-foreground">
         MediConnect v1.0.0
       </p>
