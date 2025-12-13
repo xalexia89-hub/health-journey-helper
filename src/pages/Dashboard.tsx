@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Calendar, FileText, User, Search, Heart, Activity, 
-  AlertCircle, ChevronRight, Stethoscope, Building2, Hospital, UserRound
+  AlertCircle, ChevronRight, Stethoscope, Building2, Hospital, UserRound, GraduationCap
 } from "lucide-react";
 
 interface Profile {
@@ -60,6 +60,7 @@ export default function Dashboard() {
     { icon: Building2, label: "Εύρεση Κλινικών", path: "/providers?type=clinic", color: "bg-health-blue-light text-health-blue" },
     { icon: Hospital, label: "Νοσοκομεία", path: "/providers?type=hospital", color: "bg-health-lavender-light text-health-lavender" },
     { icon: UserRound, label: "Κατ' Οίκον Νοσηλεία", path: "/nurses", color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400" },
+    { icon: GraduationCap, label: "Ιατρική Ακαδημία", path: "/academy", color: "bg-accent/20 text-accent" },
   ];
 
   const firstName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'εκεί';
