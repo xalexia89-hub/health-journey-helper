@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PatientLayout } from "@/components/layout/PatientLayout";
 import { DoctorLayout } from "@/components/layout/DoctorLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -26,6 +27,13 @@ import DoctorAppointments from "./pages/doctor/DoctorAppointments";
 import DoctorPatients from "./pages/doctor/DoctorPatients";
 import DoctorSchedule from "./pages/doctor/DoctorSchedule";
 import DoctorSettings from "./pages/doctor/DoctorSettings";
+
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminProviders from "./pages/admin/AdminProviders";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +68,15 @@ const App = () => (
               <Route path="/doctor/patients" element={<DoctorPatients />} />
               <Route path="/doctor/schedule" element={<DoctorSchedule />} />
               <Route path="/doctor/settings" element={<DoctorSettings />} />
+            </Route>
+
+            {/* Admin routes */}
+            <Route element={<AdminLayout />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/providers" element={<AdminProviders />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
