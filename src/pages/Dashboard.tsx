@@ -96,18 +96,6 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Medical Disclaimer Banner */}
-        <section className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-          <Card className="bg-warning/10 border-warning/20">
-            <CardContent className="p-4 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
-              <p className="text-sm text-foreground/80">
-                <strong>Σημαντικό:</strong> Αυτή η εφαρμογή παρέχει μόνο γενικές πληροφορίες υγείας. 
-                Συμβουλευτείτε πάντα έναν επαγγελματία υγείας για ιατρικές συμβουλές.
-              </p>
-            </CardContent>
-          </Card>
-        </section>
 
         {/* Upcoming Appointments */}
         <section className="animate-slide-up" style={{ animationDelay: '300ms' }}>
