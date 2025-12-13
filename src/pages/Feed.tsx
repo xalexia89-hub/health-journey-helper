@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { StoryViewer } from "@/components/feed/StoryViewer";
 
 // Mock data for stories
 const mockStories = [
@@ -276,10 +276,14 @@ const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
 const Feed = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState(mockPosts);
+  const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
 
-  const handleStoryClick = (storyId: string) => {
-    // TODO: Open story viewer
-    console.log("Open story:", storyId);
+  const handleStoryClick = (storyIndex: number) => {
+    setActiveStoryIndex(storyIndex);
+  };
+
+  const handleCloseStory = () => {
+    setActiveStoryIndex(null);
   };
 
   const handleLike = (postId: string) => {
@@ -304,15 +308,30 @@ const Feed = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Story Viewer Modal */}
+      {activeStoryIndex !== null && (
+        <StoryViewer
+          stories={mockStories.map(s => ({
+            id: s.id,
+            name: s.name,
+            avatarUrl: s.avatarUrl,
+            type: s.type,
+            specialty: s.specialty,
+          }))}
+          initialStoryIndex={activeStoryIndex}
+          onClose={handleCloseStory}
+        />
+      )}
+
       {/* Stories Section */}
       <section className="bg-card border-b border-border">
         <ScrollArea className="w-full whitespace-nowrap">
           <div className="flex gap-4 p-4">
-            {mockStories.map((story) => (
+            {mockStories.map((story, index) => (
               <StoryItem
                 key={story.id}
                 story={story}
-                onClick={() => handleStoryClick(story.id)}
+                onClick={() => handleStoryClick(index)}
               />
             ))}
           </div>
