@@ -16,6 +16,7 @@ import {
   Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -69,11 +70,14 @@ export const AdminLayout = () => {
           <Shield className="h-5 w-5 text-primary" />
           <span className="font-semibold">Admin</span>
         </div>
-        <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-            A
-          </AvatarFallback>
-        </Avatar>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+              A
+            </AvatarFallback>
+          </Avatar>
+        </div>
       </header>
 
       {/* Sidebar */}

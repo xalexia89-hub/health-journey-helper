@@ -1,8 +1,9 @@
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/ui/logo";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 interface HeaderProps {
   title?: string;
@@ -30,10 +31,7 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" />
-          </Button>
+          <NotificationBell />
           <Avatar className="h-9 w-9 border-2 border-primary/20">
             <AvatarImage src={user?.user_metadata?.avatar_url} />
             <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
