@@ -23,8 +23,8 @@ export function Logo({ className, size = "md", showText = true }: LogoProps) {
         <div className="absolute -inset-1 gradient-health rounded-xl opacity-30 blur-md -z-10" />
       </div>
       {showText && (
-        <span className={cn(sizes[size].text, "font-bold text-foreground")}>
-          Health<span className="text-primary">Up</span>
+        <span className={cn(sizes[size].text, "font-bold text-foreground tracking-tight")}>
+          MEDI<span className="text-primary">THOS</span>
         </span>
       )}
     </div>

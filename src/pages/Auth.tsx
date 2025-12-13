@@ -104,8 +104,8 @@ export default function Auth() {
       });
     } else {
       toast({
-        title: "Account created!",
-        description: "Welcome to Health Up. Let's set up your profile.",
+        title: "Ο λογαριασμός δημιουργήθηκε!",
+        description: "Καλώς ήρθατε στο Medithos. Ας ρυθμίσουμε το προφίλ σας.",
       });
       navigate('/dashboard');
     }
