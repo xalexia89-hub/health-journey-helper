@@ -44,8 +44,8 @@ const subcategories: Record<string, { id: string; label: string; specialty: stri
     { id: 'eyes', label: 'Μάτια', specialty: 'Οφθαλμολογία' },
     { id: 'ears', label: 'Αυτιά', specialty: 'Ωτορινολαρυγγολογία' },
     { id: 'scalp', label: 'Τριχωτό Κεφαλής', specialty: 'Δερματολογία' },
-    { id: 'migraine', label: 'Πονοκέφαλος/Ημικρανία', specialty: 'Νευρολογία' },
-    { id: 'brain', label: 'Εγκεφαλικά', specialty: 'Νευρολογία' },
+    { id: 'migraine', label: 'Πονοκέφαλος/Ημικρανία', specialty: 'Νευρολόγος' },
+    { id: 'brain', label: 'Εγκεφαλικά', specialty: 'Νευρολόγος' },
   ],
   face: [
     { id: 'eyes', label: 'Μάτια', specialty: 'Οφθαλμολογία' },
