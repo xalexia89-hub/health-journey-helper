@@ -8,7 +8,7 @@ interface ProviderCardProps {
   id: string;
   name: string;
   specialty?: string;
-  type: 'doctor' | 'clinic' | 'hospital';
+  type: 'doctor' | 'clinic' | 'hospital' | 'nurse';
   rating?: number;
   reviewCount?: number;
   priceMin?: number;
@@ -24,7 +24,8 @@ interface ProviderCardProps {
 const typeLabels: Record<string, string> = {
   doctor: 'Γιατρός',
   clinic: 'Κλινική',
-  hospital: 'Νοσοκομείο'
+  hospital: 'Νοσοκομείο',
+  nurse: 'Νοσηλευτής/τρια'
 };
 
 // Default cover images for clinics and hospitals (multiple options)

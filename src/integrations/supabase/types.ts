@@ -567,7 +567,7 @@ export type Database = {
         | "left_foot"
         | "right_foot"
       payment_status: "pending" | "paid" | "refunded" | "failed"
-      provider_type: "doctor" | "clinic" | "hospital"
+      provider_type: "doctor" | "clinic" | "hospital" | "nurse"
       urgency_level: "low" | "medium" | "high" | "emergency"
     }
     CompositeTypes: {
@@ -719,7 +719,7 @@ export const Constants = {
         "right_foot",
       ],
       payment_status: ["pending", "paid", "refunded", "failed"],
-      provider_type: ["doctor", "clinic", "hospital"],
+      provider_type: ["doctor", "clinic", "hospital", "nurse"],
       urgency_level: ["low", "medium", "high", "emergency"],
     },
   },

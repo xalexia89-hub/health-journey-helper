@@ -10,7 +10,7 @@ import { Search, Loader2, Star, MapPin, Clock } from "lucide-react";
 interface Provider {
   id: string;
   name: string;
-  type: 'doctor' | 'clinic' | 'hospital';
+  type: 'doctor' | 'clinic' | 'hospital' | 'nurse';
   specialty: string | null;
   rating: number | null;
   review_count: number | null;
@@ -24,7 +24,8 @@ interface Provider {
 const typeLabels: Record<string, string> = {
   doctor: 'Γιατροί',
   clinic: 'Κλινικές',
-  hospital: 'Νοσοκομεία'
+  hospital: 'Νοσοκομεία',
+  nurse: 'Νοσηλευτές'
 };
 
 export default function Providers() {
@@ -45,8 +46,8 @@ export default function Providers() {
     setLoading(true);
     let query = supabase.from('providers').select('*').eq('is_active', true);
     
-    if (typeFilter && ['doctor', 'clinic', 'hospital'].includes(typeFilter)) {
-      query = query.eq('type', typeFilter as 'doctor' | 'clinic' | 'hospital');
+    if (typeFilter && ['doctor', 'clinic', 'hospital', 'nurse'].includes(typeFilter)) {
+      query = query.eq('type', typeFilter as 'doctor' | 'clinic' | 'hospital' | 'nurse');
     }
     
     // Filter by specialty if provided
