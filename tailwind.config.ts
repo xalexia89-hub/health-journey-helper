@@ -18,7 +18,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        sans: ['"Outfit"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -72,15 +72,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        health: {
-          mint: "hsl(var(--health-mint))",
-          "mint-light": "hsl(var(--health-mint-light))",
-          blue: "hsl(var(--health-blue))",
-          "blue-light": "hsl(var(--health-blue-light))",
-          coral: "hsl(var(--health-coral))",
-          "coral-light": "hsl(var(--health-coral-light))",
-          lavender: "hsl(var(--health-lavender))",
-          "lavender-light": "hsl(var(--health-lavender-light))",
+        medithos: {
+          gold: "hsl(var(--medithos-gold))",
+          "gold-light": "hsl(var(--medithos-gold-light))",
+          blue: "hsl(var(--medithos-blue))",
+          "blue-light": "hsl(var(--medithos-blue-light))",
+          teal: "hsl(var(--medithos-teal))",
+          "teal-light": "hsl(var(--medithos-teal-light))",
+          slate: "hsl(var(--medithos-slate))",
+          "slate-light": "hsl(var(--medithos-slate-light))",
         },
         urgency: {
           low: "hsl(var(--urgency-low))",
@@ -118,6 +118,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -125,10 +129,12 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
         "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+        shimmer: "shimmer 2s linear infinite",
       },
       boxShadow: {
-        soft: "0 4px 20px -4px hsl(var(--primary) / 0.15)",
-        glow: "0 0 30px -5px hsl(var(--primary) / 0.3)",
+        soft: "0 4px 24px -4px hsl(var(--primary) / 0.25)",
+        glow: "0 0 40px -8px hsl(var(--primary) / 0.4)",
+        gold: "0 0 30px -5px hsl(var(--accent) / 0.35)",
       },
     },
   },
