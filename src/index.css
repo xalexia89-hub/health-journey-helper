@@ -6,31 +6,31 @@
 
 @layer base {
   :root {
-    /* Medithos - Elegant Dark Theme */
-    --background: 222 25% 6%;
-    --foreground: 45 20% 95%;
+    /* Medithos - Elegant Purple & Lavender Theme */
+    --background: 270 20% 98%;
+    --foreground: 270 30% 15%;
 
-    --card: 222 25% 10%;
-    --card-foreground: 45 20% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 270 30% 15%;
 
-    --popover: 222 25% 12%;
-    --popover-foreground: 45 20% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 30% 15%;
 
-    /* Primary - Royal Blue */
-    --primary: 220 70% 55%;
+    /* Primary - Rich Purple */
+    --primary: 270 65% 50%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Deep Slate */
-    --secondary: 222 20% 16%;
-    --secondary-foreground: 45 20% 85%;
+    /* Secondary - Soft Lavender */
+    --secondary: 270 30% 94%;
+    --secondary-foreground: 270 30% 25%;
 
     /* Muted */
-    --muted: 222 20% 14%;
-    --muted-foreground: 222 15% 55%;
+    --muted: 270 20% 92%;
+    --muted-foreground: 270 15% 45%;
 
-    /* Accent - Warm Gold */
-    --accent: 42 85% 55%;
-    --accent-foreground: 222 25% 8%;
+    /* Accent - Warm Lavender Pink */
+    --accent: 290 50% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -43,106 +43,133 @@
     --success: 160 72% 42%;
     --success-foreground: 0 0% 100%;
 
-    --border: 222 20% 18%;
-    --input: 222 20% 18%;
-    --ring: 220 70% 55%;
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 270 65% 50%;
 
     --radius: 0.875rem;
 
     /* Sidebar */
-    --sidebar-background: 222 25% 8%;
-    --sidebar-foreground: 45 20% 90%;
-    --sidebar-primary: 220 70% 55%;
+    --sidebar-background: 270 25% 97%;
+    --sidebar-foreground: 270 30% 20%;
+    --sidebar-primary: 270 65% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 20% 14%;
-    --sidebar-accent-foreground: 45 20% 85%;
-    --sidebar-border: 222 20% 16%;
-    --sidebar-ring: 220 70% 55%;
+    --sidebar-accent: 270 30% 92%;
+    --sidebar-accent-foreground: 270 30% 25%;
+    --sidebar-border: 270 20% 90%;
+    --sidebar-ring: 270 65% 50%;
 
     /* Custom Medithos Colors */
-    --medithos-gold: 42 85% 55%;
-    --medithos-gold-light: 42 60% 75%;
-    --medithos-blue: 220 70% 55%;
-    --medithos-blue-light: 220 60% 70%;
-    --medithos-teal: 175 60% 45%;
-    --medithos-teal-light: 175 50% 65%;
-    --medithos-slate: 222 25% 20%;
-    --medithos-slate-light: 222 20% 30%;
+    --medithos-purple: 270 65% 50%;
+    --medithos-purple-light: 270 50% 70%;
+    --medithos-lavender: 270 40% 80%;
+    --medithos-lavender-light: 270 35% 90%;
+    --medithos-violet: 280 55% 55%;
+    --medithos-violet-light: 280 45% 72%;
+    --medithos-slate: 270 15% 35%;
+    --medithos-slate-light: 270 12% 55%;
 
     /* Body area colors */
-    --body-selected: 220 70% 55%;
-    --body-hover: 220 70% 65%;
-    --body-default: 222 20% 25%;
+    --body-selected: 270 65% 50%;
+    --body-hover: 270 55% 65%;
+    --body-default: 270 20% 85%;
 
     /* Urgency levels */
     --urgency-low: 160 72% 42%;
     --urgency-medium: 38 92% 50%;
     --urgency-high: 0 72% 51%;
     --urgency-emergency: 0 84% 40%;
+
+    /* Health Colors for cards */
+    --health-coral: 0 70% 60%;
+    --health-coral-light: 0 60% 95%;
+    --health-mint: 160 50% 45%;
+    --health-mint-light: 160 40% 92%;
+    --health-blue: 210 70% 55%;
+    --health-blue-light: 210 60% 92%;
+    --health-lavender: 270 50% 60%;
+    --health-lavender-light: 270 40% 92%;
+    --health-warning: 38 92% 50%;
+    --health-success: 160 72% 42%;
+    --health-danger: 0 72% 51%;
+    --health-info: 210 70% 55%;
   }
 
   .dark {
-    /* Same as root - already dark theme */
-    --background: 222 25% 4%;
-    --foreground: 45 20% 96%;
+    /* Dark Purple Theme */
+    --background: 270 25% 8%;
+    --foreground: 270 15% 95%;
 
-    --card: 222 25% 8%;
-    --card-foreground: 45 20% 96%;
+    --card: 270 25% 12%;
+    --card-foreground: 270 15% 95%;
 
-    --popover: 222 25% 10%;
-    --popover-foreground: 45 20% 96%;
+    --popover: 270 25% 14%;
+    --popover-foreground: 270 15% 95%;
 
-    --primary: 220 75% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 270 70% 65%;
+    --primary-foreground: 270 25% 8%;
 
-    --secondary: 222 20% 14%;
-    --secondary-foreground: 45 20% 88%;
+    --secondary: 270 20% 18%;
+    --secondary-foreground: 270 15% 85%;
 
-    --muted: 222 20% 12%;
-    --muted-foreground: 222 15% 50%;
+    --muted: 270 20% 15%;
+    --muted-foreground: 270 12% 55%;
 
-    --accent: 42 90% 58%;
-    --accent-foreground: 222 25% 6%;
+    --accent: 290 55% 70%;
+    --accent-foreground: 270 25% 8%;
 
-    --destructive: 0 72% 48%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --warning: 38 92% 48%;
+    --warning: 38 92% 55%;
     --warning-foreground: 0 0% 100%;
 
-    --success: 160 72% 40%;
+    --success: 160 72% 48%;
     --success-foreground: 0 0% 100%;
 
-    --border: 222 20% 16%;
-    --input: 222 20% 16%;
-    --ring: 220 75% 60%;
+    --border: 270 20% 20%;
+    --input: 270 20% 20%;
+    --ring: 270 70% 65%;
 
-    --sidebar-background: 222 25% 6%;
-    --sidebar-foreground: 45 20% 92%;
-    --sidebar-primary: 220 75% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 20% 12%;
-    --sidebar-accent-foreground: 45 20% 88%;
-    --sidebar-border: 222 20% 14%;
-    --sidebar-ring: 220 75% 60%;
+    --sidebar-background: 270 25% 10%;
+    --sidebar-foreground: 270 15% 92%;
+    --sidebar-primary: 270 70% 65%;
+    --sidebar-primary-foreground: 270 25% 8%;
+    --sidebar-accent: 270 20% 16%;
+    --sidebar-accent-foreground: 270 15% 85%;
+    --sidebar-border: 270 20% 18%;
+    --sidebar-ring: 270 70% 65%;
 
-    --medithos-gold: 42 90% 58%;
-    --medithos-gold-light: 42 65% 70%;
-    --medithos-blue: 220 75% 60%;
-    --medithos-blue-light: 220 65% 72%;
-    --medithos-teal: 175 65% 48%;
-    --medithos-teal-light: 175 55% 62%;
-    --medithos-slate: 222 25% 18%;
-    --medithos-slate-light: 222 20% 28%;
+    --medithos-purple: 270 70% 65%;
+    --medithos-purple-light: 270 55% 75%;
+    --medithos-lavender: 270 45% 75%;
+    --medithos-lavender-light: 270 40% 85%;
+    --medithos-violet: 280 60% 62%;
+    --medithos-violet-light: 280 50% 75%;
+    --medithos-slate: 270 15% 50%;
+    --medithos-slate-light: 270 12% 65%;
 
-    --body-selected: 220 75% 60%;
-    --body-hover: 220 75% 68%;
-    --body-default: 222 20% 22%;
+    --body-selected: 270 70% 65%;
+    --body-hover: 270 60% 72%;
+    --body-default: 270 20% 25%;
 
-    --urgency-low: 160 72% 45%;
-    --urgency-medium: 38 92% 52%;
-    --urgency-high: 0 72% 55%;
-    --urgency-emergency: 0 84% 48%;
+    --urgency-low: 160 72% 48%;
+    --urgency-medium: 38 92% 55%;
+    --urgency-high: 0 72% 58%;
+    --urgency-emergency: 0 84% 52%;
+
+    --health-coral: 0 70% 65%;
+    --health-coral-light: 0 40% 20%;
+    --health-mint: 160 50% 50%;
+    --health-mint-light: 160 30% 18%;
+    --health-blue: 210 70% 60%;
+    --health-blue-light: 210 40% 18%;
+    --health-lavender: 270 50% 65%;
+    --health-lavender-light: 270 30% 20%;
+    --health-warning: 38 92% 55%;
+    --health-success: 160 72% 48%;
+    --health-danger: 0 72% 55%;
+    --health-info: 210 70% 60%;
   }
 }
 
@@ -168,27 +195,27 @@
   }
   
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--medithos-teal)) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--medithos-violet)) 100%);
   }
   
   .gradient-health {
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
   }
 
-  .gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--medithos-gold)) 0%, hsl(var(--medithos-gold-light)) 100%);
+  .gradient-lavender {
+    background: linear-gradient(135deg, hsl(var(--medithos-lavender)) 0%, hsl(var(--medithos-lavender-light)) 100%);
   }
 
   .shadow-soft {
-    box-shadow: 0 4px 24px -4px hsl(var(--primary) / 0.25);
+    box-shadow: 0 4px 24px -4px hsl(var(--primary) / 0.2);
   }
 
   .shadow-glow {
-    box-shadow: 0 0 40px -8px hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 40px -8px hsl(var(--primary) / 0.35);
   }
 
-  .shadow-gold {
-    box-shadow: 0 0 30px -5px hsl(var(--accent) / 0.35);
+  .shadow-lavender {
+    box-shadow: 0 0 30px -5px hsl(var(--accent) / 0.3);
   }
 
   /* Body area styles */
