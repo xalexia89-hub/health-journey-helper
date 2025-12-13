@@ -39,7 +39,7 @@ const mockStoryContent: Record<string, StoryContent[]> = {
   "2": [
     {
       id: "s2-1",
-      imageUrl: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&h=900&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&h=900&fit=crop",
       caption: "Η κλινική μας είναι έτοιμη να σας υποδεχτεί!",
       timeAgo: "1ω",
     },
