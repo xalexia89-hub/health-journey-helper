@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Symptoms from "./pages/Symptoms";
 import Providers from "./pages/Providers";
+import Nurses from "./pages/Nurses";
 import ProviderDetail from "./pages/ProviderDetail";
 import Appointments from "./pages/Appointments";
 import MedicalRecords from "./pages/MedicalRecords";
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/symptoms" element={<Symptoms />} />
               <Route path="/providers" element={<Providers />} />
+              <Route path="/nurses" element={<Nurses />} />
               <Route path="/providers/:id" element={<ProviderDetail />} />
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/records" element={<MedicalRecords />} />
