@@ -1,12 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, User, Calendar, FileText, GraduationCap } from "lucide-react";
+import { Home, User, Calendar, GraduationCap, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/dashboard", icon: Home, label: "Αρχική" },
+  { path: "/feed", icon: Newspaper, label: "Νέα" },
   { path: "/academy", icon: GraduationCap, label: "Academy" },
   { path: "/appointments", icon: Calendar, label: "Ραντεβού" },
-  { path: "/records", icon: FileText, label: "Ιστορικό" },
   { path: "/profile", icon: User, label: "Προφίλ" },
 ];
 
