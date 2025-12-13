@@ -81,6 +81,9 @@ export default {
           "violet-light": "hsl(var(--medithos-violet-light))",
           slate: "hsl(var(--medithos-slate))",
           "slate-light": "hsl(var(--medithos-slate-light))",
+          cyan: "hsl(var(--medithos-cyan))",
+          pink: "hsl(var(--medithos-pink))",
+          gold: "hsl(var(--medithos-gold))",
         },
         urgency: {
           low: "hsl(var(--urgency-low))",
