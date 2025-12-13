@@ -14,6 +14,265 @@ export type Database = {
   }
   public: {
     Tables: {
+      academy_case_studies: {
+        Row: {
+          category: Database["public"]["Enums"]["academy_category"]
+          created_at: string
+          diagnosis: string | null
+          id: string
+          lessons_learned: string | null
+          outcome: string | null
+          patient_background: string | null
+          provider_id: string
+          published_at: string | null
+          status: Database["public"]["Enums"]["academy_content_status"]
+          summary: string | null
+          tags: string[] | null
+          title: string
+          treatment: string | null
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["academy_category"]
+          created_at?: string
+          diagnosis?: string | null
+          id?: string
+          lessons_learned?: string | null
+          outcome?: string | null
+          patient_background?: string | null
+          provider_id: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          treatment?: string | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["academy_category"]
+          created_at?: string
+          diagnosis?: string | null
+          id?: string
+          lessons_learned?: string | null
+          outcome?: string | null
+          patient_background?: string | null
+          provider_id?: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          treatment?: string | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_case_studies_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_publications: {
+        Row: {
+          abstract: string | null
+          category: Database["public"]["Enums"]["academy_category"]
+          citation_count: number | null
+          co_authors: string[] | null
+          content: string | null
+          created_at: string
+          doi: string | null
+          download_count: number | null
+          id: string
+          journal_name: string | null
+          pdf_url: string | null
+          provider_id: string
+          published_at: string | null
+          status: Database["public"]["Enums"]["academy_content_status"]
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          abstract?: string | null
+          category?: Database["public"]["Enums"]["academy_category"]
+          citation_count?: number | null
+          co_authors?: string[] | null
+          content?: string | null
+          created_at?: string
+          doi?: string | null
+          download_count?: number | null
+          id?: string
+          journal_name?: string | null
+          pdf_url?: string | null
+          provider_id: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          abstract?: string | null
+          category?: Database["public"]["Enums"]["academy_category"]
+          citation_count?: number | null
+          co_authors?: string[] | null
+          content?: string | null
+          created_at?: string
+          doi?: string | null
+          download_count?: number | null
+          id?: string
+          journal_name?: string | null
+          pdf_url?: string | null
+          provider_id?: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_publications_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_video_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_video_comments_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "academy_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_video_likes: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_video_likes_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "academy_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_videos: {
+        Row: {
+          category: Database["public"]["Enums"]["academy_category"]
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          like_count: number | null
+          provider_id: string
+          published_at: string | null
+          status: Database["public"]["Enums"]["academy_content_status"]
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string
+          view_count: number | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["academy_category"]
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          like_count?: number | null
+          provider_id: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url: string
+          view_count?: number | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["academy_category"]
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          like_count?: number | null
+          provider_id?: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["academy_content_status"]
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_videos_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           appointment_date: string
@@ -545,6 +804,22 @@ export type Database = {
       }
     }
     Enums: {
+      academy_category:
+        | "cardiology"
+        | "neurology"
+        | "oncology"
+        | "pediatrics"
+        | "surgery"
+        | "internal_medicine"
+        | "dermatology"
+        | "psychiatry"
+        | "orthopedics"
+        | "other"
+      academy_content_status:
+        | "draft"
+        | "pending_review"
+        | "published"
+        | "archived"
       app_role: "patient" | "doctor" | "admin"
       appointment_status: "pending" | "confirmed" | "completed" | "cancelled"
       body_area:
@@ -696,6 +971,24 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      academy_category: [
+        "cardiology",
+        "neurology",
+        "oncology",
+        "pediatrics",
+        "surgery",
+        "internal_medicine",
+        "dermatology",
+        "psychiatry",
+        "orthopedics",
+        "other",
+      ],
+      academy_content_status: [
+        "draft",
+        "pending_review",
+        "published",
+        "archived",
+      ],
       app_role: ["patient", "doctor", "admin"],
       appointment_status: ["pending", "confirmed", "completed", "cancelled"],
       body_area: [
