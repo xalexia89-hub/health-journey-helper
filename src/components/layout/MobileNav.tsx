@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, User, Calendar, FileText, Settings } from "lucide-react";
+import { Home, User, Calendar, FileText, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/dashboard", icon: Home, label: "Αρχική" },
+  { path: "/feed", icon: Newspaper, label: "Νέα" },
   { path: "/appointments", icon: Calendar, label: "Ραντεβού" },
   { path: "/records", icon: FileText, label: "Ιστορικό" },
   { path: "/profile", icon: User, label: "Προφίλ" },
-  { path: "/settings", icon: Settings, label: "Ρυθμίσεις" },
 ];
 
 export function MobileNav() {
