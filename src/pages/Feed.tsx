@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, Plus } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,14 +10,6 @@ import { Separator } from "@/components/ui/separator";
 
 // Mock data for stories
 const mockStories = [
-  {
-    id: "my-story",
-    name: "Το Story μου",
-    avatarUrl: "",
-    hasNewStory: false,
-    isOwn: true,
-    type: "patient" as const,
-  },
   {
     id: "1",
     name: "Δρ. Παπαδόπουλος",
@@ -155,9 +147,7 @@ const StoryItem = ({ story, onClick }: StoryItemProps) => {
         className={`relative p-0.5 rounded-full ${
           story.hasNewStory 
             ? 'bg-gradient-to-tr from-primary via-accent to-primary' 
-            : story.isOwn 
-              ? 'bg-muted' 
-              : 'bg-border'
+            : 'bg-border'
         }`}
       >
         <div className="bg-background p-0.5 rounded-full">
@@ -168,14 +158,9 @@ const StoryItem = ({ story, onClick }: StoryItemProps) => {
             </AvatarFallback>
           </Avatar>
         </div>
-        {story.isOwn && (
-          <div className="absolute -bottom-0.5 -right-0.5 bg-primary text-primary-foreground rounded-full p-1 shadow-lg">
-            <Plus className="h-3 w-3" />
-          </div>
-        )}
       </div>
       <span className="text-xs text-center max-w-[72px] truncate text-foreground/80 group-hover:text-foreground transition-colors">
-        {story.isOwn ? "Το Story μου" : story.name.split(" ").slice(-1)[0]}
+        {story.name.split(" ").slice(-1)[0]}
       </span>
     </div>
   );
