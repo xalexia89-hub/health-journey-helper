@@ -34,14 +34,20 @@ export default function Symptoms() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"chat" | "manual">("chat");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleAreaClick = (area: BodyArea) => {
     setSelectedAreas(prev => 
-      prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
+      prev.includes(area) ? prev.filter(a => a !== area) : [area]
     );
+    setSelectedSubcategory(null);
+  };
+
+  const handleSubcategorySelect = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
   };
 
   const toggleSymptom = (symptom: string) => {
@@ -112,7 +118,11 @@ export default function Symptoms() {
                   <h2 className="text-xl font-semibold">Πού πονάει;</h2>
                   <p className="text-muted-foreground mt-1">Πατήστε στις περιοχές του σώματος</p>
                 </div>
-                <BodyAvatar selectedAreas={selectedAreas} onAreaClick={handleAreaClick} />
+                <BodyAvatar 
+                  selectedAreas={selectedAreas} 
+                  onAreaClick={handleAreaClick}
+                  onSubcategorySelect={handleSubcategorySelect}
+                />
               </div>
             )}
 

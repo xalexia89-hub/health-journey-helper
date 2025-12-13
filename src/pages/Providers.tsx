@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { ProviderCard } from "@/components/providers/ProviderCard";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Filter, Loader2 } from "lucide-react";
+import { Search, Loader2, Star, MapPin, Clock } from "lucide-react";
 
 interface Provider {
   id: string;
@@ -32,19 +32,36 @@ export default function Providers() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  
   const typeFilter = searchParams.get('type');
+  const specialtyFilter = searchParams.get('specialty');
+  const sortBy = searchParams.get('sort') || 'rating';
 
   useEffect(() => {
     fetchProviders();
-  }, [typeFilter]);
+  }, [typeFilter, specialtyFilter, sortBy]);
 
   const fetchProviders = async () => {
+    setLoading(true);
     let query = supabase.from('providers').select('*').eq('is_active', true);
+    
     if (typeFilter && ['doctor', 'clinic', 'hospital'].includes(typeFilter)) {
       query = query.eq('type', typeFilter as 'doctor' | 'clinic' | 'hospital');
     }
     
-    const { data } = await query.order('rating', { ascending: false });
+    // Filter by specialty if provided
+    if (specialtyFilter) {
+      query = query.ilike('specialty', `%${specialtyFilter}%`);
+    }
+    
+    // Sort based on parameter
+    if (sortBy === 'rating') {
+      query = query.order('rating', { ascending: false, nullsFirst: false });
+    } else {
+      query = query.order('rating', { ascending: false, nullsFirst: false });
+    }
+    
+    const { data } = await query;
     if (data) setProviders(data as Provider[]);
     setLoading(false);
   };
@@ -54,18 +71,51 @@ export default function Providers() {
     p.specialty?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const title = typeFilter ? `Εύρεση ${typeLabels[typeFilter] || 'Παρόχων'}` : "Εύρεση Παρόχων";
+  // Build title
+  let title = "Εύρεση Παρόχων";
+  if (specialtyFilter) {
+    title = specialtyFilter;
+  } else if (typeFilter) {
+    title = `Εύρεση ${typeLabels[typeFilter] || 'Παρόχων'}`;
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <Header title={title} />
 
-      <div className="px-4 py-4 sticky top-[57px] bg-background/80 backdrop-blur-lg z-30">
+      <div className="px-4 py-4 sticky top-[57px] bg-background/80 backdrop-blur-lg z-30 space-y-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Αναζήτηση με όνομα ή ειδικότητα..." className="pl-10 h-12 rounded-xl" />
+          <Input 
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Αναζήτηση με όνομα ή ειδικότητα..." 
+            className="pl-10 h-12 rounded-xl" 
+          />
         </div>
+        
+        {/* Active filters */}
+        {(specialtyFilter || sortBy !== 'rating') && (
+          <div className="flex flex-wrap gap-2">
+            {specialtyFilter && (
+              <Badge variant="secondary" className="gap-1">
+                Ειδικότητα: {specialtyFilter}
+              </Badge>
+            )}
+            {sortBy === 'rating' && (
+              <Badge variant="outline" className="gap-1">
+                <Star className="h-3 w-3" />
+                Κατά βαθμολογία
+              </Badge>
+            )}
+            {sortBy === 'distance' && (
+              <Badge variant="outline" className="gap-1">
+                <MapPin className="h-3 w-3" />
+                Κατά απόσταση
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
       <main className="px-4 pb-6">
@@ -95,7 +145,12 @@ export default function Providers() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Δεν βρέθηκαν πάροχοι</p>
+            <p className="text-muted-foreground">
+              {specialtyFilter 
+                ? `Δεν βρέθηκαν πάροχοι για "${specialtyFilter}"`
+                : "Δεν βρέθηκαν πάροχοι"
+              }
+            </p>
           </div>
         )}
       </main>
