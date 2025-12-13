@@ -15,6 +15,7 @@ interface ProviderCardProps {
   priceMax?: number;
   city?: string;
   avatarUrl?: string;
+  coverImageUrl?: string;
   isVerified?: boolean;
   onClick?: () => void;
   className?: string;
@@ -24,6 +25,12 @@ const typeLabels: Record<string, string> = {
   doctor: 'Γιατρός',
   clinic: 'Κλινική',
   hospital: 'Νοσοκομείο'
+};
+
+// Default cover images for clinics and hospitals
+const defaultCoverImages: Record<string, string> = {
+  clinic: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
+  hospital: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800&h=400&fit=crop',
 };
 
 export function ProviderCard({
@@ -36,6 +43,7 @@ export function ProviderCard({
   priceMax,
   city,
   avatarUrl,
+  coverImageUrl,
   isVerified,
   onClick,
   className,
@@ -52,6 +60,74 @@ export function ProviderCard({
     return `€${min} - €${max}`;
   };
 
+  const isClinicOrHospital = type === 'clinic' || type === 'hospital';
+  const coverImage = coverImageUrl || (isClinicOrHospital ? defaultCoverImages[type] : undefined);
+
+  // Card with cover image for clinics and hospitals
+  if (isClinicOrHospital) {
+    return (
+      <Card
+        className={cn(
+          "cursor-pointer transition-all duration-200 hover:shadow-soft hover:scale-[1.02] active:scale-[0.98] overflow-hidden",
+          className
+        )}
+        onClick={onClick}
+      >
+        {/* Cover Image */}
+        <div className="relative h-40 bg-muted">
+          <img
+            src={coverImage}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          
+          {/* Badges on image */}
+          <div className="absolute top-3 left-3 flex gap-2">
+            <Badge variant="secondary" className={cn("text-xs capitalize backdrop-blur-sm", typeColors[type])}>
+              {typeLabels[type]}
+            </Badge>
+            {isVerified && (
+              <Badge variant="secondary" className="text-xs border-0 bg-success/90 text-success-foreground backdrop-blur-sm">
+                ✓ Πιστοποιημένο
+              </Badge>
+            )}
+          </div>
+
+          {/* Name overlay on image */}
+          <div className="absolute bottom-3 left-3 right-3">
+            <h3 className="font-bold text-white text-lg drop-shadow-lg">{name}</h3>
+            {specialty && (
+              <p className="text-white/80 text-sm drop-shadow-md">{specialty}</p>
+            )}
+          </div>
+        </div>
+
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-warning text-warning" />
+                <span className="font-medium text-foreground">{rating.toFixed(1)}</span>
+                <span>({reviewCount})</span>
+              </div>
+              {city && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>{city}</span>
+                </div>
+              )}
+            </div>
+            <span className="text-sm font-medium text-primary">
+              {formatPrice(priceMin, priceMax)}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Original card layout for doctors
   return (
     <Card
       className={cn(
