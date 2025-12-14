@@ -601,6 +601,50 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_documents: {
+        Row: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          provider_id: string
+          status: string | null
+          uploaded_at: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          provider_id: string
+          status?: string | null
+          uploaded_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          provider_id?: string
+          status?: string | null
+          uploaded_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_documents_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       providers: {
         Row: {
           address: string | null
@@ -614,6 +658,7 @@ export type Database = {
           is_active: boolean | null
           is_verified: boolean | null
           latitude: number | null
+          license_number: string | null
           longitude: number | null
           name: string
           phone: string | null
@@ -621,6 +666,7 @@ export type Database = {
           price_min: number | null
           qualifications: string[] | null
           rating: number | null
+          registration_status: string | null
           review_count: number | null
           services: string[] | null
           specialty: string | null
@@ -640,6 +686,7 @@ export type Database = {
           is_active?: boolean | null
           is_verified?: boolean | null
           latitude?: number | null
+          license_number?: string | null
           longitude?: number | null
           name: string
           phone?: string | null
@@ -647,6 +694,7 @@ export type Database = {
           price_min?: number | null
           qualifications?: string[] | null
           rating?: number | null
+          registration_status?: string | null
           review_count?: number | null
           services?: string[] | null
           specialty?: string | null
@@ -666,6 +714,7 @@ export type Database = {
           is_active?: boolean | null
           is_verified?: boolean | null
           latitude?: number | null
+          license_number?: string | null
           longitude?: number | null
           name?: string
           phone?: string | null
@@ -673,6 +722,7 @@ export type Database = {
           price_min?: number | null
           qualifications?: string[] | null
           rating?: number | null
+          registration_status?: string | null
           review_count?: number | null
           services?: string[] | null
           specialty?: string | null

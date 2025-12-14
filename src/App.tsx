@@ -24,6 +24,7 @@ import Settings from "./pages/Settings";
 import Feed from "./pages/Feed";
 import Academy from "./pages/Academy";
 import NotFound from "./pages/NotFound";
+import DoctorRegistration from "./pages/DoctorRegistration";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -52,6 +53,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Welcome />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/doctor-registration" element={<DoctorRegistration />} />
             
             {/* Protected patient routes */}
             <Route element={<PatientLayout />}>
