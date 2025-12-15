@@ -42,11 +42,30 @@ const Profile = () => {
   }, [user]);
 
   const fetchProfile = async () => {
-    const { data } = await supabase
+    if (!user) return;
+    
+    let { data } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', user?.id)
+      .eq('id', user.id)
       .maybeSingle();
+
+    // If no profile exists, create one
+    if (!data) {
+      const { data: newProfile, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          email: user.email || '',
+          full_name: user.user_metadata?.full_name || null
+        })
+        .select()
+        .single();
+      
+      if (!error && newProfile) {
+        data = newProfile;
+      }
+    }
 
     if (data) setProfile(data);
     setLoading(false);
