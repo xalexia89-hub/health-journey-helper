@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout/Header';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Phone, MapPin, Calendar, Droplet, Save, Camera, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Droplet, Save, Camera, Loader2, Settings, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -27,6 +28,7 @@ interface ProfileData {
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -377,6 +379,22 @@ const Profile = () => {
                 placeholder="Εισάγετε τη χώρα σας"
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Settings Link */}
+      <Card 
+        className="cursor-pointer hover:bg-muted/50 transition-colors"
+        onClick={() => navigate('/settings')}
+      >
+        <CardContent className="py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Settings className="h-5 w-5 text-muted-foreground" />
+              <span className="font-medium">Ρυθμίσεις</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </div>
         </CardContent>
       </Card>
