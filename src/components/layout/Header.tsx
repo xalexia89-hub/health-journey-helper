@@ -39,12 +39,14 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
         
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <Avatar className="h-9 w-9 border-2 border-primary/20">
-            <AvatarImage src={user?.user_metadata?.avatar_url} />
-            <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-              {user?.email?.charAt(0).toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
+          <button onClick={() => navigate('/profile')} className="focus:outline-none">
+            <Avatar className="h-9 w-9 border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors">
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                {user?.email?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </button>
         </div>
       </div>
     </header>
