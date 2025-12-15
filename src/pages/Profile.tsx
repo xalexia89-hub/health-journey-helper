@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -175,17 +176,16 @@ const Profile = () => {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Το Προφίλ μου</h1>
+    <div className="min-h-screen bg-background">
+      <Header title="Το Προφίλ μου" showBack />
+      <div className="px-4 py-6 space-y-6 pb-24">
+        <div className="flex items-center justify-between">
           <p className="text-muted-foreground">Διαχειριστείτε τα προσωπικά σας στοιχεία</p>
+          <Button onClick={handleSave} disabled={saving}>
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
+          </Button>
         </div>
-        <Button onClick={handleSave} disabled={saving}>
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
-        </Button>
-      </div>
 
       {/* Avatar Section */}
       <Card>
@@ -380,6 +380,7 @@ const Profile = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

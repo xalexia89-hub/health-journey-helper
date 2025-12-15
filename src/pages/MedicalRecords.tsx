@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -129,17 +130,16 @@ const MedicalRecords = () => {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Ιατρικό Ιστορικό</h1>
+    <div className="min-h-screen bg-background">
+      <Header title="Ιατρικό Ιστορικό" showBack />
+      <div className="px-4 py-6 space-y-6 pb-24">
+        <div className="flex items-center justify-between">
           <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
+          <Button onClick={handleSave} disabled={saving}>
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
+          </Button>
         </div>
-        <Button onClick={handleSave} disabled={saving}>
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Αποθήκευση...' : 'Αποθήκευση Αλλαγών'}
-        </Button>
-      </div>
 
       <Tabs defaultValue="allergies" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
@@ -338,7 +338,8 @@ const MedicalRecords = () => {
             rows={4}
           />
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
