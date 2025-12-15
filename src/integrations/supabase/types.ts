@@ -437,6 +437,41 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_record_shares: {
+        Row: {
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          patient_id: string
+          provider_id: string
+          shared_at: string | null
+        }
+        Insert: {
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          patient_id: string
+          provider_id: string
+          shared_at?: string | null
+        }
+        Update: {
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          patient_id?: string
+          provider_id?: string
+          shared_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_record_shares_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_records: {
         Row: {
           allergies: string[] | null
