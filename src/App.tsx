@@ -19,6 +19,7 @@ import ProviderDetail from "./pages/ProviderDetail";
 import Payment from "./pages/Payment";
 import Appointments from "./pages/Appointments";
 import MedicalRecords from "./pages/MedicalRecords";
+import MedicationReminders from "./pages/MedicationReminders";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Feed from "./pages/Feed";
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/payment/:appointmentId" element={<Payment />} />
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/records" element={<MedicalRecords />} />
+              <Route path="/medications" element={<MedicationReminders />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/feed" element={<Feed />} />
