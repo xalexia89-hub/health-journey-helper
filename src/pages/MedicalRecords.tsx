@@ -54,6 +54,8 @@ const MedicalRecords = () => {
       .from('medical_records')
       .select('*')
       .eq('user_id', user?.id)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .maybeSingle();
 
     if (data) {
