@@ -13,22 +13,39 @@ import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const signInSchema = z.object({
-  email: z.string().email("Παρακαλώ εισάγετε ένα έγκυρο email"),
+  email: z.string().trim().email("Παρακαλώ εισάγετε ένα έγκυρο email"),
   password: z.string().min(6, "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες"),
 });
 
+const signUpSchema = z.object({
+  fullName: z.string().trim().min(2, "Το όνομα πρέπει να έχει τουλάχιστον 2 χαρακτήρες").max(100, "Το όνομα είναι πολύ μεγάλο"),
+  email: z.string().trim().email("Παρακαλώ εισάγετε ένα έγκυρο email"),
+  password: z.string().min(6, "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Οι κωδικοί δεν ταιριάζουν",
+  path: ["confirmPassword"],
+});
+
 type SignInFormData = z.infer<typeof signInSchema>;
+type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
 
   const signInForm = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: '', password: '' },
+  });
+
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { fullName: '', email: '', password: '', confirmPassword: '' },
   });
 
   if (user) {
@@ -53,6 +70,37 @@ export default function Auth() {
     }
   };
 
+  const handleSignUp = async (data: SignUpFormData) => {
+    setLoading(true);
+    const { error } = await signUp(data.email, data.password, data.fullName);
+    setLoading(false);
+
+    if (error) {
+      let errorMessage = error.message;
+      if (error.message.includes("already registered")) {
+        errorMessage = "Αυτό το email χρησιμοποιείται ήδη. Δοκιμάστε να συνδεθείτε.";
+      }
+      toast({
+        title: "Αποτυχία εγγραφής",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Επιτυχής εγγραφή!",
+        description: "Ο λογαριασμός σας δημιουργήθηκε. Μπορείτε να συνδεθείτε τώρα.",
+      });
+      setIsSignUp(false);
+      signUpForm.reset();
+    }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    signInForm.reset();
+    signUpForm.reset();
+  };
+
   return (
     <div className="min-h-screen bg-mesh-futuristic relative overflow-hidden flex flex-col">
       {/* Animated Background Elements */}
@@ -75,64 +123,166 @@ export default function Auth() {
         <div className="mb-8 text-center animate-fade-in">
           <Logo size="lg" className="justify-center mb-4" />
           <h1 className="text-2xl font-bold text-foreground">
-            Καλώς ήρθατε
+            {isSignUp ? "Δημιουργία λογαριασμού" : "Καλώς ήρθατε"}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Συνδεθείτε για να συνεχίσετε
+            {isSignUp ? "Εγγραφείτε για να ξεκινήσετε" : "Συνδεθείτε για να συνεχίσετε"}
           </p>
         </div>
 
         <Card className="border-0 glass-futuristic shadow-futuristic animate-slide-up">
           <CardContent className="pt-6">
-            <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  {...signInForm.register('email')}
-                  className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
-                />
-                {signInForm.formState.errors.email && (
-                  <p className="text-sm text-destructive">{signInForm.formState.errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Κωδικός</Label>
-                <div className="relative">
+            {isSignUp ? (
+              <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Ονοματεπώνυμο</Label>
                   <Input
-                    id="password"
+                    id="fullName"
+                    type="text"
+                    placeholder="Γιάννης Παπαδόπουλος"
+                    {...signUpForm.register('fullName')}
+                    className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                  />
+                  {signUpForm.formState.errors.fullName && (
+                    <p className="text-sm text-destructive">{signUpForm.formState.errors.fullName.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    {...signUpForm.register('email')}
+                    className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                  />
+                  {signUpForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">{signUpForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Κωδικός</Label>
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      {...signUpForm.register('password')}
+                      className="h-12 rounded-xl pr-10 bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {signUpForm.formState.errors.password && (
+                    <p className="text-sm text-destructive">{signUpForm.formState.errors.password.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Επιβεβαίωση κωδικού</Label>
+                  <Input
+                    id="confirmPassword"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    {...signInForm.register('password')}
-                    className="h-12 rounded-xl pr-10 bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                    {...signUpForm.register('confirmPassword')}
+                    className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1 h-10 w-10"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
+                  {signUpForm.formState.errors.confirmPassword && (
+                    <p className="text-sm text-destructive">{signUpForm.formState.errors.confirmPassword.message}</p>
+                  )}
                 </div>
-                {signInForm.formState.errors.password && (
-                  <p className="text-sm text-destructive">{signInForm.formState.errors.password.message}</p>
-                )}
-              </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl gradient-futuristic hover:shadow-neon transition-all duration-300 border-0" 
-                disabled={loading}
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Σύνδεση
-              </Button>
-            </form>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 rounded-xl gradient-futuristic hover:shadow-neon transition-all duration-300 border-0" 
+                  disabled={loading}
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Εγγραφή
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
+                  Έχετε ήδη λογαριασμό;{" "}
+                  <button
+                    type="button"
+                    onClick={toggleMode}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Συνδεθείτε
+                  </button>
+                </p>
+              </form>
+            ) : (
+              <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    {...signInForm.register('email')}
+                    className="h-12 rounded-xl bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                  />
+                  {signInForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">{signInForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Κωδικός</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      {...signInForm.register('password')}
+                      className="h-12 rounded-xl pr-10 bg-background/50 border-primary/20 focus:border-accent focus:shadow-glow-accent transition-all duration-300"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {signInForm.formState.errors.password && (
+                    <p className="text-sm text-destructive">{signInForm.formState.errors.password.message}</p>
+                  )}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 rounded-xl gradient-futuristic hover:shadow-neon transition-all duration-300 border-0" 
+                  disabled={loading}
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Σύνδεση
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
+                  Δεν έχετε λογαριασμό;{" "}
+                  <button
+                    type="button"
+                    onClick={toggleMode}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Εγγραφείτε
+                  </button>
+                </p>
+              </form>
+            )}
           </CardContent>
         </Card>
       </div>
