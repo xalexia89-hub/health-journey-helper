@@ -82,7 +82,7 @@ export default function Providers() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title={title} />
+      <Header title={title} showBack />
 
       <div className="px-4 py-4 sticky top-[57px] bg-background/80 backdrop-blur-lg z-30 space-y-3">
         <div className="relative">

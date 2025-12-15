@@ -1,9 +1,10 @@
-import { Menu } from "lucide-react";
+import { Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/ui/logo";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   title?: string;
@@ -13,11 +14,17 @@ interface HeaderProps {
 
 export function Header({ title, showBack, onMenuClick }: HeaderProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
+          {showBack && (
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
           {onMenuClick && (
             <Button variant="ghost" size="icon" onClick={onMenuClick}>
               <Menu className="h-5 w-5" />
