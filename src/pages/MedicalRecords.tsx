@@ -17,9 +17,11 @@ import {
   Plus, 
   X,
   Save,
-  FileText
+  FileText,
+  MessageSquare
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
 
 interface MedicalRecord {
   id: string;
@@ -133,12 +135,15 @@ const MedicalRecords = () => {
     <div className="min-h-screen bg-background">
       <Header title="Ιατρικό Ιστορικό" showBack />
       <div className="px-4 py-6 space-y-6 pb-24">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
-          <Button onClick={handleSave} disabled={saving}>
-            <Save className="h-4 w-4 mr-2" />
-            {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
-          </Button>
+          <div className="flex gap-2">
+            <ShareRecordDialog />
+            <Button onClick={handleSave} disabled={saving}>
+              <Save className="h-4 w-4 mr-2" />
+              {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
+            </Button>
+          </div>
         </div>
 
       <Tabs defaultValue="allergies" className="w-full">

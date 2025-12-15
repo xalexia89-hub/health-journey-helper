@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Loader2, Bot, User } from "lucide-react";
+import { Send, Loader2, Bot, User, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -14,6 +16,7 @@ interface Message {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/symptom-chat`;
 
 export function SymptomChat() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -22,6 +25,7 @@ export function SymptomChat() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [savingToRecord, setSavingToRecord] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -122,6 +126,58 @@ export function SymptomChat() {
     }
   };
 
+  // Save symptoms to medical record
+  const saveToMedicalRecord = async () => {
+    if (!user || messages.length <= 1) return;
+
+    setSavingToRecord(true);
+    try {
+      // Extract symptoms from user messages
+      const userSymptoms = messages
+        .filter(m => m.role === "user")
+        .map(m => m.content);
+
+      // Get the conversation summary (last assistant message if it contains a summary)
+      const conversationSummary = messages
+        .map((m, i) => `${m.role === 'user' ? 'Ασθενής' : 'Βοηθός'}: ${m.content}`)
+        .join('\n\n');
+
+      // Get current medical record
+      const { data: record } = await supabase
+        .from('medical_records')
+        .select('notes')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      // Append symptom chat to notes
+      const timestamp = new Date().toLocaleString('el-GR');
+      const newNote = `\n\n--- Συνομιλία Συμπτωμάτων (${timestamp}) ---\n${conversationSummary}`;
+      
+      const updatedNotes = (record?.notes || '') + newNote;
+
+      const { error } = await supabase
+        .from('medical_records')
+        .update({ notes: updatedNotes })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Αποθηκεύτηκε",
+        description: "Τα συμπτώματα αποθηκεύτηκαν στον ιατρικό σας φάκελο",
+      });
+    } catch (error) {
+      console.error("Error saving to medical record:", error);
+      toast({
+        title: "Σφάλμα",
+        description: "Αποτυχία αποθήκευσης στον ιατρικό φάκελο",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingToRecord(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[60vh] max-h-[500px] bg-card rounded-2xl border border-border overflow-hidden">
       <div className="p-4 border-b border-border bg-secondary/30">
@@ -183,6 +239,24 @@ export function SymptomChat() {
       </ScrollArea>
 
       <div className="p-4 border-t border-border bg-background/50">
+        {messages.length > 1 && (
+          <div className="mb-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={saveToMedicalRecord}
+              disabled={savingToRecord}
+              className="w-full"
+            >
+              {savingToRecord ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              Αποθήκευση στον Ιατρικό Φάκελο
+            </Button>
+          </div>
+        )}
         <div className="flex gap-2">
           <Input
             value={input}
