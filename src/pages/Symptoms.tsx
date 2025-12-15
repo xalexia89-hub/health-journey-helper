@@ -92,7 +92,7 @@ export default function Symptoms() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="Έλεγχος Συμπτωμάτων" />
+      <Header title="Έλεγχος Συμπτωμάτων" showBack />
 
       <main className="px-4 py-6">
         <Tabs value={mode} onValueChange={(v) => setMode(v as "chat" | "manual")} className="w-full">

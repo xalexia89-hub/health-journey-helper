@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -220,11 +221,10 @@ const Appointments = () => {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <div>
-        <h1 className="text-2xl font-bold">Τα Ραντεβού μου</h1>
+    <div className="min-h-screen bg-background">
+      <Header title="Τα Ραντεβού μου" showBack />
+      <div className="px-4 py-6 space-y-6 pb-24">
         <p className="text-muted-foreground">Διαχειριστείτε τα ραντεβού υγείας σας</p>
-      </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -267,7 +267,8 @@ const Appointments = () => {
             ))
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 };

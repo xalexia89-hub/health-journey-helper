@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Star, MapPin, Clock, CheckCircle, Phone, Mail } from 'lucide-react';
+import { Star, MapPin, Clock, CheckCircle, Phone, Mail } from 'lucide-react';
 import { format, addDays, setHours, setMinutes } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -170,11 +171,9 @@ const ProviderDetail = () => {
   const availableTimes = selectedDate ? getAvailableTimesForDate(selectedDate) : [];
 
   return (
-    <div className="space-y-6 pb-24">
-      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Πίσω
-      </Button>
+    <div className="min-h-screen bg-background">
+      <Header title={provider.name} showBack />
+      <div className="px-4 py-6 space-y-6 pb-24">
 
       {/* Provider Header */}
       <Card>
@@ -335,7 +334,8 @@ const ProviderDetail = () => {
             {booking ? 'Κράτηση...' : 'Κλείστε Ραντεβού'}
           </Button>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -70,11 +71,10 @@ const Settings = () => {
   };
 
   return (
-    <div className="space-y-6 pb-24">
-      <div>
-        <h1 className="text-2xl font-bold">Ρυθμίσεις</h1>
+    <div className="min-h-screen bg-background">
+      <Header title="Ρυθμίσεις" showBack />
+      <div className="px-4 py-6 space-y-6 pb-24">
         <p className="text-muted-foreground">Διαχειριστείτε τις προτιμήσεις της εφαρμογής</p>
-      </div>
 
       {/* Ειδοποιήσεις */}
       <Card>
@@ -277,10 +277,11 @@ const Settings = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Έκδοση Εφαρμογής */}
-      <p className="text-center text-sm text-muted-foreground">
-        MediConnect v1.0.0
-      </p>
+        {/* Έκδοση Εφαρμογής */}
+        <p className="text-center text-sm text-muted-foreground">
+          MediConnect v1.0.0
+        </p>
+      </div>
     </div>
   );
 };

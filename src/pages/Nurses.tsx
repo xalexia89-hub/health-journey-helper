@@ -61,7 +61,7 @@ export default function Nurses() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="Κατ' Οίκον Νοσηλεία" />
+      <Header title="Κατ' Οίκον Νοσηλεία" showBack />
 
       {/* Hero Section */}
       <div className="px-4 py-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background">

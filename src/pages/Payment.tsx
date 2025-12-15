@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, CreditCard, Lock, CheckCircle, Calendar, Clock, User } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle, Calendar, Clock, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -181,16 +182,10 @@ const Payment = () => {
   const amount = appointment.provider.price_min || 50;
 
   return (
-    <div className="space-y-6 pb-24 max-w-lg mx-auto">
-      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Πίσω
-      </Button>
-
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold">Ολοκλήρωση Πληρωμής</h1>
-        <p className="text-muted-foreground">Ασφαλής πληρωμή με κάρτα</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header title="Ολοκλήρωση Πληρωμής" showBack />
+      <div className="px-4 py-6 space-y-6 pb-24 max-w-lg mx-auto">
+        <p className="text-center text-muted-foreground">Ασφαλής πληρωμή με κάρτα</p>
 
       {/* Appointment Summary */}
       <Card>
@@ -300,15 +295,16 @@ const Payment = () => {
         </CardContent>
       </Card>
 
-      {/* Security badges */}
-      <div className="flex justify-center gap-4 text-xs text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <Lock className="h-3 w-3" />
-          <span>SSL Secure</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <CheckCircle className="h-3 w-3" />
-          <span>PCI Compliant</span>
+        {/* Security badges */}
+        <div className="flex justify-center gap-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Lock className="h-3 w-3" />
+            <span>SSL Secure</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <CheckCircle className="h-3 w-3" />
+            <span>PCI Compliant</span>
+          </div>
         </div>
       </div>
     </div>
