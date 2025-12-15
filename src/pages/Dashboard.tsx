@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Calendar, FileText, User, Search, Heart, Activity, 
-  AlertCircle, ChevronRight, Stethoscope, Building2, Hospital, UserRound, GraduationCap
+  AlertCircle, ChevronRight, Stethoscope, Building2, Hospital, UserRound, GraduationCap, Pill
 } from "lucide-react";
 
 interface Profile {
@@ -151,6 +151,21 @@ export default function Dashboard() {
         <section className="animate-slide-up" style={{ animationDelay: '400ms' }}>
           <h2 className="text-lg font-semibold text-foreground mb-3">Γρήγοροι Σύνδεσμοι</h2>
           <div className="space-y-2">
+            <Link to="/medications">
+              <Card className="hover:shadow-soft transition-shadow">
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="p-2.5 rounded-xl bg-health-coral-light">
+                    <Pill className="h-5 w-5 text-health-coral" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-foreground">Υπενθυμίσεις Φαρμάκων</h3>
+                    <p className="text-sm text-muted-foreground">Διαχειριστείτε τα φάρμακά σας και τις ώρες λήψης</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
+            </Link>
+
             <Link to="/records">
               <Card className="hover:shadow-soft transition-shadow">
                 <CardContent className="p-4 flex items-center gap-4">
