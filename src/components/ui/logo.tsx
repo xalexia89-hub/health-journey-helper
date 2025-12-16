@@ -1,6 +1,6 @@
-import { Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import medithoLogo from "@/assets/medithos-logo.png";
 
 interface LogoProps {
   className?: string;
@@ -11,18 +11,20 @@ interface LogoProps {
 
 export function Logo({ className, size = "md", showText = true, linkTo = "/settings" }: LogoProps) {
   const sizes = {
-    sm: { icon: "h-5 w-5", text: "text-lg", container: "p-1.5" },
-    md: { icon: "h-6 w-6", text: "text-xl", container: "p-2" },
-    lg: { icon: "h-10 w-10", text: "text-3xl", container: "p-3" },
+    sm: { icon: "h-8 w-8", text: "text-lg" },
+    md: { icon: "h-10 w-10", text: "text-xl" },
+    lg: { icon: "h-14 w-14", text: "text-3xl" },
   };
 
   const content = (
     <>
       <div className="relative">
-        <div className={cn("gradient-health rounded-xl", sizes[size].container)}>
-          <Stethoscope className={cn(sizes[size].icon, "text-primary-foreground")} />
-        </div>
-        <div className="absolute -inset-1 gradient-health rounded-xl opacity-40 blur-lg -z-10" />
+        <img 
+          src={medithoLogo} 
+          alt="Medithos Logo" 
+          className={cn(sizes[size].icon, "rounded-lg object-contain")}
+        />
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary/40 to-accent/40 rounded-lg blur-lg -z-10" />
       </div>
       {showText && (
         <span className={cn(sizes[size].text, "font-semibold text-foreground tracking-wide")}>
