@@ -27,6 +27,7 @@ import Feed from "./pages/Feed";
 import Academy from "./pages/Academy";
 import NotFound from "./pages/NotFound";
 import DoctorRegistration from "./pages/DoctorRegistration";
+import PitchDeck from "./pages/PitchDeck";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/intro" element={<Intro />} />
             <Route path="/doctor-registration" element={<DoctorRegistration />} />
+            <Route path="/pitch-deck" element={<PitchDeck />} />
             
             {/* Protected patient routes */}
             <Route element={<PatientLayout />}>
