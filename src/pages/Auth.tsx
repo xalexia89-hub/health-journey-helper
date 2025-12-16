@@ -88,10 +88,9 @@ export default function Auth() {
     } else {
       toast({
         title: "Επιτυχής εγγραφή!",
-        description: "Ο λογαριασμός σας δημιουργήθηκε. Μπορείτε να συνδεθείτε τώρα.",
+        description: "Καλώς ήρθατε στο Medithos!",
       });
-      setIsSignUp(false);
-      signUpForm.reset();
+      navigate('/intro');
     }
   };
 
