@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { Heart, Shield, Calendar, ArrowRight, Stethoscope } from "lucide-react";
+import { Heart, Shield, Calendar, ArrowRight, Stethoscope, Building2, Hospital } from "lucide-react";
 
 const features = [
   {
@@ -86,14 +86,29 @@ export default function Welcome() {
             </Link>
           </Button>
           
-          {/* Doctor Registration Link */}
-          <div className="pt-4 border-t border-border/50">
-            <Button asChild variant="ghost" size="lg" className="w-full h-12 text-sm font-medium">
-              <Link to="/doctor-registration" className="flex items-center gap-2">
-                <Stethoscope className="h-4 w-4" />
-                Είστε Γιατρός; Εγγραφείτε εδώ
-              </Link>
-            </Button>
+          {/* Provider Registration Links */}
+          <div className="pt-4 border-t border-border/50 space-y-2">
+            <p className="text-xs text-center text-muted-foreground mb-3">Είστε πάροχος υγείας;</p>
+            <div className="grid grid-cols-3 gap-2">
+              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
+                <Link to="/doctor-registration?type=doctor">
+                  <Stethoscope className="h-5 w-5 text-primary" />
+                  <span className="text-xs">Γιατρός</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
+                <Link to="/doctor-registration?type=clinic">
+                  <Building2 className="h-5 w-5 text-accent" />
+                  <span className="text-xs">Κλινική</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
+                <Link to="/doctor-registration?type=hospital">
+                  <Hospital className="h-5 w-5 text-emerald-500" />
+                  <span className="text-xs">Νοσοκομείο</span>
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
