@@ -73,7 +73,7 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <section className="animate-slide-up">
           <h1 className="text-2xl font-bold text-foreground">
-            Καλώς ήρθες, <span className="text-primary">{firstName}</span>
+            Καλώς ήρθες, <span className="text-primary">{firstName}</span> <span className="inline-block animate-bounce">👋</span>
           </h1>
           <p className="text-muted-foreground mt-1">Πώς νιώθεις σήμερα;</p>
         </section>
