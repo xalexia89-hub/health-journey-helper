@@ -44,7 +44,7 @@ export default function Welcome() {
           <div className="space-y-4 animate-fade-in">
             <h1 className="text-4xl font-bold text-foreground leading-tight">
               Η Υγεία σας,{" "}
-              <span className="gradient-neon bg-clip-text text-transparent">Απλοποιημένη</span>
+              <span className="text-gradient-neon">Απλοποιημένη</span>
             </h1>
             <p className="text-lg text-muted-foreground">
               Συνδεθείτε με παρόχους υγείας, παρακολουθήστε τα συμπτώματά σας και διαχειριστείτε 
