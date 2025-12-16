@@ -51,12 +51,20 @@ export default function Intro() {
               <Sparkles className="h-5 w-5" />
               Το Όραμά μας
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Το <span className="text-foreground font-medium">Medithos</span> γεννήθηκε με σκοπό να φέρει επανάσταση στον τρόπο που οι πολίτες έχουν πρόσβαση στην υγειονομική περίθαλψη. 
-              Με <span className="text-primary font-medium">συστημική σκέψη</span> και καινοτόμα τεχνολογία, συνδέουμε <span className="text-primary font-medium">νοσοκομεία</span>, 
-              <span className="text-primary font-medium"> γιατρούς</span> και <span className="text-primary font-medium">ιατρικά κέντρα</span> σε 
-              ένα ενιαίο οικοσύστημα, παρέχοντας στον πολίτη τη σωστή πληροφορία την κατάλληλη στιγμή.
-            </p>
+            <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
+              <p>
+                Το <span className="text-foreground font-medium">Medithos</span> δημιουργήθηκε για να κάνει την υγειονομική φροντίδα απλή και άμεσα προσβάσιμη.
+              </p>
+              <p>
+                Μέσα από μία εφαρμογή, ο πολίτης μπορεί να βρει γρήγορα τη σωστή πληροφορία, να καταλάβει τι χρειάζεται να κάνει και να συνδεθεί με τον κατάλληλο γιατρό ή ιατρική δομή, χωρίς ταλαιπωρία και χωρίς περιττές διαδικασίες.
+              </p>
+              <p>
+                Το Medithos ξεχωρίζει γιατί δεν ζητά από τον χρήστη να γνωρίζει το σύστημα υγείας — <span className="text-primary font-medium">το φέρνει κοντά του</span>, οργανωμένο και κατανοητό. Καθοδηγεί με σαφήνεια, λειτουργεί άμεσα και είναι σχεδιασμένο για να χρησιμοποιείται εύκολα, από όλους.
+              </p>
+              <p>
+                Στόχος μας είναι κάθε άνθρωπος να έχει μια <span className="text-foreground font-medium">αξιόπιστη βοήθεια υγείας στην τσέπη του</span>. Ένα εργαλείο που απλοποιεί τις αποφάσεις, εξοικονομεί χρόνο και προσφέρει σιγουριά, κάθε στιγμή που τη χρειάζεται.
+              </p>
+            </div>
           </div>
 
           {/* Features Grid */}
