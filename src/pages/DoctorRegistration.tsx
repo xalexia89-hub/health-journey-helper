@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, Loader2, CheckCircle2, User, Mail, Phone, MapPin, Stethoscope, FileCheck } from "lucide-react";
+import { Upload, FileText, Loader2, CheckCircle2, User, Mail, Phone, MapPin, Stethoscope, FileCheck, ArrowLeft } from "lucide-react";
 
 const registrationSchema = z.object({
   fullName: z.string().min(3, "Το όνομα πρέπει να έχει τουλάχιστον 3 χαρακτήρες"),
@@ -223,6 +223,16 @@ export default function DoctorRegistration() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/auth")}
+          className="mb-4 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Επιστροφή
+        </Button>
+
         <div className="flex justify-center mb-8">
           <Logo size="lg" linkTo="/" />
         </div>
