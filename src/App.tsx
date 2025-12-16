@@ -11,6 +11,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 // Pages
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
+import Intro from "./pages/Intro";
 import Dashboard from "./pages/Dashboard";
 import Symptoms from "./pages/Symptoms";
 import Providers from "./pages/Providers";
@@ -54,6 +55,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Welcome />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/intro" element={<Intro />} />
             <Route path="/doctor-registration" element={<DoctorRegistration />} />
             
             {/* Protected patient routes */}
