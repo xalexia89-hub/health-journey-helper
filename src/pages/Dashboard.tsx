@@ -72,24 +72,10 @@ export default function Dashboard() {
       <main className="px-4 py-6 space-y-6">
         {/* Welcome Section */}
         <section className="animate-slide-up">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-accent to-health-coral p-[2px] animate-[spin_4s_linear_infinite]">
-                <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden">
-                  <span className="text-2xl font-bold text-primary">
-                    {firstName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              </div>
-              <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background animate-pulse" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
-                Καλώς ήρθες, <span className="text-primary">{firstName}</span> <span className="inline-block animate-bounce">👋</span>
-              </h1>
-              <p className="text-muted-foreground mt-1">Πώς νιώθεις σήμερα;</p>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold text-foreground">
+            Καλώς ήρθες, <span className="text-primary">{firstName}</span> <span className="inline-block animate-bounce">👋</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">Πώς νιώθεις σήμερα;</p>
         </section>
 
         {/* Quick Actions */}
