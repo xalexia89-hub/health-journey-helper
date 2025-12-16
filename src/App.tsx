@@ -29,6 +29,7 @@ import NotFound from "./pages/NotFound";
 import DoctorRegistration from "./pages/DoctorRegistration";
 import PitchDeck from "./pages/PitchDeck";
 import MeshArchitecture from "./pages/MeshArchitecture";
+import InterestForm from "./pages/InterestForm";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/doctor-registration" element={<DoctorRegistration />} />
             <Route path="/pitch-deck" element={<PitchDeck />} />
             <Route path="/mesh-architecture" element={<MeshArchitecture />} />
+            <Route path="/interest" element={<InterestForm />} />
             
             {/* Protected patient routes */}
             <Route element={<PatientLayout />}>
