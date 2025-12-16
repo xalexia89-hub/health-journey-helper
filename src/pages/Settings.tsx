@@ -18,7 +18,8 @@ import {
   Globe,
   HelpCircle,
   FileText,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -215,6 +216,13 @@ const Settings = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
+          <Button variant="ghost" className="w-full justify-between" onClick={() => navigate('/intro')}>
+            <div className="flex items-center gap-2">
+              <Info className="h-4 w-4" />
+              <span>Σχετικά με το Medithos</span>
+            </div>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
           <Button variant="ghost" className="w-full justify-between">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4" />
