@@ -407,6 +407,51 @@ export type Database = {
           },
         ]
       }
+      interest_expressions: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_verified: boolean | null
+          organization_name: string | null
+          phone: string | null
+          provider_type: string
+          reason: string | null
+          signature_date: string
+          specialty: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_verified?: boolean | null
+          organization_name?: string | null
+          phone?: string | null
+          provider_type: string
+          reason?: string | null
+          signature_date?: string
+          specialty?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_verified?: boolean | null
+          organization_name?: string | null
+          phone?: string | null
+          provider_type?: string
+          reason?: string | null
+          signature_date?: string
+          specialty?: string | null
+        }
+        Relationships: []
+      }
       medical_documents: {
         Row: {
           description: string | null

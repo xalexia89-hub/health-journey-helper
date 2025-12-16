@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { Heart, Shield, Calendar, ArrowRight, Stethoscope, Building2, Hospital } from "lucide-react";
+import { Heart, Shield, Calendar, ArrowRight, Stethoscope, Building2, Hospital, FileSignature } from "lucide-react";
 
 const features = [
   {
@@ -109,6 +109,12 @@ export default function Welcome() {
                 </Link>
               </Button>
             </div>
+            <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-accent hover:text-accent hover:bg-accent/10">
+              <Link to="/interest">
+                <FileSignature className="h-4 w-4 mr-2" />
+                Εκδήλωση Ενδιαφέροντος για Επαγγελματίες Υγείας
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
