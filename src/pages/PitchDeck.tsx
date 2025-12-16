@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Download, Heart, Users, Building2, Stethoscope, Brain, Calendar, FileText, Video, BookOpen, Shield, TrendingUp, Target, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Download, Heart, Users, Building2, Stethoscope, Brain, Calendar, FileText, Video, BookOpen, Shield, TrendingUp, Target, Zap, Wifi, WifiOff, Radio, QrCode, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function PitchDeck() {
@@ -314,11 +315,25 @@ export default function PitchDeck() {
                       <td className="text-center p-2">⚠️</td>
                       <td className="text-center p-2 bg-primary/10">✅</td>
                     </tr>
-                    <tr>
+                    <tr className="border-b">
                       <td className="p-2">Υπενθυμίσεις Φαρμάκων</td>
                       <td className="text-center p-2">❌</td>
                       <td className="text-center p-2">❌</td>
                       <td className="text-center p-2">⚠️</td>
+                      <td className="text-center p-2 bg-primary/10">✅</td>
+                    </tr>
+                    <tr className="border-b bg-amber-500/5">
+                      <td className="p-2 font-semibold">🆕 Offline Mesh Network</td>
+                      <td className="text-center p-2">❌</td>
+                      <td className="text-center p-2">❌</td>
+                      <td className="text-center p-2">❌</td>
+                      <td className="text-center p-2 bg-primary/10">✅</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 font-semibold">🆕 Emergency Mode</td>
+                      <td className="text-center p-2">❌</td>
+                      <td className="text-center p-2">❌</td>
+                      <td className="text-center p-2">❌</td>
                       <td className="text-center p-2 bg-primary/10">✅</td>
                     </tr>
                   </tbody>
@@ -429,6 +444,79 @@ export default function PitchDeck() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Emergency Innovation - Mesh Network */}
+        <section className="page-break-after">
+          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-red-500/5">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+                Καινοτομία: Mesh Network για Έκτακτες Ανάγκες
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">Μοναδικό χαρακτηριστικό παγκοσμίως:</strong> Το MEDITHOS θα είναι η πρώτη εφαρμογή υγείας 
+                που λειτουργεί αυτόνομα σε καταστάσεις έκτακτης ανάγκης (πόλεμος, blackout, φυσικές καταστροφές).
+              </p>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                  <WifiOff className="h-8 w-8 text-green-600 mb-2" />
+                  <h4 className="font-semibold">Offline Mode</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Πλήρης λειτουργία χωρίς internet με τοπική αποθήκευση δεδομένων
+                  </p>
+                </div>
+                <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                  <Radio className="h-8 w-8 text-blue-600 mb-2" />
+                  <h4 className="font-semibold">Mesh Network</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    P2P επικοινωνία μέσω Bluetooth/WiFi Direct μεταξύ συσκευών
+                  </p>
+                </div>
+                <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                  <QrCode className="h-8 w-8 text-purple-600 mb-2" />
+                  <h4 className="font-semibold">QR Medical Card</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Εκτυπώσιμη κάρτα έκτακτης ανάγκης με ιατρικά δεδομένα
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Wifi className="h-4 w-4 text-green-500" />
+                    Κανονική Λειτουργία
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Σύνδεση με cloud, real-time sync, πλήρεις δυνατότητες
+                  </p>
+                </div>
+                <div className="p-4 bg-red-500/10 rounded-lg border border-red-500/20">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <WifiOff className="h-4 w-4 text-red-500" />
+                    Emergency Mode
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Αυτόνομη λειτουργία, mesh επικοινωνία, triage interface
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                <h4 className="font-semibold mb-2 text-amber-600">🎯 Γιατί αυτό είναι Game-Changer</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong>Μοναδικό στην αγορά:</strong> Καμία άλλη εφαρμογή υγείας δεν προσφέρει αυτή τη δυνατότητα</li>
+                  <li>• <strong>Κρίσιμο για Ελλάδα:</strong> Σεισμοί, πυρκαγιές, γεωπολιτική αστάθεια</li>
+                  <li>• <strong>Humanitarian Value:</strong> Εφαρμογή σε προσφυγικές κρίσεις και ΜΚΟ</li>
+                  <li>• <strong>Government Interest:</strong> Δυνατότητα συνεργασίας με ΕΚΑΒ, Πολιτική Προστασία</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
