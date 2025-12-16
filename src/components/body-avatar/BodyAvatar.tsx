@@ -216,11 +216,31 @@ export function BodyAvatar({ selectedAreas, onAreaClick, onSubcategorySelect, cl
                     </Button>
                   </Link>
 
-                  <Link to={`/providers?specialty=${encodeURIComponent(currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty || '')}`}>
+                  <Link to={`/providers?specialty=${encodeURIComponent(currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty || '')}&type=doctor`}>
                     <Button variant="default" className="w-full justify-between group mt-2">
                       <div className="flex items-center gap-2">
                         <Stethoscope className="h-4 w-4" />
-                        <span>Όλοι οι {currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty}</span>
+                        <span>Όλοι οι Γιατροί - {currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty}</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+
+                  <Link to={`/providers?specialty=${encodeURIComponent(currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty || '')}&type=clinic`}>
+                    <Button variant="outline" className="w-full justify-between group">
+                      <div className="flex items-center gap-2">
+                        <Stethoscope className="h-4 w-4" />
+                        <span>Όλες οι Κλινικές - {currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty}</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+
+                  <Link to={`/providers?specialty=${encodeURIComponent(currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty || '')}&type=hospital`}>
+                    <Button variant="outline" className="w-full justify-between group">
+                      <div className="flex items-center gap-2">
+                        <Stethoscope className="h-4 w-4" />
+                        <span>Όλα τα Νοσοκομεία - {currentSubcategories.find(s => s.id === selectedSubcategory)?.specialty}</span>
                       </div>
                       <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
