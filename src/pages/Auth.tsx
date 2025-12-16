@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/ui/logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Loader2, ArrowLeft, Eye, EyeOff, Stethoscope } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const signInSchema = z.object({
@@ -284,6 +284,21 @@ export default function Auth() {
             )}
           </CardContent>
         </Card>
+
+        {/* Healthcare Professional Registration */}
+        <div className="mt-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/doctor-registration')}
+            className="w-full h-14 rounded-xl border-accent/30 bg-accent/5 hover:bg-accent/10 hover:border-accent/50 transition-all duration-300 group"
+          >
+            <Stethoscope className="mr-3 h-5 w-5 text-accent group-hover:scale-110 transition-transform" />
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-medium text-foreground">Είστε επαγγελματίας υγείας;</span>
+              <span className="text-xs text-muted-foreground">Γιατρός, Νοσοκομείο, Ιατρικό Κέντρο, Νοσηλευτής</span>
+            </div>
+          </Button>
+        </div>
       </div>
 
       {/* Medical Disclaimer */}
