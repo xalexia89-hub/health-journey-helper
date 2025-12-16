@@ -23,13 +23,13 @@ export default function Intro() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full max-w-2xl">
-        {/* Spinning Logo */}
+        {/* Logo */}
         <div className="relative mb-6 mt-4">
           <div className="absolute -inset-4 bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 rounded-full blur-xl animate-pulse" />
           <img 
             src={medithoLogo} 
             alt="Medithos Logo" 
-            className="w-28 h-28 md:w-36 md:h-36 animate-[spin_10s_linear_infinite] relative z-10"
+            className="w-28 h-28 md:w-36 md:h-36 relative z-10 drop-shadow-2xl"
           />
         </div>
 
