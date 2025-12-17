@@ -136,9 +136,8 @@ export function ShareRecordDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Share2 className="h-4 w-4 mr-2" />
-          Διαμοιρασμός
+        <Button variant="outline" size="icon" className="h-9 w-9">
+          <Share2 className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
