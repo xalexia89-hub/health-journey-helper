@@ -16,7 +16,9 @@ import {
   X,
   Save,
   FileText,
-  Heart
+  Heart,
+  Share2,
+  Upload
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
@@ -210,13 +212,32 @@ const MedicalRecords = () => {
         {/* Header Actions */}
         <div className="flex items-center justify-between flex-wrap gap-2">
           <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
-          <div className="flex gap-2">
-            <ShareRecordDialog />
-            <Button onClick={handleSave} disabled={saving}>
-              <Save className="h-4 w-4 mr-2" />
-              {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
-            </Button>
-          </div>
+          <TooltipProvider>
+            <div className="flex gap-1.5">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ShareRecordDialog />
+                </TooltipTrigger>
+                <TooltipContent>Διαμοιρασμός</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" className="h-9 w-9">
+                    <Upload className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Ανέβασμα Αρχείων</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" className="h-9 w-9" onClick={handleSave} disabled={saving}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{saving ? 'Αποθήκευση...' : 'Αποθήκευση'}</TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
         </div>
 
         {/* Central Hub with Orbiting Categories */}
