@@ -1,25 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { Heart, Shield, Calendar, ArrowRight, Stethoscope, Building2, Hospital, FileSignature } from "lucide-react";
-
-const features = [
-  {
-    icon: Heart,
-    title: "Παρακολουθήστε την Υγεία σας",
-    description: "Καταγράψτε συμπτώματα και διατηρήστε ολοκληρωμένο ιατρικό ιστορικό",
-  },
-  {
-    icon: Shield,
-    title: "Βρείτε Αξιόπιστους Παρόχους",
-    description: "Συνδεθείτε με πιστοποιημένους γιατρούς, κλινικές και νοσοκομεία",
-  },
-  {
-    icon: Calendar,
-    title: "Εύκολη Κράτηση",
-    description: "Προγραμματίστε ραντεβού και πληρώστε με ασφάλεια online",
-  },
-];
+import { ArrowRight, Stethoscope, Building2, Hospital, FileSignature } from "lucide-react";
 
 export default function Welcome() {
   return (
@@ -36,39 +18,20 @@ export default function Welcome() {
 
       {/* Hero Section */}
       <div className="relative z-10 flex-1 flex flex-col">
-        <div className="px-6 pt-12 pb-8">
-          <Logo size="lg" />
-        </div>
-
-        <div className="flex-1 px-6 flex flex-col justify-center">
-          <div className="space-y-4 animate-fade-in">
-            <h1 className="text-4xl font-bold text-foreground leading-tight">
+        {/* Centered Logo */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6">
+          <div className="animate-fade-in">
+            <Logo size="lg" />
+          </div>
+          
+          <div className="mt-8 text-center space-y-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            <h1 className="text-3xl font-bold text-foreground leading-tight">
               Η Υγεία σας,{" "}
               <span className="text-gradient-neon">Απλοποιημένη</span>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Συνδεθείτε με παρόχους υγείας, παρακολουθήστε τα συμπτώματά σας και διαχειριστείτε 
-              το ιατρικό σας ταξίδι — όλα σε ένα μέρος.
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              Συνδεθείτε με παρόχους υγείας και διαχειριστείτε το ιατρικό σας ταξίδι.
             </p>
-          </div>
-
-          {/* Features */}
-          <div className="mt-10 space-y-4">
-            {features.map((feature, index) => (
-              <div
-                key={feature.title}
-                className="flex items-start gap-4 p-4 rounded-2xl glass-futuristic animate-fade-in hover-lift transition-all duration-300"
-                style={{ animationDelay: `${(index + 1) * 100}ms` }}
-              >
-                <div className="p-2.5 rounded-xl gradient-primary shadow-glow">
-                  <feature.icon className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 
