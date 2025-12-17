@@ -66,40 +66,118 @@ export default function Dashboard() {
 
   const firstName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'εκεί';
 
+  // Calculate positions for orbital layout
+  const getOrbitalPosition = (index: number, total: number, radius: number) => {
+    const angle = (index * 360 / total) - 90; // Start from top
+    const radian = (angle * Math.PI) / 180;
+    return {
+      x: Math.cos(radian) * radius,
+      y: Math.sin(radian) * radius,
+      angle: angle + 90
+    };
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       <main className="px-4 py-6 space-y-6">
         {/* Welcome Section */}
-        <section className="animate-slide-up">
+        <section className="animate-slide-up text-center">
           <h1 className="text-2xl font-bold text-foreground">
             Καλώς ήρθες, <span className="text-primary">{firstName}</span> <span className="inline-block animate-bounce">👋</span>
           </h1>
           <p className="text-muted-foreground mt-1">Πώς νιώθεις σήμερα;</p>
         </section>
 
-        {/* Quick Actions */}
-        <section className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-          <TooltipProvider>
-            <div className="flex justify-center gap-4 flex-wrap">
-              {quickActions.map((action) => (
-                <Tooltip key={action.path}>
-                  <TooltipTrigger asChild>
-                    <Link 
-                      to={action.path}
-                      className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg`}
-                    >
-                      <action.icon className="h-6 w-6" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{action.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
+        {/* Hologram Hub with Orbital Actions */}
+        <section className="animate-slide-up relative" style={{ animationDelay: '100ms' }}>
+          <div className="relative w-full aspect-square max-w-[320px] mx-auto">
+            
+            {/* Orbital Rings */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[280px] h-[280px] rounded-full border border-primary/20 animate-[spin_30s_linear_infinite]" />
             </div>
-          </TooltipProvider>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[220px] h-[220px] rounded-full border border-primary/10 animate-[spin_25s_linear_infinite_reverse]" />
+            </div>
+            
+            {/* Connection Lines (Axes) */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="-160 -160 320 320">
+              {quickActions.map((_, index) => {
+                const pos = getOrbitalPosition(index, quickActions.length, 120);
+                return (
+                  <line
+                    key={index}
+                    x1="0"
+                    y1="0"
+                    x2={pos.x}
+                    y2={pos.y}
+                    stroke="url(#lineGradient)"
+                    strokeWidth="1"
+                    strokeDasharray="4 4"
+                    className="animate-pulse"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  />
+                );
+              })}
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Central Hologram */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-24 h-24">
+                {/* Glow effect */}
+                <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
+                <div className="absolute inset-2 rounded-full bg-primary/20 blur-lg animate-pulse" style={{ animationDelay: '200ms' }} />
+                
+                {/* Hologram core */}
+                <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary/40 via-primary/20 to-transparent backdrop-blur-sm border border-primary/30 flex items-center justify-center overflow-hidden">
+                  {/* Scan lines effect */}
+                  <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,hsl(var(--primary)/0.1)_2px,hsl(var(--primary)/0.1)_4px)] animate-[scan_2s_linear_infinite]" />
+                  
+                  {/* Health icon */}
+                  <Activity className="h-10 w-10 text-primary drop-shadow-[0_0_10px_hsl(var(--primary))]" />
+                </div>
+                
+                {/* Rotating ring */}
+                <div className="absolute -inset-2 rounded-full border-2 border-dashed border-primary/30 animate-[spin_10s_linear_infinite]" />
+              </div>
+            </div>
+
+            {/* Orbital Action Buttons */}
+            <TooltipProvider>
+              {quickActions.map((action, index) => {
+                const pos = getOrbitalPosition(index, quickActions.length, 120);
+                return (
+                  <Tooltip key={action.path}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={action.path}
+                        className={`absolute w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-125 hover:shadow-[0_0_20px_hsl(var(--primary)/0.5)] z-10`}
+                        style={{
+                          left: `calc(50% + ${pos.x}px - 28px)`,
+                          top: `calc(50% + ${pos.y}px - 28px)`,
+                        }}
+                      >
+                        <action.icon className="h-6 w-6" />
+                        {/* Pulse ring on hover */}
+                        <div className="absolute inset-0 rounded-full border-2 border-current opacity-0 hover:opacity-100 animate-ping" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="bg-background/90 backdrop-blur-sm border-primary/20">
+                      <p className="font-medium">{action.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
+          </div>
         </section>
 
 
