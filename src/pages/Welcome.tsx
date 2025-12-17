@@ -50,32 +50,23 @@ export default function Welcome() {
           </Button>
           
           {/* Provider Registration Links */}
-          <div className="pt-4 border-t border-border/50 space-y-2">
-            <p className="text-xs text-center text-muted-foreground mb-3">Είστε πάροχος υγείας;</p>
-            <div className="grid grid-cols-3 gap-2">
-              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
-                <Link to="/doctor-registration?type=doctor">
-                  <Stethoscope className="h-5 w-5 text-primary" />
-                  <span className="text-xs">Γιατρός</span>
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
-                <Link to="/doctor-registration?type=clinic">
-                  <Building2 className="h-5 w-5 text-accent" />
-                  <span className="text-xs">Κλινική</span>
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="h-auto py-3 flex-col gap-1 glass border-primary/30 hover:shadow-glow">
-                <Link to="/doctor-registration?type=hospital">
-                  <Hospital className="h-5 w-5 text-emerald-500" />
-                  <span className="text-xs">Νοσοκομείο</span>
-                </Link>
-              </Button>
+          <div className="pt-4 border-t border-border/50 space-y-4">
+            <p className="text-xs text-center text-muted-foreground">Είστε πάροχος υγείας;</p>
+            <div className="flex justify-center gap-6">
+              <Link to="/doctor-registration?type=doctor" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
+                <Stethoscope className="h-6 w-6 text-primary" />
+              </Link>
+              <Link to="/doctor-registration?type=clinic" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
+                <Building2 className="h-6 w-6 text-accent" />
+              </Link>
+              <Link to="/doctor-registration?type=hospital" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
+                <Hospital className="h-6 w-6 text-emerald-500" />
+              </Link>
             </div>
-            <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-accent hover:text-accent hover:bg-accent/10">
+            <Button asChild variant="ghost" size="sm" className="w-full text-accent hover:text-accent hover:bg-accent/10">
               <Link to="/interest">
                 <FileSignature className="h-4 w-4 mr-2" />
-                Εκδήλωση Ενδιαφέροντος για Επαγγελματίες Υγείας
+                Εκδήλωση Ενδιαφέροντος
               </Link>
             </Button>
           </div>
