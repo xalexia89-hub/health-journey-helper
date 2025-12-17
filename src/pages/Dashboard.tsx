@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   Calendar, FileText, User, Search, Heart, Activity, 
   AlertCircle, ChevronRight, Stethoscope, Building2, Hospital, UserRound, GraduationCap, Pill
@@ -80,17 +81,25 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <section className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-          <div className="flex justify-center gap-4 flex-wrap">
-            {quickActions.map((action) => (
-              <Link 
-                key={action.path} 
-                to={action.path}
-                className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg`}
-              >
-                <action.icon className="h-6 w-6" />
-              </Link>
-            ))}
-          </div>
+          <TooltipProvider>
+            <div className="flex justify-center gap-4 flex-wrap">
+              {quickActions.map((action) => (
+                <Tooltip key={action.path}>
+                  <TooltipTrigger asChild>
+                    <Link 
+                      to={action.path}
+                      className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg`}
+                    >
+                      <action.icon className="h-6 w-6" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{action.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </TooltipProvider>
         </section>
 
 
