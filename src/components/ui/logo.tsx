@@ -11,46 +11,36 @@ interface LogoProps {
 
 export function Logo({ className, size = "md", showText = true, linkTo = "/settings" }: LogoProps) {
   const sizes = {
-    sm: { icon: "h-8 w-8", text: "text-lg", frame: "p-2" },
-    md: { icon: "h-10 w-10", text: "text-xl", frame: "p-2.5" },
-    lg: { icon: "h-14 w-14", text: "text-3xl", frame: "p-3" },
+    sm: { icon: "h-8 w-8", text: "text-lg" },
+    md: { icon: "h-10 w-10", text: "text-xl" },
+    lg: { icon: "h-14 w-14", text: "text-3xl" },
   };
 
   const content = (
     <>
-      {/* Futuristic Frame with Glow */}
+      {/* Diamond Glow Effect */}
       <div className="relative group">
-        {/* Outer glow ring */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-primary via-accent to-primary rounded-xl blur-lg opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
+        {/* Outer diamond glow */}
+        <div className="absolute -inset-3 bg-gradient-to-r from-primary via-accent to-primary rounded-lg blur-xl opacity-70 animate-[glowPulse_2s_ease-in-out_infinite]" />
         
-        {/* Animated border frame */}
-        <div className={cn(
-          "relative rounded-xl bg-gradient-to-br from-primary/20 via-background to-accent/20 border border-primary/50",
-          sizes[size].frame,
-          "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-transparent before:via-primary/20 before:to-transparent before:animate-[shimmer_2s_infinite]",
-          "after:absolute after:-inset-[1px] after:rounded-xl after:bg-gradient-to-r after:from-primary/0 after:via-primary/50 after:to-primary/0 after:blur-sm after:animate-[scan_3s_infinite]"
-        )}>
-          {/* Inner container with logo */}
-          <div className="relative z-10">
-            <img 
-              src={medithoLogo} 
-              alt="Medithos Logo" 
-              className={cn(
-                sizes[size].icon, 
-                "rounded-lg object-contain",
-                "drop-shadow-[0_0_10px_hsl(var(--primary)/0.8)]",
-                "group-hover:drop-shadow-[0_0_20px_hsl(var(--primary))]",
-                "transition-all duration-300",
-                "animate-[float_4s_ease-in-out_infinite]"
-              )}
-            />
-          </div>
-          
-          {/* Corner accents */}
-          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary rounded-tl-lg" />
-          <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-primary rounded-tr-lg" />
-          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-primary rounded-bl-lg" />
-          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary rounded-br-lg" />
+        {/* Diamond sparkle layer */}
+        <div className="absolute -inset-2 bg-gradient-to-tr from-transparent via-white/30 to-transparent rounded-lg animate-[shimmer_3s_infinite] opacity-60" />
+        
+        {/* Logo with diamond shine */}
+        <div className="relative">
+          <img 
+            src={medithoLogo} 
+            alt="Medithos Logo" 
+            className={cn(
+              sizes[size].icon, 
+              "rounded-lg object-contain relative z-10",
+              "drop-shadow-[0_0_15px_hsl(var(--primary))]",
+              "group-hover:drop-shadow-[0_0_25px_hsl(var(--primary))]",
+              "transition-all duration-300"
+            )}
+          />
+          {/* Diamond shine overlay */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent rounded-lg animate-[shimmer_2s_infinite]" />
         </div>
       </div>
       
