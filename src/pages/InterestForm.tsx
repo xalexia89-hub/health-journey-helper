@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Logo } from "@/components/ui/logo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileSignature, Heart, Shield, Smartphone, CheckCircle, Users } from "lucide-react";
+import { FileSignature, Heart, Shield, Smartphone, CheckCircle, Users, Printer } from "lucide-react";
 
 export default function InterestForm() {
   const navigate = useNavigate();
@@ -89,9 +89,15 @@ export default function InterestForm() {
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Logo size="sm" linkTo="/" />
-          <Button variant="outline" onClick={() => navigate("/pitch-deck")}>
-            Pitch Deck
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => window.open("/interest/print", "_blank")}>
+              <Printer className="w-4 h-4 mr-2" />
+              Εκτύπωση
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/pitch-deck")}>
+              Pitch Deck
+            </Button>
+          </div>
         </div>
       </header>
 
