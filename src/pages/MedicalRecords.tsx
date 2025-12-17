@@ -210,10 +210,10 @@ const MedicalRecords = () => {
       
       <div className="px-4 py-6 space-y-8 pb-24">
         {/* Header Actions */}
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-muted-foreground text-sm flex-1 min-w-0">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
           <TooltipProvider>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 flex-shrink-0">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <ShareRecordDialog />
@@ -222,7 +222,7 @@ const MedicalRecords = () => {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-9 w-9">
+                  <Button variant="outline" size="icon" className="h-8 w-8">
                     <Upload className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
@@ -230,7 +230,7 @@ const MedicalRecords = () => {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" className="h-9 w-9" onClick={handleSave} disabled={saving}>
+                  <Button size="icon" className="h-8 w-8" onClick={handleSave} disabled={saving}>
                     <Save className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
