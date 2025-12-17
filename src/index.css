@@ -16,9 +16,9 @@
     --popover: 230 20% 98%;
     --popover-foreground: 230 60% 10%;
 
-    /* Primary - Electric Cyan */
-    --primary: 185 100% 45%;
-    --primary-foreground: 230 60% 5%;
+    /* Primary - Intense Futuristic Green */
+    --primary: 145 100% 45%;
+    --primary-foreground: 145 100% 5%;
 
     /* Secondary */
     --secondary: 260 30% 92%;
@@ -28,9 +28,9 @@
     --muted: 230 20% 90%;
     --muted-foreground: 230 25% 45%;
 
-    /* Accent - Neon Purple */
-    --accent: 280 85% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Bright Green */
+    --accent: 120 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -45,34 +45,34 @@
 
     --border: 230 25% 85%;
     --input: 230 25% 88%;
-    --ring: 185 100% 45%;
+    --ring: 145 100% 45%;
 
     --radius: 0.75rem;
 
-    /* Sidebar - Dark Futuristic */
-    --sidebar-background: 230 40% 12%;
-    --sidebar-foreground: 185 100% 85%;
-    --sidebar-primary: 185 100% 50%;
-    --sidebar-primary-foreground: 230 40% 5%;
-    --sidebar-accent: 280 80% 60%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 230 35% 20%;
-    --sidebar-ring: 185 100% 50%;
+    /* Sidebar - Dark Futuristic Green */
+    --sidebar-background: 140 40% 8%;
+    --sidebar-foreground: 145 100% 85%;
+    --sidebar-primary: 145 100% 50%;
+    --sidebar-primary-foreground: 140 40% 5%;
+    --sidebar-accent: 120 100% 55%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 140 35% 20%;
+    --sidebar-ring: 145 100% 50%;
 
     /* Futuristic Colors */
-    --neon-cyan: 185 100% 50%;
-    --neon-purple: 280 85% 55%;
-    --neon-pink: 320 90% 60%;
-    --neon-blue: 210 100% 55%;
-    --neon-green: 145 85% 50%;
-    --neon-orange: 35 100% 55%;
-    --dark-surface: 230 40% 12%;
-    --dark-surface-light: 230 35% 18%;
+    --neon-cyan: 160 100% 50%;
+    --neon-purple: 145 85% 55%;
+    --neon-pink: 165 90% 60%;
+    --neon-blue: 170 100% 55%;
+    --neon-green: 145 100% 55%;
+    --neon-orange: 130 100% 55%;
+    --dark-surface: 140 40% 8%;
+    --dark-surface-light: 140 35% 14%;
 
     /* Body area colors */
-    --body-selected: 185 100% 50%;
-    --body-hover: 280 80% 60%;
-    --body-default: 230 25% 80%;
+    --body-selected: 145 100% 50%;
+    --body-hover: 120 100% 55%;
+    --body-default: 140 25% 80%;
 
     /* Urgency levels */
     --urgency-low: 145 85% 45%;
@@ -96,31 +96,31 @@
   }
 
   .dark {
-    /* Futuristic Neon Theme - Dark Mode (Primary) */
-    --background: 230 40% 6%;
-    --foreground: 185 30% 92%;
+    /* Futuristic Neon Theme - Dark Mode (Green) */
+    --background: 140 40% 4%;
+    --foreground: 145 30% 92%;
 
-    --card: 230 35% 10%;
-    --card-foreground: 185 30% 92%;
+    --card: 140 35% 8%;
+    --card-foreground: 145 30% 92%;
 
-    --popover: 230 35% 12%;
-    --popover-foreground: 185 30% 92%;
+    --popover: 140 35% 10%;
+    --popover-foreground: 145 30% 92%;
 
-    /* Primary - Electric Cyan */
-    --primary: 185 100% 50%;
-    --primary-foreground: 230 40% 5%;
+    /* Primary - Intense Futuristic Green */
+    --primary: 145 100% 50%;
+    --primary-foreground: 140 40% 5%;
 
     /* Secondary */
-    --secondary: 230 30% 16%;
-    --secondary-foreground: 185 50% 85%;
+    --secondary: 140 30% 14%;
+    --secondary-foreground: 145 50% 85%;
 
     /* Muted */
-    --muted: 230 30% 14%;
-    --muted-foreground: 230 20% 55%;
+    --muted: 140 30% 12%;
+    --muted-foreground: 140 20% 55%;
 
-    /* Accent - Neon Purple */
-    --accent: 280 85% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Bright Green */
+    --accent: 120 100% 55%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -131,31 +131,31 @@
     --success: 145 85% 50%;
     --success-foreground: 0 0% 100%;
 
-    --border: 230 30% 20%;
-    --input: 230 30% 18%;
-    --ring: 185 100% 50%;
+    --border: 140 30% 18%;
+    --input: 140 30% 15%;
+    --ring: 145 100% 50%;
 
-    --sidebar-background: 230 45% 8%;
-    --sidebar-foreground: 185 100% 85%;
-    --sidebar-primary: 185 100% 55%;
-    --sidebar-primary-foreground: 230 40% 5%;
-    --sidebar-accent: 280 80% 65%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 230 35% 18%;
-    --sidebar-ring: 185 100% 55%;
+    --sidebar-background: 140 45% 6%;
+    --sidebar-foreground: 145 100% 85%;
+    --sidebar-primary: 145 100% 55%;
+    --sidebar-primary-foreground: 140 40% 5%;
+    --sidebar-accent: 120 100% 60%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 140 35% 16%;
+    --sidebar-ring: 145 100% 55%;
 
-    --neon-cyan: 185 100% 55%;
-    --neon-purple: 280 85% 60%;
-    --neon-pink: 320 90% 65%;
-    --neon-blue: 210 100% 60%;
-    --neon-green: 145 85% 55%;
-    --neon-orange: 35 100% 60%;
-    --dark-surface: 230 40% 10%;
-    --dark-surface-light: 230 35% 15%;
+    --neon-cyan: 160 100% 55%;
+    --neon-purple: 145 85% 60%;
+    --neon-pink: 165 90% 65%;
+    --neon-blue: 170 100% 60%;
+    --neon-green: 145 100% 60%;
+    --neon-orange: 130 100% 60%;
+    --dark-surface: 140 40% 8%;
+    --dark-surface-light: 140 35% 12%;
 
-    --body-selected: 185 100% 55%;
-    --body-hover: 280 80% 65%;
-    --body-default: 230 30% 25%;
+    --body-selected: 145 100% 55%;
+    --body-hover: 120 100% 60%;
+    --body-default: 140 30% 22%;
 
     --urgency-low: 145 85% 50%;
     --urgency-medium: 35 100% 58%;
