@@ -23,25 +23,18 @@ export function Logo({ className, size = "md", showText = true, linkTo = "/setti
         {/* Outer diamond glow */}
         <div className="absolute -inset-3 bg-gradient-to-r from-primary via-accent to-primary rounded-lg blur-xl opacity-70 animate-[glowPulse_2s_ease-in-out_infinite]" />
         
-        {/* Diamond sparkle layer */}
-        <div className="absolute -inset-2 bg-gradient-to-tr from-transparent via-white/30 to-transparent rounded-lg animate-[shimmer_3s_infinite] opacity-60" />
-        
         {/* Logo with diamond shine */}
-        <div className="relative">
-          <img 
-            src={medithoLogo} 
-            alt="Medithos Logo" 
-            className={cn(
-              sizes[size].icon, 
-              "rounded-lg object-contain relative z-10",
-              "drop-shadow-[0_0_15px_hsl(var(--primary))]",
-              "group-hover:drop-shadow-[0_0_25px_hsl(var(--primary))]",
-              "transition-all duration-300"
-            )}
-          />
-          {/* Diamond shine overlay */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent rounded-lg animate-[shimmer_2s_infinite]" />
-        </div>
+        <img 
+          src={medithoLogo} 
+          alt="Medithos Logo" 
+          className={cn(
+            sizes[size].icon, 
+            "rounded-lg object-contain relative z-10",
+            "drop-shadow-[0_0_15px_hsl(var(--primary))]",
+            "group-hover:drop-shadow-[0_0_25px_hsl(var(--primary))]",
+            "transition-all duration-300"
+          )}
+        />
       </div>
       
       {showText && (
