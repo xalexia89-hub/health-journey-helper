@@ -80,17 +80,14 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <section className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex justify-center gap-4 flex-wrap">
             {quickActions.map((action) => (
-              <Link key={action.path} to={action.path}>
-                <Card className="hover:shadow-soft transition-all active:scale-[0.98]">
-                  <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                    <div className={`p-3 rounded-xl ${action.color}`}>
-                      <action.icon className="h-6 w-6" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{action.label}</span>
-                  </CardContent>
-                </Card>
+              <Link 
+                key={action.path} 
+                to={action.path}
+                className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg`}
+              >
+                <action.icon className="h-6 w-6" />
               </Link>
             ))}
           </div>
