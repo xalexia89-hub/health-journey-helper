@@ -5,10 +5,8 @@ import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Pill, 
   AlertTriangle, 
@@ -18,10 +16,16 @@ import {
   X,
   Save,
   FileText,
-  MessageSquare
+  Heart
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MedicalRecord {
   id: string;
@@ -32,18 +36,75 @@ interface MedicalRecord {
   notes: string | null;
 }
 
+type CategoryType = 'allergies' | 'conditions' | 'medications' | 'surgeries' | 'notes';
+
+const categories = [
+  { 
+    id: 'allergies' as CategoryType, 
+    label: 'Αλλεργίες', 
+    icon: AlertTriangle, 
+    field: 'allergies' as keyof MedicalRecord,
+    placeholder: 'Προσθήκη αλλεργίας (π.χ., Πενικιλίνη)',
+    emptyText: 'Δεν έχουν καταγραφεί αλλεργίες',
+    gradient: 'from-amber-500 to-orange-600',
+    shadow: 'shadow-amber-500/30',
+    pattern: 'radial-gradient(circle at 30% 30%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)',
+  },
+  { 
+    id: 'conditions' as CategoryType, 
+    label: 'Παθήσεις', 
+    icon: Stethoscope, 
+    field: 'chronic_conditions' as keyof MedicalRecord,
+    placeholder: 'Προσθήκη πάθησης (π.χ., Διαβήτης)',
+    emptyText: 'Δεν έχουν καταγραφεί παθήσεις',
+    gradient: 'from-blue-500 to-cyan-600',
+    shadow: 'shadow-blue-500/30',
+    pattern: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, transparent 50%)',
+  },
+  { 
+    id: 'medications' as CategoryType, 
+    label: 'Φάρμακα', 
+    icon: Pill, 
+    field: 'current_medications' as keyof MedicalRecord,
+    placeholder: 'Προσθήκη φαρμάκου (π.χ., Μετφορμίνη)',
+    emptyText: 'Δεν έχουν καταγραφεί φάρμακα',
+    gradient: 'from-emerald-500 to-teal-600',
+    shadow: 'shadow-emerald-500/30',
+    pattern: 'repeating-linear-gradient(45deg, rgba(16, 185, 129, 0.1) 0px, rgba(16, 185, 129, 0.1) 2px, transparent 2px, transparent 8px)',
+  },
+  { 
+    id: 'surgeries' as CategoryType, 
+    label: 'Χειρουργεία', 
+    icon: Scissors, 
+    field: 'past_surgeries' as keyof MedicalRecord,
+    placeholder: 'Προσθήκη χειρουργείου (π.χ., Σκωληκοειδεκτομή 2020)',
+    emptyText: 'Δεν έχουν καταγραφεί χειρουργεία',
+    gradient: 'from-rose-500 to-pink-600',
+    shadow: 'shadow-rose-500/30',
+    pattern: 'conic-gradient(from 0deg at 50% 50%, rgba(244, 63, 94, 0.15) 0deg, transparent 60deg, rgba(244, 63, 94, 0.15) 120deg, transparent 180deg)',
+  },
+];
+
 const MedicalRecords = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [record, setRecord] = useState<MedicalRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<CategoryType | null>(null);
   
   const [newAllergy, setNewAllergy] = useState('');
   const [newCondition, setNewCondition] = useState('');
   const [newMedication, setNewMedication] = useState('');
   const [newSurgery, setNewSurgery] = useState('');
   const [notes, setNotes] = useState('');
+
+  const inputStates: Record<string, { value: string; setter: (v: string) => void }> = {
+    allergies: { value: newAllergy, setter: setNewAllergy },
+    chronic_conditions: { value: newCondition, setter: setNewCondition },
+    current_medications: { value: newMedication, setter: setNewMedication },
+    past_surgeries: { value: newSurgery, setter: setNewSurgery },
+  };
 
   useEffect(() => {
     if (user) fetchMedicalRecord();
@@ -117,6 +178,12 @@ const MedicalRecords = () => {
     setSaving(false);
   };
 
+  const getItemCount = (field: keyof MedicalRecord) => {
+    if (!record) return 0;
+    const arr = record[field] as string[] | null;
+    return arr?.length || 0;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -133,10 +200,14 @@ const MedicalRecords = () => {
     );
   }
 
+  const activeConfig = categories.find(c => c.id === activeCategory);
+
   return (
     <div className="min-h-screen bg-background">
       <Header title="Ιατρικό Ιστορικό" showBack />
-      <div className="px-4 py-6 space-y-6 pb-24">
+      
+      <div className="px-4 py-6 space-y-8 pb-24">
+        {/* Header Actions */}
         <div className="flex items-center justify-between flex-wrap gap-2">
           <p className="text-muted-foreground">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
           <div className="flex gap-2">
@@ -148,203 +219,145 @@ const MedicalRecords = () => {
           </div>
         </div>
 
-      <Tabs defaultValue="allergies" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="allergies" className="text-xs sm:text-sm">
-            <AlertTriangle className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Αλλεργίες</span>
-          </TabsTrigger>
-          <TabsTrigger value="conditions" className="text-xs sm:text-sm">
-            <Stethoscope className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Παθήσεις</span>
-          </TabsTrigger>
-          <TabsTrigger value="medications" className="text-xs sm:text-sm">
-            <Pill className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Φάρμακα</span>
-          </TabsTrigger>
-          <TabsTrigger value="surgeries" className="text-xs sm:text-sm">
-            <Scissors className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Χειρουργεία</span>
-          </TabsTrigger>
-        </TabsList>
+        {/* Central Hub with Orbiting Categories */}
+        <div className="relative flex items-center justify-center py-12">
+          {/* Background Glow */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-64 h-64 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
+          </div>
 
-        <TabsContent value="allergies" className="mt-4">
-          <Card>
+          {/* Orbital Rings */}
+          <div className="absolute w-72 h-72 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
+          <div className="absolute w-56 h-56 rounded-full border border-primary/10" />
+
+          {/* Center Heart */}
+          <div className="relative z-10 w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl shadow-primary/30">
+            <Heart className="w-10 h-10 text-primary-foreground" fill="currentColor" />
+            <div className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+          </div>
+
+          {/* Category Circles */}
+          <TooltipProvider>
+            {categories.map((cat, index) => {
+              const Icon = cat.icon;
+              const angle = (index * 90 - 45) * (Math.PI / 180);
+              const radius = 120;
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+              const count = getItemCount(cat.field);
+              const isActive = activeCategory === cat.id;
+
+              return (
+                <Tooltip key={cat.id}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setActiveCategory(isActive ? null : cat.id)}
+                      className="absolute z-20 transition-all duration-300 group"
+                      style={{
+                        transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
+                      }}
+                    >
+                      {/* Connection Line */}
+                      <div 
+                        className="absolute top-1/2 left-1/2 w-20 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
+                        style={{
+                          transform: `rotate(${(index * 90 - 45) + 180}deg)`,
+                          transformOrigin: '0 50%',
+                        }}
+                      />
+                      
+                      {/* Circle */}
+                      <div 
+                        className={`
+                          w-16 h-16 rounded-full flex items-center justify-center
+                          bg-gradient-to-br ${cat.gradient}
+                          shadow-lg ${cat.shadow}
+                          transition-all duration-300
+                          ${isActive ? 'ring-4 ring-white/30 scale-110' : 'hover:scale-105'}
+                        `}
+                        style={{ backgroundImage: cat.pattern }}
+                      >
+                        <Icon className="w-7 h-7 text-white drop-shadow-md" />
+                      </div>
+
+                      {/* Count Badge */}
+                      {count > 0 && (
+                        <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>{cat.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </TooltipProvider>
+        </div>
+
+        {/* Active Category Content */}
+        {activeConfig && (
+          <Card className="animate-fade-in overflow-hidden">
+            <div 
+              className="h-2 w-full"
+              style={{ background: `linear-gradient(to right, ${activeConfig.gradient.includes('amber') ? '#f59e0b' : activeConfig.gradient.includes('blue') ? '#3b82f6' : activeConfig.gradient.includes('emerald') ? '#10b981' : '#f43f5e'}, transparent)` }}
+            />
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <AlertTriangle className="h-5 w-5 text-health-warning" />
-                Αλλεργίες
+                <activeConfig.icon className={`h-5 w-5`} />
+                {activeConfig.label}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Προσθήκη αλλεργίας (π.χ., Πενικιλίνη, Φιστίκια)"
-                  value={newAllergy}
-                  onChange={(e) => setNewAllergy(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('allergies', newAllergy, setNewAllergy)}
+                  placeholder={activeConfig.placeholder}
+                  value={inputStates[activeConfig.field].value}
+                  onChange={(e) => inputStates[activeConfig.field].setter(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}
                 />
-                <Button onClick={() => addItem('allergies', newAllergy, setNewAllergy)}>
+                <Button onClick={() => addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}>
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {(record.allergies || []).map((allergy, i) => (
-                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1">
-                    {allergy}
+                {((record[activeConfig.field] as string[] | null) || []).map((item, i) => (
+                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1.5 text-sm">
+                    {item}
                     <button
-                      onClick={() => removeItem('allergies', allergy)}
+                      onClick={() => removeItem(activeConfig.field, item)}
                       className="ml-2 hover:bg-destructive/20 rounded-full p-1"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
                 ))}
-                {(!record.allergies || record.allergies.length === 0) && (
-                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί αλλεργίες</p>
+                {getItemCount(activeConfig.field) === 0 && (
+                  <p className="text-sm text-muted-foreground">{activeConfig.emptyText}</p>
                 )}
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
-        <TabsContent value="conditions" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Stethoscope className="h-5 w-5 text-primary" />
-                Χρόνιες Παθήσεις
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Προσθήκη πάθησης (π.χ., Διαβήτης, Υπέρταση)"
-                  value={newCondition}
-                  onChange={(e) => setNewCondition(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('chronic_conditions', newCondition, setNewCondition)}
-                />
-                <Button onClick={() => addItem('chronic_conditions', newCondition, setNewCondition)}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {(record.chronic_conditions || []).map((condition, i) => (
-                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1">
-                    {condition}
-                    <button
-                      onClick={() => removeItem('chronic_conditions', condition)}
-                      className="ml-2 hover:bg-destructive/20 rounded-full p-1"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-                {(!record.chronic_conditions || record.chronic_conditions.length === 0) && (
-                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί παθήσεις</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="medications" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Pill className="h-5 w-5 text-health-info" />
-                Τρέχοντα Φάρμακα
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Προσθήκη φαρμάκου (π.χ., Μετφορμίνη 500mg)"
-                  value={newMedication}
-                  onChange={(e) => setNewMedication(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('current_medications', newMedication, setNewMedication)}
-                />
-                <Button onClick={() => addItem('current_medications', newMedication, setNewMedication)}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {(record.current_medications || []).map((medication, i) => (
-                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1">
-                    {medication}
-                    <button
-                      onClick={() => removeItem('current_medications', medication)}
-                      className="ml-2 hover:bg-destructive/20 rounded-full p-1"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-                {(!record.current_medications || record.current_medications.length === 0) && (
-                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί φάρμακα</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="surgeries" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Scissors className="h-5 w-5 text-health-danger" />
-                Προηγούμενα Χειρουργεία
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Προσθήκη χειρουργείου (π.χ., Σκωληκοειδεκτομή 2020)"
-                  value={newSurgery}
-                  onChange={(e) => setNewSurgery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem('past_surgeries', newSurgery, setNewSurgery)}
-                />
-                <Button onClick={() => addItem('past_surgeries', newSurgery, setNewSurgery)}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {(record.past_surgeries || []).map((surgery, i) => (
-                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1">
-                    {surgery}
-                    <button
-                      onClick={() => removeItem('past_surgeries', surgery)}
-                      className="ml-2 hover:bg-destructive/20 rounded-full p-1"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-                {(!record.past_surgeries || record.past_surgeries.length === 0) && (
-                  <p className="text-sm text-muted-foreground">Δεν έχουν καταγραφεί χειρουργεία</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Notes */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5" />
-            Επιπλέον Σημειώσεις
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            placeholder="Προσθέστε επιπλέον ιατρικές πληροφορίες ή σημειώσεις..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={4}
-          />
-        </CardContent>
+        {/* Notes Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <FileText className="h-5 w-5" />
+              Επιπλέον Σημειώσεις
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea
+              placeholder="Προσθέστε επιπλέον ιατρικές πληροφορίες ή σημειώσεις..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+            />
+          </CardContent>
         </Card>
       </div>
     </div>
