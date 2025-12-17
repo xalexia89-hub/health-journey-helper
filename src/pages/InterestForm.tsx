@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ export default function InterestForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [signatureCount, setSignatureCount] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -25,6 +26,16 @@ export default function InterestForm() {
     city: "",
     reason: "",
   });
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from("interest_expressions")
+        .select("*", { count: "exact", head: true });
+      setSignatureCount(count || 0);
+    };
+    fetchCount();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,9 +189,11 @@ export default function InterestForm() {
             <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
               <p className="text-sm text-muted-foreground mb-2">Μέχρι στιγμής έχουν υπογράψει</p>
               <p className="text-4xl font-bold text-foreground">
-                <span className="text-gradient-neon">0+</span> επαγγελματίες
+                <span className="text-gradient-neon">{signatureCount !== null ? signatureCount : "..."}</span> επαγγελματίες
               </p>
-              <p className="text-sm text-muted-foreground mt-1">Γίνετε ο πρώτος!</p>
+              {signatureCount === 0 && (
+                <p className="text-sm text-muted-foreground mt-1">Γίνετε ο πρώτος!</p>
+              )}
             </div>
           </div>
 
