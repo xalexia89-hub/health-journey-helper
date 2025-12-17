@@ -6,174 +6,174 @@
 
 @layer base {
   :root {
-    /* Dark Emerald Luxury Theme */
-    --background: 152 40% 4%;
-    --foreground: 145 25% 85%;
+    /* Deep Space Theme */
+    --background: 240 30% 4%;
+    --foreground: 220 30% 88%;
 
-    --card: 150 35% 6%;
-    --card-foreground: 145 25% 85%;
+    --card: 235 35% 7%;
+    --card-foreground: 220 30% 88%;
 
-    --popover: 150 35% 6%;
-    --popover-foreground: 145 25% 85%;
+    --popover: 235 35% 7%;
+    --popover-foreground: 220 30% 88%;
 
-    /* Primary - Deep Emerald */
-    --primary: 152 60% 28%;
-    --primary-foreground: 145 30% 92%;
+    /* Primary - Cosmic Purple */
+    --primary: 265 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary */
-    --secondary: 150 30% 10%;
-    --secondary-foreground: 145 25% 80%;
+    --secondary: 235 30% 12%;
+    --secondary-foreground: 220 30% 85%;
 
     /* Muted */
-    --muted: 150 25% 12%;
-    --muted-foreground: 145 15% 50%;
+    --muted: 235 25% 14%;
+    --muted-foreground: 220 20% 55%;
 
-    /* Accent - Rich Emerald */
-    --accent: 155 55% 35%;
-    --accent-foreground: 145 30% 95%;
+    /* Accent - Stellar Blue */
+    --accent: 210 90% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 60% 45%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* Warning */
-    --warning: 40 70% 45%;
-    --warning-foreground: 40 100% 95%;
+    --warning: 35 90% 55%;
+    --warning-foreground: 35 100% 95%;
 
-    /* Success */
-    --success: 152 60% 32%;
-    --success-foreground: 145 30% 95%;
+    /* Success - Nebula Green */
+    --success: 165 70% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 150 30% 14%;
-    --input: 150 30% 10%;
-    --ring: 152 55% 30%;
+    --border: 235 30% 16%;
+    --input: 235 30% 12%;
+    --ring: 265 70% 55%;
 
     --radius: 0.75rem;
 
-    /* Sidebar - Deep Emerald */
-    --sidebar-background: 150 40% 3%;
-    --sidebar-foreground: 145 25% 85%;
-    --sidebar-primary: 152 55% 32%;
-    --sidebar-primary-foreground: 145 30% 95%;
-    --sidebar-accent: 155 50% 28%;
-    --sidebar-accent-foreground: 145 30% 92%;
-    --sidebar-border: 150 30% 12%;
-    --sidebar-ring: 152 55% 30%;
+    /* Sidebar - Deep Space */
+    --sidebar-background: 240 35% 3%;
+    --sidebar-foreground: 220 30% 88%;
+    --sidebar-primary: 265 70% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 80% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 235 30% 12%;
+    --sidebar-ring: 265 70% 55%;
 
-    /* Luxury Emerald Neon */
-    --neon-cyan: 160 50% 40%;
-    --neon-purple: 155 45% 38%;
-    --neon-pink: 150 50% 35%;
-    --neon-blue: 165 55% 38%;
-    --neon-green: 152 60% 35%;
-    --neon-orange: 158 55% 38%;
-    --dark-surface: 150 40% 4%;
-    --dark-surface-light: 150 30% 8%;
+    /* Cosmic Colors */
+    --neon-cyan: 195 100% 60%;
+    --neon-purple: 280 80% 60%;
+    --neon-pink: 320 80% 60%;
+    --neon-blue: 210 100% 60%;
+    --neon-green: 165 80% 50%;
+    --neon-orange: 25 100% 55%;
+    --dark-surface: 240 30% 5%;
+    --dark-surface-light: 235 28% 10%;
 
-    /* Body area colors */
-    --body-selected: 152 55% 35%;
-    --body-hover: 155 50% 40%;
-    --body-default: 150 20% 18%;
+    /* Body area colors - Cosmic */
+    --body-selected: 265 70% 55%;
+    --body-hover: 210 90% 60%;
+    --body-default: 235 25% 22%;
 
     /* Urgency levels */
-    --urgency-low: 152 55% 32%;
-    --urgency-medium: 40 65% 45%;
-    --urgency-high: 0 60% 45%;
-    --urgency-emergency: 0 70% 50%;
+    --urgency-low: 165 70% 45%;
+    --urgency-medium: 35 90% 55%;
+    --urgency-high: 0 70% 50%;
+    --urgency-emergency: 0 80% 55%;
 
-    /* Health Colors - Muted Luxury */
-    --health-coral: 350 55% 50%;
-    --health-coral-light: 350 30% 12%;
-    --health-mint: 152 55% 35%;
-    --health-mint-light: 152 30% 12%;
-    --health-blue: 165 50% 38%;
-    --health-blue-light: 165 30% 12%;
-    --health-lavender: 158 45% 35%;
-    --health-lavender-light: 158 25% 12%;
-    --health-warning: 40 65% 45%;
-    --health-success: 152 55% 32%;
-    --health-danger: 0 60% 45%;
-    --health-info: 165 50% 38%;
+    /* Health Colors - Cosmic */
+    --health-coral: 350 70% 55%;
+    --health-coral-light: 350 35% 15%;
+    --health-mint: 165 65% 45%;
+    --health-mint-light: 165 35% 14%;
+    --health-blue: 210 85% 55%;
+    --health-blue-light: 210 40% 16%;
+    --health-lavender: 280 60% 55%;
+    --health-lavender-light: 280 30% 15%;
+    --health-warning: 35 90% 55%;
+    --health-success: 165 70% 45%;
+    --health-danger: 0 70% 50%;
+    --health-info: 210 85% 55%;
   }
 
   .dark {
-    /* Dark Emerald Luxury Theme - Dark Mode */
-    --background: 152 40% 4%;
-    --foreground: 145 25% 85%;
+    /* Deep Space Theme - Dark Mode */
+    --background: 240 30% 4%;
+    --foreground: 220 30% 88%;
 
-    --card: 150 35% 6%;
-    --card-foreground: 145 25% 85%;
+    --card: 235 35% 7%;
+    --card-foreground: 220 30% 88%;
 
-    --popover: 150 35% 6%;
-    --popover-foreground: 145 25% 85%;
+    --popover: 235 35% 7%;
+    --popover-foreground: 220 30% 88%;
 
-    /* Primary - Deep Emerald */
-    --primary: 152 60% 28%;
-    --primary-foreground: 145 30% 92%;
+    /* Primary - Cosmic Purple */
+    --primary: 265 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary */
-    --secondary: 150 30% 10%;
-    --secondary-foreground: 145 25% 80%;
+    --secondary: 235 30% 12%;
+    --secondary-foreground: 220 30% 85%;
 
     /* Muted */
-    --muted: 150 25% 12%;
-    --muted-foreground: 145 15% 50%;
+    --muted: 235 25% 14%;
+    --muted-foreground: 220 20% 55%;
 
-    /* Accent - Rich Emerald */
-    --accent: 155 55% 35%;
-    --accent-foreground: 145 30% 95%;
+    /* Accent - Stellar Blue */
+    --accent: 210 90% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 60% 45%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --warning: 40 70% 45%;
-    --warning-foreground: 40 100% 95%;
+    --warning: 35 90% 55%;
+    --warning-foreground: 35 100% 95%;
 
-    --success: 152 60% 32%;
-    --success-foreground: 145 30% 95%;
+    --success: 165 70% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 150 30% 14%;
-    --input: 150 30% 10%;
-    --ring: 152 55% 30%;
+    --border: 235 30% 16%;
+    --input: 235 30% 12%;
+    --ring: 265 70% 55%;
 
-    --sidebar-background: 150 40% 3%;
-    --sidebar-foreground: 145 25% 85%;
-    --sidebar-primary: 152 55% 32%;
-    --sidebar-primary-foreground: 145 30% 95%;
-    --sidebar-accent: 155 50% 28%;
-    --sidebar-accent-foreground: 145 30% 92%;
-    --sidebar-border: 150 30% 12%;
-    --sidebar-ring: 152 55% 30%;
+    --sidebar-background: 240 35% 3%;
+    --sidebar-foreground: 220 30% 88%;
+    --sidebar-primary: 265 70% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 80% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 235 30% 12%;
+    --sidebar-ring: 265 70% 55%;
 
-    --neon-cyan: 160 50% 40%;
-    --neon-purple: 155 45% 38%;
-    --neon-pink: 150 50% 35%;
-    --neon-blue: 165 55% 38%;
-    --neon-green: 152 60% 35%;
-    --neon-orange: 158 55% 38%;
-    --dark-surface: 150 40% 4%;
-    --dark-surface-light: 150 30% 8%;
+    --neon-cyan: 195 100% 60%;
+    --neon-purple: 280 80% 60%;
+    --neon-pink: 320 80% 60%;
+    --neon-blue: 210 100% 60%;
+    --neon-green: 165 80% 50%;
+    --neon-orange: 25 100% 55%;
+    --dark-surface: 240 30% 5%;
+    --dark-surface-light: 235 28% 10%;
 
-    --body-selected: 152 55% 35%;
-    --body-hover: 155 50% 40%;
-    --body-default: 150 20% 18%;
+    --body-selected: 265 70% 55%;
+    --body-hover: 210 90% 60%;
+    --body-default: 235 25% 22%;
 
-    --urgency-low: 152 55% 32%;
-    --urgency-medium: 40 65% 45%;
-    --urgency-high: 0 60% 45%;
-    --urgency-emergency: 0 70% 50%;
+    --urgency-low: 165 70% 45%;
+    --urgency-medium: 35 90% 55%;
+    --urgency-high: 0 70% 50%;
+    --urgency-emergency: 0 80% 55%;
 
-    --health-coral: 350 55% 50%;
-    --health-coral-light: 350 30% 12%;
-    --health-mint: 152 55% 35%;
-    --health-mint-light: 152 30% 12%;
-    --health-blue: 165 50% 38%;
-    --health-blue-light: 165 30% 12%;
-    --health-lavender: 158 45% 35%;
-    --health-lavender-light: 158 25% 12%;
-    --health-warning: 40 65% 45%;
-    --health-success: 152 55% 32%;
-    --health-danger: 0 60% 45%;
-    --health-info: 165 50% 38%;
+    --health-coral: 350 70% 55%;
+    --health-coral-light: 350 35% 15%;
+    --health-mint: 165 65% 45%;
+    --health-mint-light: 165 35% 14%;
+    --health-blue: 210 85% 55%;
+    --health-blue-light: 210 40% 16%;
+    --health-lavender: 280 60% 55%;
+    --health-lavender-light: 280 30% 15%;
+    --health-warning: 35 90% 55%;
+    --health-success: 165 70% 45%;
+    --health-danger: 0 70% 50%;
+    --health-info: 210 85% 55%;
   }
 }
 
