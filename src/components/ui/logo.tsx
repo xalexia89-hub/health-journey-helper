@@ -45,7 +45,7 @@ export function Logo({ className, size = "md", showText = true, linkTo = "/setti
           "drop-shadow-[0_0_10px_hsl(var(--primary)/0.5)]",
           "animate-[glowPulse_2s_ease-in-out_infinite]"
         )}>
-          MEDI<span className="text-accent drop-shadow-[0_0_8px_hsl(var(--accent))]">THOS</span>
+          MEDI<span className="text-primary drop-shadow-[0_0_8px_hsl(var(--primary))]">THOS</span>
         </span>
       )}
     </>
