@@ -2,9 +2,9 @@ import { Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { Logo } from "@/components/ui/logo";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import medithoLogo from "@/assets/medithos-logo-new.png";
 import {
   Tooltip,
   TooltipContent,
@@ -37,9 +37,17 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
           )}
           {title ? (
             <h1 className="text-lg font-semibold">{title}</h1>
-          ) : (
-            <Logo size="sm" />
-          )}
+          ) : null}
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <Link to="/settings">
+            <img 
+              src={medithoLogo} 
+              alt="Medithos Logo" 
+              className="h-10 w-auto object-contain hover:scale-105 transition-transform"
+            />
+          </Link>
         </div>
         
         <div className="flex items-center gap-2">
