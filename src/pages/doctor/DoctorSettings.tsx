@@ -19,7 +19,11 @@ import {
   Phone,
   MapPin,
   X,
-  Plus
+  Plus,
+  ImagePlus,
+  Trash2,
+  Loader2,
+  Camera
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -50,6 +54,13 @@ interface ProviderProfile {
   avatar_url: string | null;
 }
 
+interface GalleryImage {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  display_order: number;
+}
+
 const DoctorSettings = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -57,12 +68,18 @@ const DoctorSettings = () => {
   const [provider, setProvider] = useState<ProviderProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   
   const [newService, setNewService] = useState('');
   const [newQualification, setNewQualification] = useState('');
 
   useEffect(() => {
-    if (user) fetchProvider();
+    if (user) {
+      fetchProvider();
+      fetchGallery();
+    }
   }, [user]);
 
   const fetchProvider = async () => {
@@ -74,6 +91,124 @@ const DoctorSettings = () => {
 
     if (data) setProvider(data);
     setLoading(false);
+  };
+
+  const fetchGallery = async () => {
+    const { data: providerData } = await supabase
+      .from('providers')
+      .select('id')
+      .eq('user_id', user?.id)
+      .maybeSingle();
+
+    if (providerData) {
+      const { data } = await supabase
+        .from('provider_gallery')
+        .select('*')
+        .eq('provider_id', providerData.id)
+        .order('display_order', { ascending: true });
+
+      if (data) setGalleryImages(data);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !provider || !user) return;
+
+    setUploadingAvatar(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar_${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      const { error: updateError } = await supabase
+        .from('providers')
+        .update({ avatar_url: publicUrl })
+        .eq('id', provider.id);
+
+      if (updateError) throw updateError;
+
+      setProvider({ ...provider, avatar_url: publicUrl });
+      toast({ title: 'Επιτυχία', description: 'Η φωτογραφία προφίλ ενημερώθηκε' });
+    } catch (error: any) {
+      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !provider || !user) return;
+
+    if (galleryImages.length >= 5) {
+      toast({
+        title: 'Όριο φωτογραφιών',
+        description: 'Μπορείτε να ανεβάσετε μέχρι 5 φωτογραφίες',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/gallery_${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('provider-gallery')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('provider-gallery')
+        .getPublicUrl(fileName);
+
+      const { data, error: insertError } = await supabase
+        .from('provider_gallery')
+        .insert({
+          provider_id: provider.id,
+          image_url: publicUrl,
+          display_order: galleryImages.length
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      setGalleryImages([...galleryImages, data]);
+      toast({ title: 'Επιτυχία', description: 'Η φωτογραφία προστέθηκε στη gallery' });
+    } catch (error: any) {
+      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleDeleteGalleryImage = async (imageId: string, imageUrl: string) => {
+    try {
+      const { error } = await supabase
+        .from('provider_gallery')
+        .delete()
+        .eq('id', imageId);
+
+      if (error) throw error;
+
+      setGalleryImages(galleryImages.filter(img => img.id !== imageId));
+      toast({ title: 'Επιτυχία', description: 'Η φωτογραφία διαγράφηκε' });
+    } catch (error: any) {
+      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    }
   };
 
   const handleSave = async () => {
@@ -99,14 +234,14 @@ const DoctorSettings = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update profile',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ενημέρωσης προφίλ',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Profile Updated',
-        description: 'Your provider profile has been saved'
+        title: 'Επιτυχία',
+        description: 'Το προφίλ σας αποθηκεύτηκε'
       });
     }
     setSaving(false);
@@ -162,7 +297,7 @@ const DoctorSettings = () => {
   if (!provider) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Provider profile not found</p>
+        <p className="text-muted-foreground">Δεν βρέθηκε προφίλ παρόχου</p>
       </div>
     );
   }
@@ -171,29 +306,97 @@ const DoctorSettings = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Settings</h1>
-          <p className="text-muted-foreground">Manage your provider profile</p>
+          <h1 className="text-2xl font-bold">Ρυθμίσεις</h1>
+          <p className="text-muted-foreground">Διαχειριστείτε το προφίλ σας</p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? 'Αποθήκευση...' : 'Αποθήκευση'}
         </Button>
       </div>
 
-      {/* Profile Header */}
+      {/* Profile Header with Avatar Upload */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={provider.avatar_url || undefined} />
-              <AvatarFallback className="text-xl bg-primary/10 text-primary">
-                {provider.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative group">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={provider.avatar_url || undefined} />
+                <AvatarFallback className="text-xl bg-primary/10 text-primary">
+                  {provider.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                {uploadingAvatar ? (
+                  <Loader2 className="h-6 w-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                />
+              </label>
+            </div>
             <div>
               <h2 className="text-xl font-semibold">{provider.name}</h2>
               <p className="text-muted-foreground">{provider.specialty}</p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Gallery - 5 Promotional Photos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ImagePlus className="h-5 w-5" />
+            Διαφημιστικές Φωτογραφίες
+          </CardTitle>
+          <CardDescription>
+            Ανεβάστε μέχρι 5 φωτογραφίες του ιατρείου σας ({galleryImages.length}/5)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {galleryImages.map((image) => (
+              <div key={image.id} className="relative group aspect-square rounded-lg overflow-hidden border">
+                <img
+                  src={image.image_url}
+                  alt="Gallery"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  onClick={() => handleDeleteGalleryImage(image.id, image.image_url)}
+                  className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            
+            {galleryImages.length < 5 && (
+              <label className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors">
+                {uploadingImage ? (
+                  <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="h-8 w-8 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground mt-1">Προσθήκη</span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleGalleryUpload}
+                  disabled={uploadingImage}
+                />
+              </label>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -203,13 +406,13 @@ const DoctorSettings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Basic Information
+            Βασικές Πληροφορίες
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Name / Practice Name</Label>
+              <Label htmlFor="name">Όνομα / Επωνυμία</Label>
               <Input
                 id="name"
                 value={provider.name}
@@ -217,23 +420,23 @@ const DoctorSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="specialty">Specialty</Label>
+              <Label htmlFor="specialty">Ειδικότητα</Label>
               <Input
                 id="specialty"
                 value={provider.specialty || ''}
                 onChange={(e) => setProvider({ ...provider, specialty: e.target.value })}
-                placeholder="e.g., General Medicine, Cardiology"
+                placeholder="π.χ. Γενική Ιατρική, Καρδιολογία"
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Βιογραφικό / Περιγραφή Ιατρείου</Label>
             <Textarea
               id="description"
               value={provider.description || ''}
               onChange={(e) => setProvider({ ...provider, description: e.target.value })}
-              placeholder="Tell patients about yourself and your practice..."
+              placeholder="Περιγράψτε τον εαυτό σας και το ιατρείο σας στους ασθενείς..."
               rows={4}
             />
           </div>
@@ -245,7 +448,7 @@ const DoctorSettings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building className="h-5 w-5" />
-            Contact & Location
+            Επικοινωνία & Τοποθεσία
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -264,7 +467,7 @@ const DoctorSettings = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Τηλέφωνο</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -278,7 +481,7 @@ const DoctorSettings = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">Διεύθυνση</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -291,7 +494,7 @@ const DoctorSettings = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
+            <Label htmlFor="city">Πόλη</Label>
             <Input
               id="city"
               value={provider.city || ''}
@@ -306,13 +509,13 @@ const DoctorSettings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            Pricing
+            Τιμολόγηση
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="priceMin">Minimum Price (€)</Label>
+              <Label htmlFor="priceMin">Ελάχιστη Τιμή (€)</Label>
               <Input
                 id="priceMin"
                 type="number"
@@ -322,7 +525,7 @@ const DoctorSettings = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="priceMax">Maximum Price (€)</Label>
+              <Label htmlFor="priceMax">Μέγιστη Τιμή (€)</Label>
               <Input
                 id="priceMax"
                 type="number"
@@ -338,15 +541,15 @@ const DoctorSettings = () => {
       {/* Services */}
       <Card>
         <CardHeader>
-          <CardTitle>Services Offered</CardTitle>
-          <CardDescription>List the services you provide</CardDescription>
+          <CardTitle>Υπηρεσίες</CardTitle>
+          <CardDescription>Οι υπηρεσίες που προσφέρετε</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
               value={newService}
               onChange={(e) => setNewService(e.target.value)}
-              placeholder="Add a service..."
+              placeholder="Προσθήκη υπηρεσίας..."
               onKeyPress={(e) => e.key === 'Enter' && addService()}
             />
             <Button onClick={addService}>
@@ -372,15 +575,15 @@ const DoctorSettings = () => {
       {/* Qualifications */}
       <Card>
         <CardHeader>
-          <CardTitle>Qualifications & Certifications</CardTitle>
-          <CardDescription>Add your medical qualifications</CardDescription>
+          <CardTitle>Προσόντα & Πιστοποιήσεις</CardTitle>
+          <CardDescription>Τα ιατρικά σας προσόντα</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
               value={newQualification}
               onChange={(e) => setNewQualification(e.target.value)}
-              placeholder="Add a qualification..."
+              placeholder="Προσθήκη προσόντος..."
               onKeyPress={(e) => e.key === 'Enter' && addQualification()}
             />
             <Button onClick={addQualification}>
@@ -408,19 +611,19 @@ const DoctorSettings = () => {
         <AlertDialogTrigger asChild>
           <Button variant="destructive" className="w-full">
             <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            Αποσύνδεση
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Sign Out</AlertDialogTitle>
+            <AlertDialogTitle>Αποσύνδεση</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to sign out?
+              Είστε σίγουροι ότι θέλετε να αποσυνδεθείτε;
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSignOut}>Sign Out</AlertDialogAction>
+            <AlertDialogCancel>Άκυρο</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut}>Αποσύνδεση</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

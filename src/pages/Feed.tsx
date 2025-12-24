@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, MapPin, Stethoscope, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,132 +9,52 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { StoryViewer } from "@/components/feed/StoryViewer";
 
-// Mock data for stories
-const mockStories = [
-  {
-    id: "1",
-    name: "Δρ. Παπαδόπουλος",
-    avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop",
-    hasNewStory: true,
-    isOwn: false,
-    type: "doctor" as const,
-    specialty: "Καρδιολόγος",
-  },
-  {
-    id: "2",
-    name: "Κλινική Υγεία",
-    avatarUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=150&h=150&fit=crop",
-    hasNewStory: true,
-    isOwn: false,
-    type: "clinic" as const,
-  },
-  {
-    id: "3",
-    name: "Δρ. Αντωνίου",
-    avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop",
-    hasNewStory: true,
-    isOwn: false,
-    type: "doctor" as const,
-    specialty: "Δερματολόγος",
-  },
-  {
-    id: "4",
-    name: "MedCenter",
-    avatarUrl: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=150&h=150&fit=crop",
-    hasNewStory: false,
-    isOwn: false,
-    type: "clinic" as const,
-  },
-  {
-    id: "5",
-    name: "Δρ. Γεωργίου",
-    avatarUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop",
-    hasNewStory: true,
-    isOwn: false,
-    type: "doctor" as const,
-    specialty: "Ορθοπεδικός",
-  },
-  {
-    id: "6",
-    name: "HealthCare Plus",
-    avatarUrl: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=150&h=150&fit=crop",
-    hasNewStory: true,
-    isOwn: false,
-    type: "clinic" as const,
-  },
-];
+interface Provider {
+  id: string;
+  name: string;
+  specialty: string | null;
+  description: string | null;
+  avatar_url: string | null;
+  city: string | null;
+  type: string;
+  is_verified: boolean;
+  gallery: {
+    id: string;
+    image_url: string;
+  }[];
+}
 
-// Mock data for posts
-const mockPosts = [
-  {
-    id: "1",
-    author: {
-      name: "Δρ. Παπαδόπουλος",
-      avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop",
-      type: "doctor" as const,
-      specialty: "Καρδιολόγος",
-      isVerified: true,
-    },
-    content: "Σήμερα γιορτάζουμε την Παγκόσμια Ημέρα Καρδιάς! 🫀 Μην ξεχνάτε τον τακτικό καρδιολογικό έλεγχο. Η πρόληψη σώζει ζωές!",
-    imageUrl: "https://images.unsplash.com/photo-1628348070889-cb656235b4eb?w=800&h=600&fit=crop",
-    likes: 234,
-    comments: 45,
-    timeAgo: "2 ώρες",
-    isLiked: false,
-    isSaved: false,
-  },
-  {
-    id: "2",
-    author: {
-      name: "Κλινική Υγεία",
-      avatarUrl: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=150&h=150&fit=crop",
-      type: "clinic" as const,
-      isVerified: true,
-    },
-    content: "📢 Νέα υπηρεσία! Τώρα προσφέρουμε τηλεϊατρική για όλες τις ειδικότητες. Κλείστε ραντεβού online και συνδεθείτε με τους γιατρούς μας από το σπίτι σας.",
-    imageUrl: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=600&fit=crop",
-    likes: 567,
-    comments: 89,
-    timeAgo: "5 ώρες",
-    isLiked: true,
-    isSaved: true,
-  },
-  {
-    id: "3",
-    author: {
-      name: "Δρ. Αντωνίου",
-      avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop",
-      type: "doctor" as const,
-      specialty: "Δερματολόγος",
-      isVerified: true,
-    },
-    content: "🌞 Συμβουλές για την προστασία του δέρματος το καλοκαίρι:\n\n1. Χρησιμοποιείτε αντηλιακό SPF 50+\n2. Αποφύγετε τον ήλιο 12:00-16:00\n3. Φοράτε καπέλο και γυαλιά ηλίου\n\nΓια περισσότερες πληροφορίες, κλείστε ραντεβού!",
-    likes: 892,
-    comments: 156,
-    timeAgo: "1 ημέρα",
-    isLiked: false,
-    isSaved: false,
-  },
-  {
-    id: "4",
-    author: {
-      name: "MedCenter",
-      avatarUrl: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=150&h=150&fit=crop",
-      type: "clinic" as const,
-      isVerified: false,
-    },
-    content: "🏥 Νέο τμήμα αθλητιατρικής! Εξειδικευμένη φροντίδα για αθλητές όλων των επιπέδων. Προγράμματα αποκατάστασης και πρόληψης τραυματισμών.",
-    imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-    likes: 123,
-    comments: 23,
-    timeAgo: "2 ημέρες",
-    isLiked: false,
-    isSaved: false,
-  },
-];
+interface Story {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  hasNewStory: boolean;
+  isOwn: boolean;
+  type: "doctor" | "clinic";
+  specialty?: string;
+}
+
+interface Post {
+  id: string;
+  author: {
+    name: string;
+    avatarUrl: string;
+    type: "doctor" | "clinic";
+    specialty?: string;
+    isVerified: boolean;
+    city?: string;
+  };
+  content: string;
+  imageUrl?: string;
+  likes: number;
+  comments: number;
+  timeAgo: string;
+  isLiked: boolean;
+  isSaved: boolean;
+}
 
 interface StoryItemProps {
-  story: (typeof mockStories)[0];
+  story: Story;
   onClick: () => void;
 }
 
@@ -167,7 +88,7 @@ const StoryItem = ({ story, onClick }: StoryItemProps) => {
 };
 
 interface PostCardProps {
-  post: (typeof mockPosts)[0];
+  post: Post;
   onLike: (id: string) => void;
   onSave: (id: string) => void;
 }
@@ -203,13 +124,17 @@ const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             {post.author.specialty && (
-              <span>{post.author.specialty}</span>
+              <span className="flex items-center gap-1">
+                <Stethoscope className="h-3 w-3" />
+                {post.author.specialty}
+              </span>
             )}
-            {post.author.type === "clinic" && (
-              <span>Κλινική</span>
+            {post.author.city && (
+              <span className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {post.author.city}
+              </span>
             )}
-            <span>•</span>
-            <span>{post.timeAgo}</span>
           </div>
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
@@ -265,9 +190,13 @@ const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
       </CardContent>
       
       <CardFooter className="p-3 pt-0">
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-          Δείτε όλα τα {post.comments} σχόλια
-        </button>
+        <Button 
+          variant="link" 
+          className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
+          onClick={() => navigate(`/providers/${post.id}`)}
+        >
+          Προβολή προφίλ
+        </Button>
       </CardFooter>
     </Card>
   );
@@ -275,8 +204,76 @@ const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
 
 const Feed = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState(mockPosts);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchProviders();
+  }, []);
+
+  const fetchProviders = async () => {
+    const { data, error } = await supabase
+      .from('providers')
+      .select(`
+        id,
+        name,
+        specialty,
+        description,
+        avatar_url,
+        city,
+        type,
+        is_verified,
+        gallery:provider_gallery (
+          id,
+          image_url
+        )
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setProviders(data as unknown as Provider[]);
+      
+      // Transform providers to stories
+      const transformedStories: Story[] = data.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        avatarUrl: p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random`,
+        hasNewStory: p.gallery && p.gallery.length > 0,
+        isOwn: false,
+        type: p.type === 'clinic' || p.type === 'hospital' ? 'clinic' : 'doctor',
+        specialty: p.specialty || undefined,
+      }));
+      setStories(transformedStories);
+
+      // Transform providers to posts
+      const transformedPosts: Post[] = data
+        .filter((p: any) => p.description || (p.gallery && p.gallery.length > 0))
+        .map((p: any) => ({
+          id: p.id,
+          author: {
+            name: p.name,
+            avatarUrl: p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random`,
+            type: p.type === 'clinic' || p.type === 'hospital' ? 'clinic' : 'doctor',
+            specialty: p.specialty || undefined,
+            isVerified: p.is_verified || false,
+            city: p.city || undefined,
+          },
+          content: p.description || `Καλωσήρθατε στο προφίλ μου! Είμαι ${p.specialty || 'ιατρός'} στην ${p.city || 'περιοχή σας'}.`,
+          imageUrl: p.gallery?.[0]?.image_url || undefined,
+          likes: Math.floor(Math.random() * 500) + 50,
+          comments: Math.floor(Math.random() * 50) + 5,
+          timeAgo: 'Πρόσφατα',
+          isLiked: false,
+          isSaved: false,
+        }));
+      setPosts(transformedPosts);
+    }
+    setLoading(false);
+  };
 
   const handleStoryClick = (storyIndex: number) => {
     setActiveStoryIndex(storyIndex);
@@ -306,12 +303,20 @@ const Feed = () => {
     ));
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Story Viewer Modal */}
       {activeStoryIndex !== null && (
         <StoryViewer
-          stories={mockStories.map(s => ({
+          stories={stories.map(s => ({
             id: s.id,
             name: s.name,
             avatarUrl: s.avatarUrl,
@@ -324,45 +329,62 @@ const Feed = () => {
       )}
 
       {/* Stories Section */}
-      <section className="bg-card border-b border-border">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex gap-4 p-4">
-            {mockStories.map((story, index) => (
-              <StoryItem
-                key={story.id}
-                story={story}
-                onClick={() => handleStoryClick(index)}
-              />
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" className="invisible" />
-        </ScrollArea>
-      </section>
+      {stories.length > 0 && (
+        <section className="bg-card border-b border-border">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex gap-4 p-4">
+              {stories.map((story, index) => (
+                <StoryItem
+                  key={story.id}
+                  story={story}
+                  onClick={() => handleStoryClick(index)}
+                />
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" className="invisible" />
+          </ScrollArea>
+        </section>
+      )}
 
       {/* Posts Section */}
       <section className="max-w-lg mx-auto">
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onLike={handleLike}
-            onSave={handleSave}
-          />
-        ))}
+        {posts.length === 0 ? (
+          <div className="py-12 text-center">
+            <Stethoscope className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Δεν υπάρχουν ακόμα πάροχοι</h3>
+            <p className="text-muted-foreground mb-4">
+              Οι εγγεγραμμένοι γιατροί και κλινικές θα εμφανίζονται εδώ
+            </p>
+            <Button onClick={() => navigate('/providers')}>
+              Εξερεύνηση Παρόχων
+            </Button>
+          </div>
+        ) : (
+          posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              onLike={handleLike}
+              onSave={handleSave}
+            />
+          ))
+        )}
 
         {/* Load more indicator */}
-        <div className="py-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Ακολουθήστε περισσότερους γιατρούς και κλινικές για να δείτε περισσότερα νέα
-          </p>
-          <Button 
-            variant="link" 
-            className="mt-2 text-primary"
-            onClick={() => navigate('/providers')}
-          >
-            Ανακαλύψτε παρόχους υγείας
-          </Button>
-        </div>
+        {posts.length > 0 && (
+          <div className="py-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              Ακολουθήστε περισσότερους γιατρούς και κλινικές για περισσότερα νέα
+            </p>
+            <Button 
+              variant="link" 
+              className="mt-2 text-primary"
+              onClick={() => navigate('/providers')}
+            >
+              Ανακαλύψτε παρόχους υγείας
+            </Button>
+          </div>
+        )}
       </section>
     </div>
   );
