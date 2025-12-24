@@ -5,11 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNavigate, Link } from "react-router-dom";
 import medithoLogo from "@/assets/medithos-logo-new.png";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface HeaderProps {
   title?: string;
@@ -35,12 +30,6 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
           )}
-          {title ? (
-            <h1 className="text-lg font-semibold">{title}</h1>
-          ) : null}
-        </div>
-        
-        <div className="flex items-center gap-3">
           <Link to="/settings">
             <img 
               src={medithoLogo} 
@@ -48,31 +37,21 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
               className="h-10 w-auto object-contain hover:scale-105 transition-transform"
             />
           </Link>
+          {title && (
+            <h1 className="text-lg font-semibold">{title}</h1>
+          )}
         </div>
         
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={() => navigate('/profile')} className="focus:outline-none relative group">
-                <Avatar className="h-9 w-9 border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                    {user?.email?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                {/* Speech bubble indicator */}
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-[200px] text-center">
-              <p className="font-medium">Πού πονάς;</p>
-              <p className="text-xs text-muted-foreground">Θα σου θυμίζω τα φάρμακά σου! 💊</p>
-            </TooltipContent>
-          </Tooltip>
+          <button onClick={() => navigate('/profile')} className="focus:outline-none">
+            <Avatar className="h-9 w-9 border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors">
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                {user?.email?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </button>
         </div>
       </div>
     </header>
