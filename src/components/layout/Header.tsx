@@ -30,12 +30,15 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
           )}
-          <Link to="/settings">
+          <Link to="/settings" className="flex items-center gap-2 hover:scale-105 transition-transform">
             <img 
               src={medithoLogo} 
               alt="Medithos Logo" 
-              className="h-10 w-auto object-contain hover:scale-105 transition-transform"
+              className="h-10 w-auto object-contain"
             />
+            <span className="text-lg font-bold tracking-wider bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              MEDI<span className="text-primary">THOS</span>
+            </span>
           </Link>
           {title && (
             <h1 className="text-lg font-semibold">{title}</h1>
