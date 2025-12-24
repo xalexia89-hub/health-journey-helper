@@ -37,6 +37,7 @@ export default function Providers() {
   const typeFilter = searchParams.get('type');
   const specialtyFilter = searchParams.get('specialty');
   const sortBy = searchParams.get('sort') || 'rating';
+  const intakeId = searchParams.get('intake'); // Symptom intake ID for booking flow
 
   useEffect(() => {
     fetchProviders();
@@ -127,7 +128,7 @@ export default function Providers() {
         ) : filteredProviders.length > 0 ? (
           <div className="space-y-3">
             {filteredProviders.map((provider) => (
-              <Link key={provider.id} to={`/providers/${provider.id}`}>
+              <Link key={provider.id} to={`/providers/${provider.id}${intakeId ? `?intake=${intakeId}` : ''}`}>
                 <ProviderCard
                   id={provider.id}
                   name={provider.name}

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, Clock, MapPin, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, AlertCircle, Heart } from 'lucide-react';
 import { format, parseISO, isPast, isToday } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -24,6 +24,13 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
+interface SymptomIntake {
+  id: string;
+  body_areas: string[];
+  symptoms: string[] | null;
+  pain_level: number | null;
+}
+
 interface Appointment {
   id: string;
   appointment_date: string;
@@ -31,6 +38,7 @@ interface Appointment {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   notes: string | null;
   visit_type: string | null;
+  symptom_intake: SymptomIntake | null;
   provider: {
     id: string;
     name: string;
@@ -76,6 +84,12 @@ const Appointments = () => {
         status,
         notes,
         visit_type,
+        symptom_intake:symptom_intakes (
+          id,
+          body_areas,
+          symptoms,
+          pain_level
+        ),
         provider:providers (
           id,
           name,
@@ -167,6 +181,30 @@ const Appointments = () => {
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   {appointment.provider.address}, {appointment.provider.city}
+                </div>
+              )}
+
+              {/* Symptom summary if exists */}
+              {appointment.symptom_intake && (
+                <div className="flex items-start gap-2 text-sm bg-primary/5 rounded-lg p-2 mt-1">
+                  <Heart className="h-4 w-4 text-primary mt-0.5" />
+                  <div className="flex flex-wrap gap-1">
+                    {appointment.symptom_intake.body_areas?.slice(0, 2).map((area: string) => (
+                      <Badge key={area} variant="outline" className="text-xs capitalize">
+                        {area.replace('_', ' ')}
+                      </Badge>
+                    ))}
+                    {appointment.symptom_intake.symptoms?.slice(0, 2).map((symptom: string) => (
+                      <Badge key={symptom} variant="secondary" className="text-xs">
+                        {symptom}
+                      </Badge>
+                    ))}
+                    {appointment.symptom_intake.pain_level && (
+                      <span className="text-xs text-muted-foreground">
+                        Πόνος: {appointment.symptom_intake.pain_level}/10
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
 
