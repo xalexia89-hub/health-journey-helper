@@ -151,8 +151,8 @@ export default function Dashboard() {
                         <div className="absolute inset-0 rounded-full border-2 border-current opacity-0 hover:opacity-100 animate-ping" />
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" className="bg-background/90 backdrop-blur-sm border-primary/20">
-                      <p className="font-medium">{action.label}</p>
+                    <TooltipContent side="bottom" className="bg-background/90 backdrop-blur-sm border-primary/20 px-2 py-1 text-xs max-w-[100px] text-center">
+                      <p className="font-medium text-xs leading-tight">{action.label}</p>
                     </TooltipContent>
                   </Tooltip>
                 );
