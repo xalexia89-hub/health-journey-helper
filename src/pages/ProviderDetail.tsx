@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout/Header';
@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MapPin, Clock, CheckCircle, Phone, Mail } from 'lucide-react';
+import { Star, MapPin, Clock, CheckCircle, Phone, Mail, AlertCircle } from 'lucide-react';
 import { format, addDays, setHours, setMinutes } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -50,12 +50,16 @@ const typeLabels: Record<string, string> = {
 
 const ProviderDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   
+  const intakeId = searchParams.get('intake'); // Symptom intake ID from flow
+  
   const [provider, setProvider] = useState<Provider | null>(null);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [symptomIntake, setSymptomIntake] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,8 +69,21 @@ const ProviderDetail = () => {
     if (id) {
       fetchProvider();
       fetchAvailability();
+      if (intakeId) {
+        fetchSymptomIntake();
+      }
     }
-  }, [id]);
+  }, [id, intakeId]);
+
+  const fetchSymptomIntake = async () => {
+    const { data } = await supabase
+      .from('symptom_intakes')
+      .select('*')
+      .eq('id', intakeId)
+      .maybeSingle();
+    
+    if (data) setSymptomIntake(data);
+  };
 
   const fetchProvider = async () => {
     const { data } = await supabase
@@ -121,7 +138,9 @@ const ProviderDetail = () => {
         provider_id: provider.id,
         appointment_date: format(selectedDate, 'yyyy-MM-dd'),
         appointment_time: selectedTime,
-        status: 'pending'
+        status: 'pending',
+        symptom_intake_id: intakeId || null,
+        visit_type: symptomIntake?.visit_type || 'medical'
       }).select('id').single();
 
       if (error) throw error;
@@ -273,6 +292,42 @@ const ProviderDetail = () => {
                 <Badge key={i} variant="secondary">{service}</Badge>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Symptom Summary if coming from symptom flow */}
+      {symptomIntake && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-primary" />
+              Τα Συμπτώματά σας
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex flex-wrap gap-1">
+              {symptomIntake.body_areas?.map((area: string) => (
+                <Badge key={area} variant="outline" className="capitalize">
+                  {area.replace('_', ' ')}
+                </Badge>
+              ))}
+            </div>
+            {symptomIntake.symptoms && symptomIntake.symptoms.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {symptomIntake.symptoms.map((symptom: string) => (
+                  <Badge key={symptom} variant="secondary">{symptom}</Badge>
+                ))}
+              </div>
+            )}
+            {symptomIntake.pain_level && (
+              <p className="text-sm text-muted-foreground">
+                Επίπεδο πόνου: <span className="font-medium">{symptomIntake.pain_level}/10</span>
+              </p>
+            )}
+            {symptomIntake.additional_notes && (
+              <p className="text-sm text-muted-foreground italic">"{symptomIntake.additional_notes}"</p>
+            )}
           </CardContent>
         </Card>
       )}

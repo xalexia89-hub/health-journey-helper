@@ -8,15 +8,25 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, Lock, CheckCircle, Calendar, Clock, User } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle, Calendar, Clock, User, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+
+interface SymptomIntake {
+  id: string;
+  body_areas: string[];
+  symptoms: string[] | null;
+  pain_level: number | null;
+  additional_notes: string | null;
+}
 
 interface AppointmentDetails {
   id: string;
   appointment_date: string;
   appointment_time: string;
+  symptom_intake_id: string | null;
   provider: {
     id: string;
     name: string;
@@ -35,6 +45,7 @@ const Payment = () => {
   const { toast } = useToast();
   
   const [appointment, setAppointment] = useState<AppointmentDetails | null>(null);
+  const [symptomIntake, setSymptomIntake] = useState<SymptomIntake | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   
@@ -57,6 +68,7 @@ const Payment = () => {
         id,
         appointment_date,
         appointment_time,
+        symptom_intake_id,
         provider:providers(id, name, specialty, price_min, price_max, avatar_url)
       `)
       .eq('id', appointmentId)
@@ -64,6 +76,19 @@ const Payment = () => {
     
     if (data && !error) {
       setAppointment(data as unknown as AppointmentDetails);
+      
+      // Fetch symptom intake if exists
+      if (data.symptom_intake_id) {
+        const { data: intakeData } = await supabase
+          .from('symptom_intakes')
+          .select('id, body_areas, symptoms, pain_level, additional_notes')
+          .eq('id', data.symptom_intake_id)
+          .maybeSingle();
+        
+        if (intakeData) {
+          setSymptomIntake(intakeData as SymptomIntake);
+        }
+      }
     }
     setLoading(false);
   };
@@ -208,6 +233,35 @@ const Payment = () => {
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span>{appointment.appointment_time}</span>
           </div>
+          <Separator />
+          
+          {/* Symptom Summary if exists */}
+          {symptomIntake && (
+            <div className="space-y-2 pt-2">
+              <p className="text-sm font-medium flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-primary" />
+                Συμπτώματα
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {symptomIntake.body_areas?.map((area: string) => (
+                  <Badge key={area} variant="outline" className="text-xs capitalize">
+                    {area.replace('_', ' ')}
+                  </Badge>
+                ))}
+                {symptomIntake.symptoms?.map((symptom: string) => (
+                  <Badge key={symptom} variant="secondary" className="text-xs">
+                    {symptom}
+                  </Badge>
+                ))}
+              </div>
+              {symptomIntake.pain_level && (
+                <p className="text-xs text-muted-foreground">
+                  Πόνος: {symptomIntake.pain_level}/10
+                </p>
+              )}
+            </div>
+          )}
+          
           <Separator />
           <div className="flex justify-between items-center text-lg font-semibold">
             <span>Σύνολο</span>

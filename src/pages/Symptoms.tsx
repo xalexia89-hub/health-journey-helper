@@ -86,7 +86,8 @@ export default function Symptoms() {
       toast({ title: "Σφάλμα", description: "Αποτυχία αποθήκευσης συμπτωμάτων", variant: "destructive" });
     } else {
       toast({ title: "Τα συμπτώματα καταγράφηκαν", description: "Αναζητούμε τους κατάλληλους παρόχους για εσάς..." });
-      navigate(`/providers?urgency=${urgency}`);
+      // Pass the symptom intake ID to providers page for booking connection
+      navigate(`/providers?urgency=${urgency}&intake=${data.id}`);
     }
   };
 
