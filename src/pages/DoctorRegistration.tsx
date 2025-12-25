@@ -58,6 +58,9 @@ export default function DoctorRegistration() {
   const [step, setStep] = useState(1);
   const [uploadedFiles, setUploadedFiles] = useState<{ type: string; file: File }[]>([]);
   const [providerId, setProviderId] = useState<string | null>(null);
+  const [isLoginMode, setIsLoginMode] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
   const {
     register,
@@ -70,6 +73,52 @@ export default function DoctorRegistration() {
   });
 
   const specialty = watch("specialty");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: loginPassword,
+      });
+
+      if (error) throw error;
+
+      // Check if user has doctor role
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id);
+
+      const hasDoctor = roles?.some(r => r.role === "doctor");
+
+      if (hasDoctor) {
+        toast({
+          title: "Επιτυχής σύνδεση",
+          description: "Καλώς ήρθατε!",
+        });
+        navigate("/doctor/settings");
+      } else {
+        toast({
+          title: "Πρόβλημα πρόσβασης",
+          description: "Δεν έχετε δικαιώματα γιατρού. Παρακαλώ εγγραφείτε ως γιατρός.",
+          variant: "destructive",
+        });
+        await supabase.auth.signOut();
+      }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      toast({
+        title: "Σφάλμα σύνδεσης",
+        description: error.message || "Λάθος email ή κωδικός",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileUpload = (type: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -273,7 +322,7 @@ export default function DoctorRegistration() {
           </div>
         </div>
 
-        {step === 1 && (
+        {step === 1 && !isLoginMode && (
           <Card className="border-border/50 shadow-xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl flex items-center justify-center gap-2">
@@ -437,8 +486,70 @@ export default function DoctorRegistration() {
 
                 <p className="text-center text-sm text-muted-foreground">
                   Έχετε ήδη λογαριασμό;{" "}
-                  <Button variant="link" className="p-0 h-auto" onClick={() => navigate("/auth")}>
+                  <Button variant="link" className="p-0 h-auto" onClick={() => setIsLoginMode(true)}>
                     Σύνδεση
+                  </Button>
+                </p>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 1 && isLoginMode && (
+          <Card className="border-border/50 shadow-xl">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                <Stethoscope className="h-6 w-6 text-primary" />
+                Σύνδεση Ιατρού
+              </CardTitle>
+              <CardDescription>
+                Συνδεθείτε για να συνεχίσετε στο προφίλ σας
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="loginEmail" className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </Label>
+                  <Input
+                    id="loginEmail"
+                    type="email"
+                    placeholder="doctor@email.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="loginPassword">Κωδικός Πρόσβασης</Label>
+                  <Input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Σύνδεση...
+                    </>
+                  ) : (
+                    "Σύνδεση"
+                  )}
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
+                  Δεν έχετε λογαριασμό;{" "}
+                  <Button variant="link" className="p-0 h-auto" onClick={() => setIsLoginMode(false)}>
+                    Εγγραφή
                   </Button>
                 </p>
               </form>
