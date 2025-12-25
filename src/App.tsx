@@ -31,6 +31,7 @@ import PitchDeck from "./pages/PitchDeck";
 import MeshArchitecture from "./pages/MeshArchitecture";
 import InterestForm from "./pages/InterestForm";
 import InterestFormPrint from "./pages/InterestFormPrint";
+import SystemDocumentation from "./pages/SystemDocumentation";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/mesh-architecture" element={<MeshArchitecture />} />
             <Route path="/interest" element={<InterestForm />} />
             <Route path="/interest/print" element={<InterestFormPrint />} />
+            <Route path="/documentation" element={<SystemDocumentation />} />
             
             {/* Protected patient routes */}
             <Route element={<PatientLayout />}>
