@@ -149,11 +149,21 @@ export default function DoctorRegistration() {
       });
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast({
-        title: "Σφάλμα",
-        description: error.message || "Αποτυχία εγγραφής",
-        variant: "destructive",
-      });
+      
+      // Check if user already exists
+      if (error.code === "user_already_exists" || error.message?.includes("already registered")) {
+        toast({
+          title: "Ο χρήστης υπάρχει ήδη",
+          description: "Αυτό το email είναι ήδη εγγεγραμμένο. Παρακαλώ συνδεθείτε.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Σφάλμα",
+          description: error.message || "Αποτυχία εγγραφής",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
