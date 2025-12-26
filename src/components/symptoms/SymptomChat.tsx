@@ -192,14 +192,32 @@ export function SymptomChat() {
   return (
     <div className="flex flex-col h-[60vh] max-h-[500px] bg-card rounded-2xl border border-border overflow-hidden">
       <div className="p-4 border-b border-border bg-secondary/30">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Bot className="h-5 w-5 text-primary" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-primary/10">
+              <Bot className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">Βοηθός Συμπτωμάτων</h3>
+              <p className="text-xs text-muted-foreground">Περιγράψτε τι νιώθετε</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">Βοηθός Συμπτωμάτων</h3>
-            <p className="text-xs text-muted-foreground">Περιγράψτε τι νιώθετε</p>
-          </div>
+          {messages.length > 1 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={saveToMedicalRecord}
+              disabled={savingToRecord}
+              className="gap-2"
+            >
+              {savingToRecord ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">Αποθήκευση</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -250,24 +268,6 @@ export function SymptomChat() {
       </ScrollArea>
 
       <div className="p-4 border-t border-border bg-background/50">
-        {messages.length > 1 && (
-          <div className="mb-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={saveToMedicalRecord}
-              disabled={savingToRecord}
-              className="w-full"
-            >
-              {savingToRecord ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4 mr-2" />
-              )}
-              Αποθήκευση στον Ιατρικό Φάκελο
-            </Button>
-          </div>
-        )}
         <div className="flex gap-2">
           <Input
             value={input}
