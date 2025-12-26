@@ -137,7 +137,7 @@ export function SymptomChat() {
     }
   };
 
-  // Save symptoms to medical record
+  // Save symptoms to symptom_intakes and medical record
   const saveToMedicalRecord = async () => {
     if (!user || messages.length <= 1) return;
 
@@ -148,40 +148,50 @@ export function SymptomChat() {
         .filter(m => m.role === "user")
         .map(m => m.content);
 
-      // Get the conversation summary (last assistant message if it contains a summary)
+      // Get the full conversation as a string
       const conversationSummary = messages
-        .map((m, i) => `${m.role === 'user' ? 'Ασθενής' : 'Βοηθός'}: ${m.content}`)
+        .map((m) => `${m.role === 'user' ? 'Ασθενής' : 'Βοηθός'}: ${m.content}`)
         .join('\n\n');
 
-      // Get current medical record
+      // Create symptom intake record with chat content
+      const { error: intakeError } = await supabase
+        .from('symptom_intakes')
+        .insert({
+          user_id: user.id,
+          body_areas: ['head'], // Default, can be updated based on chat analysis
+          symptoms: userSymptoms,
+          additional_notes: conversationSummary,
+          visit_type: 'medical'
+        });
+
+      if (intakeError) throw intakeError;
+
+      // Also save to medical records notes
       const { data: record } = await supabase
         .from('medical_records')
         .select('notes')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      // Append symptom chat to notes
       const timestamp = new Date().toLocaleString('el-GR');
       const newNote = `\n\n--- Συνομιλία Συμπτωμάτων (${timestamp}) ---\n${conversationSummary}`;
       
       const updatedNotes = (record?.notes || '') + newNote;
 
-      const { error } = await supabase
+      await supabase
         .from('medical_records')
         .update({ notes: updatedNotes })
         .eq('user_id', user.id);
 
-      if (error) throw error;
-
       toast({
         title: "Αποθηκεύτηκε",
-        description: "Τα συμπτώματα αποθηκεύτηκαν στον ιατρικό σας φάκελο",
+        description: "Τα συμπτώματα αποθηκεύτηκαν στον φάκελό σας",
       });
     } catch (error) {
-      console.error("Error saving to medical record:", error);
+      console.error("Error saving symptoms:", error);
       toast({
         title: "Σφάλμα",
-        description: "Αποτυχία αποθήκευσης στον ιατρικό φάκελο",
+        description: "Αποτυχία αποθήκευσης συμπτωμάτων",
         variant: "destructive",
       });
     } finally {
