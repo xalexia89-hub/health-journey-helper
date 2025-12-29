@@ -16,11 +16,11 @@ import {
   X,
   Save,
   FileText,
-  Heart,
   Share2,
   Upload,
   Users
 } from 'lucide-react';
+import medithoLogo from '@/assets/medithos-icon.png';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
 import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
@@ -306,10 +306,10 @@ const MedicalRecords = () => {
           <div className="absolute w-52 h-52 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
           <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
 
-          {/* Center Heart */}
-          <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl shadow-primary/30">
-            <Heart className="w-8 h-8 text-primary-foreground" fill="currentColor" />
-            <div className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+          {/* Center Logo */}
+          <div className="relative z-10 w-20 h-20 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-xl shadow-primary/30 border border-primary/20">
+            <img src={medithoLogo} alt="Medithos" className="w-14 h-14 object-contain" />
+            <div className="absolute inset-0 rounded-full animate-pulse bg-primary/10" />
           </div>
 
           {/* Category Circles */}
