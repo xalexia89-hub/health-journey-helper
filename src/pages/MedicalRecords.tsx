@@ -307,9 +307,12 @@ const MedicalRecords = () => {
           <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
 
           {/* Center Logo */}
-          <div className="relative z-10 w-20 h-20 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-xl shadow-primary/30 border border-primary/20">
-            <img src={medithoLogo} alt="Medithos" className="w-14 h-14 object-contain" />
-            <div className="absolute inset-0 rounded-full animate-pulse bg-primary/10" />
+          <div className="relative z-10 w-24 h-24 rounded-full flex items-center justify-center">
+            <img 
+              src={medithoLogo} 
+              alt="Medithos" 
+              className="w-24 h-24 object-contain mix-blend-screen" 
+            />
           </div>
 
           {/* Category Circles - Radial Layout */}
