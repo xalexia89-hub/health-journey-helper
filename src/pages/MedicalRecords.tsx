@@ -20,7 +20,7 @@ import {
   Upload,
   Users
 } from 'lucide-react';
-import medithoLogo from '@/assets/medithos-icon.png';
+import medithoLogo from '@/assets/medithos-m-logo.png';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
 import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
