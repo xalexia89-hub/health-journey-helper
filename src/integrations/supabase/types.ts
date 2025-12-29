@@ -523,6 +523,7 @@ export type Database = {
           chronic_conditions: string[] | null
           created_at: string | null
           current_medications: string[] | null
+          family_history: Json | null
           id: string
           notes: string | null
           past_surgeries: string[] | null
@@ -534,6 +535,7 @@ export type Database = {
           chronic_conditions?: string[] | null
           created_at?: string | null
           current_medications?: string[] | null
+          family_history?: Json | null
           id?: string
           notes?: string | null
           past_surgeries?: string[] | null
@@ -545,6 +547,7 @@ export type Database = {
           chronic_conditions?: string[] | null
           created_at?: string | null
           current_medications?: string[] | null
+          family_history?: Json | null
           id?: string
           notes?: string | null
           past_surgeries?: string[] | null

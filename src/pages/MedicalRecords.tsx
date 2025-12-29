@@ -18,16 +18,31 @@ import {
   FileText,
   Heart,
   Share2,
-  Upload
+  Upload,
+  Users
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
+import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+interface FamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
+  conditions: string[];
+}
+
+interface FamilyHistory {
+  grandparents: FamilyMember[];
+  parents: FamilyMember[];
+  siblings: FamilyMember[];
+}
 
 interface MedicalRecord {
   id: string;
@@ -36,9 +51,10 @@ interface MedicalRecord {
   current_medications: string[] | null;
   past_surgeries: string[] | null;
   notes: string | null;
+  family_history: FamilyHistory | null;
 }
 
-type CategoryType = 'allergies' | 'conditions' | 'medications' | 'surgeries' | 'notes';
+type CategoryType = 'allergies' | 'conditions' | 'medications' | 'surgeries' | 'familyTree' | 'notes';
 
 const categories = [
   { 
@@ -85,6 +101,17 @@ const categories = [
     shadow: 'shadow-rose-500/30',
     pattern: 'conic-gradient(from 0deg at 50% 50%, rgba(244, 63, 94, 0.15) 0deg, transparent 60deg, rgba(244, 63, 94, 0.15) 120deg, transparent 180deg)',
   },
+  { 
+    id: 'familyTree' as CategoryType, 
+    label: 'Γενεαλογικό', 
+    icon: Users, 
+    field: 'family_history' as keyof MedicalRecord,
+    placeholder: '',
+    emptyText: 'Δεν έχει καταγραφεί οικογενειακό ιστορικό',
+    gradient: 'from-purple-500 to-indigo-600',
+    shadow: 'shadow-purple-500/30',
+    pattern: 'radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.3) 0%, transparent 50%)',
+  },
 ];
 
 const MedicalRecords = () => {
@@ -112,6 +139,12 @@ const MedicalRecords = () => {
     if (user) fetchMedicalRecord();
   }, [user]);
 
+  const defaultFamilyHistory: FamilyHistory = {
+    grandparents: [],
+    parents: [],
+    siblings: [],
+  };
+
   const fetchMedicalRecord = async () => {
     const { data } = await supabase
       .from('medical_records')
@@ -122,7 +155,11 @@ const MedicalRecords = () => {
       .maybeSingle();
 
     if (data) {
-      setRecord(data);
+      const familyHistory = data.family_history as unknown as FamilyHistory | null;
+      setRecord({
+        ...data,
+        family_history: familyHistory || defaultFamilyHistory,
+      });
       setNotes(data.notes || '');
     }
     setLoading(false);
@@ -161,7 +198,8 @@ const MedicalRecords = () => {
         chronic_conditions: record.chronic_conditions,
         current_medications: record.current_medications,
         past_surgeries: record.past_surgeries,
-        notes: notes
+        notes: notes,
+        family_history: JSON.parse(JSON.stringify(record.family_history))
       })
       .eq('id', record.id);
 
@@ -180,8 +218,25 @@ const MedicalRecords = () => {
     setSaving(false);
   };
 
+  const handleFamilyTreeSave = (familyHistory: FamilyHistory) => {
+    if (!record) return;
+    setRecord({
+      ...record,
+      family_history: familyHistory
+    });
+    toast({
+      title: 'Ενημερώθηκε',
+      description: 'Το γενεαλογικό δέντρο ενημερώθηκε. Πατήστε αποθήκευση για να διατηρήσετε τις αλλαγές.'
+    });
+  };
+
   const getItemCount = (field: keyof MedicalRecord) => {
     if (!record) return 0;
+    if (field === 'family_history') {
+      const fh = record.family_history;
+      if (!fh) return 0;
+      return (fh.grandparents?.length || 0) + (fh.parents?.length || 0) + (fh.siblings?.length || 0);
+    }
     const arr = record[field] as string[] | null;
     return arr?.length || 0;
   };
@@ -261,52 +316,82 @@ const MedicalRecords = () => {
           <TooltipProvider>
             {categories.map((cat, index) => {
               const Icon = cat.icon;
-              const angle = (index * 90 - 45) * (Math.PI / 180);
+              // 5 categories need 72° spacing (360/5), starting at -90° (top)
+              const angle = ((index * 72) - 90) * (Math.PI / 180);
               const radius = 120;
               const x = Math.cos(angle) * radius;
               const y = Math.sin(angle) * radius;
               const count = getItemCount(cat.field);
               const isActive = activeCategory === cat.id;
+              const isFamilyTree = cat.id === 'familyTree';
+
+              const circleContent = (
+                <div
+                  className="absolute z-20 transition-all duration-300 group"
+                  style={{
+                    transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
+                  }}
+                >
+                  {/* Connection Line */}
+                  <div 
+                    className="absolute top-1/2 left-1/2 w-20 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
+                    style={{
+                      transform: `rotate(${((index * 72) - 90) + 180}deg)`,
+                      transformOrigin: '0 50%',
+                    }}
+                  />
+                  
+                  {/* Circle */}
+                  <div 
+                    className={`
+                      w-16 h-16 rounded-full flex items-center justify-center cursor-pointer
+                      bg-gradient-to-br ${cat.gradient}
+                      shadow-lg ${cat.shadow}
+                      transition-all duration-300
+                      ${isActive ? 'ring-4 ring-white/30 scale-110' : 'hover:scale-105'}
+                    `}
+                    style={{ backgroundImage: cat.pattern }}
+                  >
+                    <Icon className="w-7 h-7 text-white drop-shadow-md" />
+                  </div>
+
+                  {/* Count Badge */}
+                  {count > 0 && (
+                    <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
+                      {count}
+                    </span>
+                  )}
+                </div>
+              );
+
+              // Family Tree uses a dialog instead of inline content
+              if (isFamilyTree) {
+                return (
+                  <Tooltip key={cat.id}>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <FamilyTreeDialog
+                          familyHistory={record.family_history || defaultFamilyHistory}
+                          onSave={handleFamilyTreeSave}
+                          trigger={circleContent}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>{cat.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }
 
               return (
                 <Tooltip key={cat.id}>
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setActiveCategory(isActive ? null : cat.id)}
-                      className="absolute z-20 transition-all duration-300 group"
-                      style={{
-                        transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
-                      }}
+                      className="focus:outline-none"
                     >
-                      {/* Connection Line */}
-                      <div 
-                        className="absolute top-1/2 left-1/2 w-20 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
-                        style={{
-                          transform: `rotate(${(index * 90 - 45) + 180}deg)`,
-                          transformOrigin: '0 50%',
-                        }}
-                      />
-                      
-                      {/* Circle */}
-                      <div 
-                        className={`
-                          w-16 h-16 rounded-full flex items-center justify-center
-                          bg-gradient-to-br ${cat.gradient}
-                          shadow-lg ${cat.shadow}
-                          transition-all duration-300
-                          ${isActive ? 'ring-4 ring-white/30 scale-110' : 'hover:scale-105'}
-                        `}
-                        style={{ backgroundImage: cat.pattern }}
-                      >
-                        <Icon className="w-7 h-7 text-white drop-shadow-md" />
-                      </div>
-
-                      {/* Count Badge */}
-                      {count > 0 && (
-                        <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
-                          {count}
-                        </span>
-                      )}
+                      {circleContent}
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -318,12 +403,12 @@ const MedicalRecords = () => {
           </TooltipProvider>
         </div>
 
-        {/* Active Category Content */}
-        {activeConfig && (
+        {/* Active Category Content (not for familyTree) */}
+        {activeConfig && activeConfig.id !== 'familyTree' && inputStates[activeConfig.field] && (
           <Card className="animate-fade-in overflow-hidden">
             <div 
               className="h-2 w-full"
-              style={{ background: `linear-gradient(to right, ${activeConfig.gradient.includes('amber') ? '#f59e0b' : activeConfig.gradient.includes('blue') ? '#3b82f6' : activeConfig.gradient.includes('emerald') ? '#10b981' : '#f43f5e'}, transparent)` }}
+              style={{ background: `linear-gradient(to right, ${activeConfig.gradient.includes('amber') ? '#f59e0b' : activeConfig.gradient.includes('blue') ? '#3b82f6' : activeConfig.gradient.includes('emerald') ? '#10b981' : activeConfig.gradient.includes('purple') ? '#8b5cf6' : '#f43f5e'}, transparent)` }}
             />
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
