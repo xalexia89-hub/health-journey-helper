@@ -312,13 +312,13 @@ const MedicalRecords = () => {
             <div className="absolute inset-0 rounded-full animate-pulse bg-primary/10" />
           </div>
 
-          {/* Category Circles */}
+          {/* Category Circles - Radial Layout */}
           <TooltipProvider>
             {categories.map((cat, index) => {
               const Icon = cat.icon;
               // 5 categories need 72° spacing (360/5), starting at -90° (top)
               const angle = ((index * 72) - 90) * (Math.PI / 180);
-              const radius = 95;
+              const radius = 110;
               const x = Math.cos(angle) * radius;
               const y = Math.sin(angle) * radius;
               const count = getItemCount(cat.field);
@@ -329,12 +329,16 @@ const MedicalRecords = () => {
                 <div
                   className="absolute z-20 transition-all duration-300 group"
                   style={{
+                    left: '50%',
+                    top: '50%',
+                    marginLeft: '-28px',
+                    marginTop: '-28px',
                     transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
                   }}
                 >
                   {/* Connection Line */}
                   <div 
-                    className="absolute top-1/2 left-1/2 w-20 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
+                    className="absolute top-1/2 left-1/2 w-16 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
                     style={{
                       transform: `rotate(${((index * 72) - 90) + 180}deg)`,
                       transformOrigin: '0 50%',
@@ -344,7 +348,7 @@ const MedicalRecords = () => {
                   {/* Circle */}
                   <div 
                     className={`
-                      w-16 h-16 rounded-full flex items-center justify-center cursor-pointer
+                      w-14 h-14 rounded-full flex items-center justify-center cursor-pointer
                       bg-gradient-to-br ${cat.gradient}
                       shadow-lg ${cat.shadow}
                       transition-all duration-300
@@ -352,12 +356,12 @@ const MedicalRecords = () => {
                     `}
                     style={{ backgroundImage: cat.pattern }}
                   >
-                    <Icon className="w-7 h-7 text-white drop-shadow-md" />
+                    <Icon className="w-6 h-6 text-white drop-shadow-md" />
                   </div>
 
                   {/* Count Badge */}
                   {count > 0 && (
-                    <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
                       {count}
                     </span>
                   )}
