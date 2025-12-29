@@ -296,19 +296,19 @@ const MedicalRecords = () => {
         </div>
 
         {/* Central Hub with Orbiting Categories */}
-        <div className="relative flex items-center justify-center py-12">
+        <div className="relative flex items-center justify-center h-[280px]">
           {/* Background Glow */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-64 h-64 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
+            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
           </div>
 
           {/* Orbital Rings */}
-          <div className="absolute w-72 h-72 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
-          <div className="absolute w-56 h-56 rounded-full border border-primary/10" />
+          <div className="absolute w-52 h-52 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
+          <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
 
           {/* Center Heart */}
-          <div className="relative z-10 w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl shadow-primary/30">
-            <Heart className="w-10 h-10 text-primary-foreground" fill="currentColor" />
+          <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl shadow-primary/30">
+            <Heart className="w-8 h-8 text-primary-foreground" fill="currentColor" />
             <div className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
           </div>
 
@@ -318,7 +318,7 @@ const MedicalRecords = () => {
               const Icon = cat.icon;
               // 5 categories need 72° spacing (360/5), starting at -90° (top)
               const angle = ((index * 72) - 90) * (Math.PI / 180);
-              const radius = 120;
+              const radius = 95;
               const x = Math.cos(angle) * radius;
               const y = Math.sin(angle) * radius;
               const count = getItemCount(cat.field);
