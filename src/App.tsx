@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PatientLayout } from "@/components/layout/PatientLayout";
 import { DoctorLayout } from "@/components/layout/DoctorLayout";
 import { AdminLayout } from "@/components/layout/AdminLayout";
@@ -52,64 +53,66 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Welcome />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/intro" element={<Intro />} />
-            <Route path="/doctor-registration" element={<DoctorRegistration />} />
-            <Route path="/pitch-deck" element={<PitchDeck />} />
-            <Route path="/mesh-architecture" element={<MeshArchitecture />} />
-            <Route path="/interest" element={<InterestForm />} />
-            <Route path="/interest/print" element={<InterestFormPrint />} />
-            <Route path="/documentation" element={<SystemDocumentation />} />
-            
-            {/* Protected patient routes */}
-            <Route element={<PatientLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/symptoms" element={<Symptoms />} />
-              <Route path="/providers" element={<Providers />} />
-              <Route path="/nurses" element={<Nurses />} />
-              <Route path="/providers/:id" element={<ProviderDetail />} />
-              <Route path="/payment/:appointmentId" element={<Payment />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/records" element={<MedicalRecords />} />
-              <Route path="/medications" element={<MedicationReminders />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/feed" element={<Feed />} />
-              <Route path="/academy" element={<Academy />} />
-            </Route>
+    <LanguageProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Welcome />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/intro" element={<Intro />} />
+              <Route path="/doctor-registration" element={<DoctorRegistration />} />
+              <Route path="/pitch-deck" element={<PitchDeck />} />
+              <Route path="/mesh-architecture" element={<MeshArchitecture />} />
+              <Route path="/interest" element={<InterestForm />} />
+              <Route path="/interest/print" element={<InterestFormPrint />} />
+              <Route path="/documentation" element={<SystemDocumentation />} />
+              
+              {/* Protected patient routes */}
+              <Route element={<PatientLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/symptoms" element={<Symptoms />} />
+                <Route path="/providers" element={<Providers />} />
+                <Route path="/nurses" element={<Nurses />} />
+                <Route path="/providers/:id" element={<ProviderDetail />} />
+                <Route path="/payment/:appointmentId" element={<Payment />} />
+                <Route path="/appointments" element={<Appointments />} />
+                <Route path="/records" element={<MedicalRecords />} />
+                <Route path="/medications" element={<MedicationReminders />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/academy" element={<Academy />} />
+              </Route>
 
-            {/* Doctor routes */}
-            <Route element={<DoctorLayout />}>
-              <Route path="/doctor" element={<DoctorDashboard />} />
-              <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-              <Route path="/doctor/patients" element={<DoctorPatients />} />
-              <Route path="/doctor/schedule" element={<DoctorSchedule />} />
-              <Route path="/doctor/settings" element={<DoctorSettings />} />
-            </Route>
+              {/* Doctor routes */}
+              <Route element={<DoctorLayout />}>
+                <Route path="/doctor" element={<DoctorDashboard />} />
+                <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+                <Route path="/doctor/patients" element={<DoctorPatients />} />
+                <Route path="/doctor/schedule" element={<DoctorSchedule />} />
+                <Route path="/doctor/settings" element={<DoctorSettings />} />
+              </Route>
 
-            {/* Admin routes */}
-            <Route element={<AdminLayout />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/providers" element={<AdminProviders />} />
-              <Route path="/admin/analytics" element={<AdminAnalytics />} />
-              <Route path="/admin/interest" element={<AdminInterestExpressions />} />
-              <Route path="/admin/settings" element={<AdminSettings />} />
-            </Route>
+              {/* Admin routes */}
+              <Route element={<AdminLayout />}>
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/providers" element={<AdminProviders />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                <Route path="/admin/interest" element={<AdminInterestExpressions />} />
+                <Route path="/admin/settings" element={<AdminSettings />} />
+              </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 
