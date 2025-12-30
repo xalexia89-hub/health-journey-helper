@@ -1,16 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Calendar, FileText, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { path: "/dashboard", icon: Home, label: "Αρχική" },
-  { path: "/feed", icon: Newspaper, label: "Νέα" },
-  { path: "/appointments", icon: Calendar, label: "Ραντεβού" },
-  { path: "/records", icon: FileText, label: "Ιστορικό" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function MobileNav() {
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { path: "/dashboard", icon: Home, labelKey: "nav.home" },
+    { path: "/feed", icon: Newspaper, labelKey: "nav.news" },
+    { path: "/appointments", icon: Calendar, labelKey: "nav.appointments" },
+    { path: "/records", icon: FileText, labelKey: "nav.records" },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-pb">
@@ -27,7 +29,7 @@ export function MobileNav() {
               )}
             >
               <item.icon className={cn("h-5 w-5", isActive && "stroke-[2.5]")} />
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-xs font-medium">{t(item.labelKey)}</span>
               {isActive && (
                 <div className="absolute bottom-0 h-0.5 w-8 bg-primary rounded-full" />
               )}
