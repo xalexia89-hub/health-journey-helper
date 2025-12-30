@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import medithoLogo from "@/assets/medithos-logo.png";
-import { Heart, Users, Building2, Mic, Accessibility, ArrowRight, Sparkles } from "lucide-react";
+import { Heart, Users, Building2, Mic, Accessibility, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
 
 export default function Intro() {
   const navigate = useNavigate();
@@ -23,14 +22,12 @@ export default function Intro() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center w-full max-w-2xl">
-        {/* Logo */}
+        {/* Consent Icon */}
         <div className="relative mb-6 mt-4">
           <div className="absolute -inset-4 bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 rounded-full blur-xl animate-pulse" />
-          <img 
-            src={medithoLogo} 
-            alt="Medithos Logo" 
-            className="w-28 h-28 md:w-36 md:h-36 relative z-10 drop-shadow-2xl"
-          />
+          <div className="w-28 h-28 md:w-36 md:h-36 relative z-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/30">
+            <ShieldCheck className="w-16 h-16 md:w-20 md:h-20 text-primary" />
+          </div>
         </div>
 
         {/* Title */}
@@ -129,15 +126,6 @@ export default function Intro() {
             </div>
           </div>
 
-          {/* Developer Credit */}
-          <div className="text-center pt-4 border-t border-border/30">
-            <p className="text-xs text-muted-foreground">
-              Σχεδιάστηκε & Αναπτύχθηκε από
-            </p>
-            <p className="text-base font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-1">
-              Αλεξία Χαλβατζάκου
-            </p>
-          </div>
         </div>
 
         {/* Continue Button */}
