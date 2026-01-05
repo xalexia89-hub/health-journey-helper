@@ -133,14 +133,21 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
         {trigger}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[85vh] p-0 overflow-hidden">
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-500" />
-            Γενεαλογικό Δέντρο
-          </DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            Καταγράψτε το οικογενειακό ιατρικό ιστορικό (έως 3 γενιές)
-          </p>
+        <DialogHeader className="p-6 pb-4">
+          <div className="flex flex-col items-center gap-3">
+            {/* Center Avatar */}
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <Users className="h-7 w-7 text-white" />
+            </div>
+            <div className="text-center">
+              <DialogTitle className="text-lg">
+                Γενεαλογικό Δέντρο
+              </DialogTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Καταγράψτε το οικογενειακό ιατρικό ιστορικό (έως 3 γενιές)
+              </p>
+            </div>
+          </div>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
