@@ -278,8 +278,11 @@ export type Database = {
           appointment_date: string
           appointment_time: string
           created_at: string | null
+          doctor_notes_internal: string | null
           id: string
+          lab_results_url: string | null
           notes: string | null
+          outcome_summary: string | null
           patient_id: string
           provider_id: string
           status: Database["public"]["Enums"]["appointment_status"] | null
@@ -291,8 +294,11 @@ export type Database = {
           appointment_date: string
           appointment_time: string
           created_at?: string | null
+          doctor_notes_internal?: string | null
           id?: string
+          lab_results_url?: string | null
           notes?: string | null
+          outcome_summary?: string | null
           patient_id: string
           provider_id: string
           status?: Database["public"]["Enums"]["appointment_status"] | null
@@ -304,8 +310,11 @@ export type Database = {
           appointment_date?: string
           appointment_time?: string
           created_at?: string | null
+          doctor_notes_internal?: string | null
           id?: string
+          lab_results_url?: string | null
           notes?: string | null
+          outcome_summary?: string | null
           patient_id?: string
           provider_id?: string
           status?: Database["public"]["Enums"]["appointment_status"] | null
@@ -406,6 +415,167 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      consents: {
+        Row: {
+          case_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          granted_at: string | null
+          id: string
+          is_active: boolean | null
+          patient_id: string
+          provider_id: string
+          revoked_at: string | null
+          scope: string
+          updated_at: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          patient_id: string
+          provider_id: string
+          revoked_at?: string | null
+          scope: string
+          updated_at?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          patient_id?: string
+          provider_id?: string
+          revoked_at?: string | null
+          scope?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consents_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      examary_reports: {
+        Row: {
+          created_at: string | null
+          generated_at: string | null
+          id: string
+          is_shared: boolean | null
+          pdf_url: string | null
+          questions_for_doctor: string[] | null
+          relevant_history: Json | null
+          risk_flags: string[] | null
+          share_expires_at: string | null
+          share_token: string | null
+          suggested_exams: string[] | null
+          summary: string | null
+          symptom_timeline: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          is_shared?: boolean | null
+          pdf_url?: string | null
+          questions_for_doctor?: string[] | null
+          relevant_history?: Json | null
+          risk_flags?: string[] | null
+          share_expires_at?: string | null
+          share_token?: string | null
+          suggested_exams?: string[] | null
+          summary?: string | null
+          symptom_timeline?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          is_shared?: boolean | null
+          pdf_url?: string | null
+          questions_for_doctor?: string[] | null
+          relevant_history?: Json | null
+          risk_flags?: string[] | null
+          share_expires_at?: string | null
+          share_token?: string | null
+          suggested_exams?: string[] | null
+          summary?: string | null
+          symptom_timeline?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      health_files: {
+        Row: {
+          activity_level: string | null
+          alcohol_consumption: string | null
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          created_at: string | null
+          date_of_birth: string | null
+          height_cm: number | null
+          id: string
+          onboarding_completed: boolean | null
+          onboarding_step: number | null
+          sex: string | null
+          smoking_status: string | null
+          updated_at: string | null
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          alcohol_consumption?: string | null
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          height_cm?: number | null
+          id?: string
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          sex?: string | null
+          smoking_status?: string | null
+          updated_at?: string | null
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          alcohol_consumption?: string | null
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          height_cm?: number | null
+          id?: string
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          sex?: string | null
+          smoking_status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: []
       }
       interest_expressions: {
         Row: {
@@ -719,6 +889,101 @@ export type Database = {
           },
         ]
       }
+      payments_sandbox: {
+        Row: {
+          amount: number
+          appointment_id: string | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          fake_card_last4: string | null
+          id: string
+          invoice_number: string | null
+          paid_at: string | null
+          receipt_url: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          appointment_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          fake_card_last4?: string | null
+          id?: string
+          invoice_number?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          appointment_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          fake_card_last4?: string | null
+          id?: string
+          invoice_number?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_sandbox_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prevention_plans: {
+        Row: {
+          based_on_age: boolean | null
+          based_on_conditions: boolean | null
+          based_on_family_history: boolean | null
+          based_on_sex: boolean | null
+          created_at: string | null
+          id: string
+          last_generated_at: string | null
+          recommendations: Json | null
+          screening_schedule: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          based_on_age?: boolean | null
+          based_on_conditions?: boolean | null
+          based_on_family_history?: boolean | null
+          based_on_sex?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_generated_at?: string | null
+          recommendations?: Json | null
+          screening_schedule?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          based_on_age?: boolean | null
+          based_on_conditions?: boolean | null
+          based_on_family_history?: boolean | null
+          based_on_sex?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_generated_at?: string | null
+          recommendations?: Json | null
+          screening_schedule?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -980,6 +1245,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      symptom_entries: {
+        Row: {
+          ai_summary: string | null
+          body_areas: string[] | null
+          created_at: string | null
+          duration: string | null
+          id: string
+          intensity: number | null
+          onset_date: string | null
+          raw_user_input: string | null
+          recommended_actions: string[] | null
+          risk_flags: string[] | null
+          status: string | null
+          structured_data: Json | null
+          triggers: string[] | null
+          updated_at: string | null
+          urgency_level: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          body_areas?: string[] | null
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          intensity?: number | null
+          onset_date?: string | null
+          raw_user_input?: string | null
+          recommended_actions?: string[] | null
+          risk_flags?: string[] | null
+          status?: string | null
+          structured_data?: Json | null
+          triggers?: string[] | null
+          updated_at?: string | null
+          urgency_level?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_summary?: string | null
+          body_areas?: string[] | null
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          intensity?: number | null
+          onset_date?: string | null
+          raw_user_input?: string | null
+          recommended_actions?: string[] | null
+          risk_flags?: string[] | null
+          status?: string | null
+          structured_data?: Json | null
+          triggers?: string[] | null
+          updated_at?: string | null
+          urgency_level?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       symptom_intakes: {
         Row: {
