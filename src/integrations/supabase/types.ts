@@ -1074,7 +1074,7 @@ export type Database = {
         | "pending_review"
         | "published"
         | "archived"
-      app_role: "patient" | "doctor" | "admin"
+      app_role: "patient" | "doctor" | "admin" | "lab"
       appointment_status: "pending" | "confirmed" | "completed" | "cancelled"
       body_area:
         | "head"
@@ -1096,7 +1096,7 @@ export type Database = {
         | "left_foot"
         | "right_foot"
       payment_status: "pending" | "paid" | "refunded" | "failed"
-      provider_type: "doctor" | "clinic" | "hospital" | "nurse"
+      provider_type: "doctor" | "clinic" | "hospital" | "nurse" | "lab"
       urgency_level: "low" | "medium" | "high" | "emergency"
     }
     CompositeTypes: {
@@ -1243,7 +1243,7 @@ export const Constants = {
         "published",
         "archived",
       ],
-      app_role: ["patient", "doctor", "admin"],
+      app_role: ["patient", "doctor", "admin", "lab"],
       appointment_status: ["pending", "confirmed", "completed", "cancelled"],
       body_area: [
         "head",
@@ -1266,7 +1266,7 @@ export const Constants = {
         "right_foot",
       ],
       payment_status: ["pending", "paid", "refunded", "failed"],
-      provider_type: ["doctor", "clinic", "hospital", "nurse"],
+      provider_type: ["doctor", "clinic", "hospital", "nurse", "lab"],
       urgency_level: ["low", "medium", "high", "emergency"],
     },
   },
