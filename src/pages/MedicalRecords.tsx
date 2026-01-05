@@ -18,9 +18,10 @@ import {
   FileText,
   Share2,
   Upload,
-  Users
+  Users,
+  User
 } from 'lucide-react';
-import medithoLogo from '@/assets/medithos-m-logo.png';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
 import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
@@ -306,14 +307,12 @@ const MedicalRecords = () => {
           <div className="absolute w-52 h-52 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
           <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
 
-          {/* Center Logo */}
-          <div className="relative z-10 w-24 h-24 rounded-full flex items-center justify-center">
-            <img 
-              src={medithoLogo} 
-              alt="Medithos" 
-              className="w-24 h-24 object-contain mix-blend-screen" 
-            />
-          </div>
+          {/* Center Avatar */}
+          <Avatar className="relative z-10 w-16 h-16 shadow-lg shadow-primary/30">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70">
+              <User className="h-7 w-7 text-primary-foreground" />
+            </AvatarFallback>
+          </Avatar>
 
           {/* Category Circles - Radial Layout */}
           <TooltipProvider>
