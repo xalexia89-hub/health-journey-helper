@@ -23,8 +23,16 @@ import {
   User,
   Bot,
   Calendar,
-  ChevronRight
+  ChevronRight,
+  Filter
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
@@ -143,6 +151,11 @@ const MedicalRecords = () => {
   const [newMedication, setNewMedication] = useState('');
   const [newSurgery, setNewSurgery] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Filters for AI analysis
+  const [dateFilter, setDateFilter] = useState<'all' | '7days' | '30days' | '90days'>('all');
+  const [urgencyFilter, setUrgencyFilter] = useState<'all' | 'low' | 'medium' | 'high'>('all');
+  const [bodyAreaFilter, setBodyAreaFilter] = useState<string>('all');
 
   const inputStates: Record<string, { value: string; setter: (v: string) => void }> = {
     allergies: { value: newAllergy, setter: setNewAllergy },
@@ -495,10 +508,63 @@ const MedicalRecords = () => {
                 AI Αναλύσεις Συμπτωμάτων
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2 items-center">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as typeof dateFilter)}>
+                  <SelectTrigger className="w-[130px] h-8 text-xs">
+                    <SelectValue placeholder="Ημερομηνία" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Όλες</SelectItem>
+                    <SelectItem value="7days">Τελευταίες 7 μέρες</SelectItem>
+                    <SelectItem value="30days">Τελευταίες 30 μέρες</SelectItem>
+                    <SelectItem value="90days">Τελευταίες 90 μέρες</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={urgencyFilter} onValueChange={(v) => setUrgencyFilter(v as typeof urgencyFilter)}>
+                  <SelectTrigger className="w-[120px] h-8 text-xs">
+                    <SelectValue placeholder="Επείγον" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Όλα</SelectItem>
+                    <SelectItem value="low">Χαμηλή</SelectItem>
+                    <SelectItem value="medium">Μέτρια</SelectItem>
+                    <SelectItem value="high">Υψηλή</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={bodyAreaFilter} onValueChange={setBodyAreaFilter}>
+                  <SelectTrigger className="w-[130px] h-8 text-xs">
+                    <SelectValue placeholder="Περιοχή" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Όλες οι περιοχές</SelectItem>
+                    {Array.from(new Set(symptomEntries.flatMap(e => e.body_areas || []))).map((area) => (
+                      <SelectItem key={area} value={area}>{area}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <ScrollArea className="max-h-[300px]">
                 <div className="space-y-3">
-                  {symptomEntries.map((entry) => (
+                  {symptomEntries
+                    .filter((entry) => {
+                      // Date filter
+                      if (dateFilter !== 'all') {
+                        const days = dateFilter === '7days' ? 7 : dateFilter === '30days' ? 30 : 90;
+                        const cutoff = new Date();
+                        cutoff.setDate(cutoff.getDate() - days);
+                        if (new Date(entry.created_at) < cutoff) return false;
+                      }
+                      // Urgency filter
+                      if (urgencyFilter !== 'all' && entry.urgency_level !== urgencyFilter) return false;
+                      // Body area filter
+                      if (bodyAreaFilter !== 'all' && !entry.body_areas?.includes(bodyAreaFilter)) return false;
+                      return true;
+                    })
+                    .map((entry) => (
                     <div 
                       key={entry.id}
                       className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
