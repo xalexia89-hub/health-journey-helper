@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Pill, 
   AlertTriangle, 
@@ -19,7 +20,10 @@ import {
   Share2,
   Upload,
   Users,
-  User
+  User,
+  Bot,
+  Calendar,
+  ChevronRight
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
@@ -31,6 +35,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+interface SymptomEntry {
+  id: string;
+  body_areas: string[] | null;
+  ai_summary: string | null;
+  risk_flags: string[] | null;
+  urgency_level: string | null;
+  created_at: string;
+  raw_user_input: string | null;
+}
 
 interface FamilyMember {
   id: string;
@@ -119,6 +133,7 @@ const MedicalRecords = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [record, setRecord] = useState<MedicalRecord | null>(null);
+  const [symptomEntries, setSymptomEntries] = useState<SymptomEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeCategory, setActiveCategory] = useState<CategoryType | null>(null);
@@ -137,7 +152,10 @@ const MedicalRecords = () => {
   };
 
   useEffect(() => {
-    if (user) fetchMedicalRecord();
+    if (user) {
+      fetchMedicalRecord();
+      fetchSymptomEntries();
+    }
   }, [user]);
 
   const defaultFamilyHistory: FamilyHistory = {
@@ -164,6 +182,19 @@ const MedicalRecords = () => {
       setNotes(data.notes || '');
     }
     setLoading(false);
+  };
+
+  const fetchSymptomEntries = async () => {
+    const { data } = await supabase
+      .from('symptom_entries')
+      .select('id, body_areas, ai_summary, risk_flags, urgency_level, created_at, raw_user_input')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (data) {
+      setSymptomEntries(data);
+    }
   };
 
   const addItem = (field: keyof MedicalRecord, value: string, setter: (v: string) => void) => {
@@ -450,6 +481,80 @@ const MedicalRecords = () => {
                   <p className="text-sm text-muted-foreground">{activeConfig.emptyText}</p>
                 )}
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* AI Symptom Analysis Section */}
+        {symptomEntries.length > 0 && (
+          <Card className="overflow-hidden">
+            <div className="h-2 w-full bg-gradient-to-r from-primary to-primary/50" />
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Bot className="h-5 w-5 text-primary" />
+                AI Αναλύσεις Συμπτωμάτων
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="max-h-[300px]">
+                <div className="space-y-3">
+                  {symptomEntries.map((entry) => (
+                    <div 
+                      key={entry.id}
+                      className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(entry.created_at).toLocaleDateString('el-GR', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                            {entry.urgency_level && (
+                              <Badge 
+                                variant={entry.urgency_level === 'high' ? 'destructive' : 'secondary'}
+                                className="text-xs"
+                              >
+                                {entry.urgency_level === 'high' ? 'Υψηλή' : 
+                                 entry.urgency_level === 'medium' ? 'Μέτρια' : 'Χαμηλή'}
+                              </Badge>
+                            )}
+                          </div>
+                          {entry.ai_summary && (
+                            <p className="text-sm text-foreground line-clamp-2">
+                              {entry.ai_summary}
+                            </p>
+                          )}
+                          {entry.body_areas && entry.body_areas.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {entry.body_areas.map((area, i) => (
+                                <Badge key={i} variant="outline" className="text-xs">
+                                  {area}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                          {entry.risk_flags && entry.risk_flags.length > 0 && (
+                            <div className="flex items-center gap-1 mt-2">
+                              <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                              <span className="text-xs text-destructive">
+                                {entry.risk_flags.join(', ')}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         )}
