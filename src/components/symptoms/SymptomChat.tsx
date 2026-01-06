@@ -137,7 +137,7 @@ export function SymptomChat() {
     }
   };
 
-  // Save symptoms to symptom_intakes and medical record
+  // Save symptoms to symptom_entries and medical record
   const saveToMedicalRecord = async () => {
     if (!user || messages.length <= 1) return;
 
@@ -153,12 +153,32 @@ export function SymptomChat() {
         .map((m) => `${m.role === 'user' ? 'Ασθενής' : 'Βοηθός'}: ${m.content}`)
         .join('\n\n');
 
-      // Create symptom intake record with chat content
+      // Get the last assistant message as summary
+      const lastAssistantMessage = messages
+        .filter(m => m.role === "assistant")
+        .pop()?.content || '';
+
+      // Save to symptom_entries table (structured for medical records)
+      const { error: entryError } = await supabase
+        .from('symptom_entries')
+        .insert({
+          user_id: user.id,
+          raw_user_input: userSymptoms.join('\n'),
+          ai_summary: lastAssistantMessage.slice(0, 500),
+          body_areas: ['general'],
+          status: 'active'
+        });
+
+      if (entryError) {
+        console.error("Error saving to symptom_entries:", entryError);
+      }
+
+      // Also create symptom intake record
       const { error: intakeError } = await supabase
         .from('symptom_intakes')
         .insert({
           user_id: user.id,
-          body_areas: ['head'], // Default, can be updated based on chat analysis
+          body_areas: ['head'],
           symptoms: userSymptoms,
           additional_notes: conversationSummary,
           visit_type: 'medical'
