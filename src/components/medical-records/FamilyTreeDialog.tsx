@@ -345,8 +345,8 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden">
-        <DialogHeader className="p-4 pb-2 border-b">
+      <DialogContent className="max-w-3xl max-h-[95vh] p-0 overflow-hidden">
+        <DialogHeader className="p-4 pb-2 border-b border-border/50">
           <DialogTitle className="text-center text-lg">
             🌳 Γενεαλογικό Δέντρο
           </DialogTitle>
@@ -355,8 +355,8 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
           </p>
         </DialogHeader>
 
-        <ScrollArea className="h-[500px]">
-          <div className="p-6 min-w-[600px]">
+        <ScrollArea className="h-[calc(95vh-180px)] min-h-[450px]">
+          <div className="p-6 pb-8 min-w-[600px]">
             {/* Family Tree Visual */}
             <div className="relative">
               
@@ -408,12 +408,12 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
               </div>
 
               {/* USER (Center) */}
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-6 mt-2">
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-xl shadow-accent/30 border-3 border-accent/50">
-                    <User className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-xl shadow-accent/40 border-4 border-accent/60 ring-4 ring-accent/20">
+                    <User className="w-10 h-10 text-white" />
                   </div>
-                  <p className="mt-1 text-sm font-semibold text-accent">Εσύ</p>
+                  <p className="mt-2 text-sm font-bold text-accent">Εσύ</p>
                 </div>
               </div>
 
