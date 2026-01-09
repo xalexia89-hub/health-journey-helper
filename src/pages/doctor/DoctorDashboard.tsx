@@ -17,10 +17,13 @@ import {
   ChevronRight,
   Bell,
   CreditCard,
-  CalendarCheck
+  CalendarCheck,
+  MessageSquare
 } from 'lucide-react';
 import { format, isToday, parseISO } from 'date-fns';
 import { el } from 'date-fns/locale';
+import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
+import { EmergencyButton } from '@/components/pilot/EmergencyButton';
 
 interface Appointment {
   id: string;
@@ -252,11 +255,17 @@ const DoctorDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Πίνακας Ελέγχου</h1>
-        <p className="text-muted-foreground">
-          Καλώς ήρθατε! Επισκόπηση για {format(new Date(), 'EEEE, d MMMM', { locale: el })}
-        </p>
+      {/* Advisor Banner */}
+      <AdvisorBanner />
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Πίνακας Ελέγχου Συμβούλου</h1>
+          <p className="text-muted-foreground">
+            Καλώς ήρθατε! Επισκόπηση για {format(new Date(), 'EEEE, d MMMM', { locale: el })}
+          </p>
+        </div>
+        <EmergencyButton variant="compact" />
       </div>
 
       {/* Stats Cards */}
@@ -265,11 +274,11 @@ const DoctorDashboard = () => {
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-primary/10">
-                <Calendar className="h-6 w-6 text-primary" />
+                <MessageSquare className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.todayAppointments}</p>
-                <p className="text-sm text-muted-foreground">Σημερινά Ραντεβού</p>
+                <p className="text-sm text-muted-foreground">Σημερινά Αιτήματα</p>
               </div>
             </div>
           </CardContent>
@@ -283,7 +292,7 @@ const DoctorDashboard = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.pendingAppointments}</p>
-                <p className="text-sm text-muted-foreground">Εκκρεμείς Επιβεβαιώσεις</p>
+                <p className="text-sm text-muted-foreground">Εκκρεμή Αιτήματα</p>
               </div>
             </div>
           </CardContent>
@@ -297,7 +306,7 @@ const DoctorDashboard = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.totalPatients}</p>
-                <p className="text-sm text-muted-foreground">Συνολικοί Ασθενείς</p>
+                <p className="text-sm text-muted-foreground">Χρήστες Πλοήγησης</p>
               </div>
             </div>
           </CardContent>
@@ -311,7 +320,7 @@ const DoctorDashboard = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.completedThisWeek}</p>
-                <p className="text-sm text-muted-foreground">Ολοκληρωμένα (7 ημέρες)</p>
+                <p className="text-sm text-muted-foreground">Ολοκληρωμένες Συμβουλές</p>
               </div>
             </div>
           </CardContent>
