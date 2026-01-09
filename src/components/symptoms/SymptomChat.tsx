@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { MedicalDisclaimer } from "@/components/pilot/MedicalDisclaimer";
 
 interface Message {
   role: "user" | "assistant";
@@ -297,7 +298,8 @@ export function SymptomChat() {
         </div>
       </ScrollArea>
 
-      <div className="p-4 border-t border-border bg-background/50">
+      <div className="p-4 border-t border-border bg-background/50 space-y-2">
+        <MedicalDisclaimer variant="compact" />
         <div className="flex gap-2">
           <Input
             value={input}

@@ -138,7 +138,7 @@ const ProviderDetail = () => {
         provider_id: provider.id,
         appointment_date: format(selectedDate, 'yyyy-MM-dd'),
         appointment_time: selectedTime,
-        status: 'pending',
+        status: 'pending', // Stays pending until doctor confirms manually
         symptom_intake_id: intakeId || null,
         visit_type: symptomIntake?.visit_type || 'medical'
       }).select('id').single();
@@ -146,12 +146,12 @@ const ProviderDetail = () => {
       if (error) throw error;
 
       toast({
-        title: 'Ραντεβού Κλείστηκε',
-        description: 'Προχωρήστε στην πληρωμή για επιβεβαίωση.'
+        title: 'Ραντεβού Καταγράφηκε',
+        description: 'Ο πάροχος θα επικοινωνήσει μαζί σας για επιβεβαίωση. (Πιλοτική Έκδοση)'
       });
       
-      // Navigate to payment page
-      navigate(`/payment/${data.id}`);
+      // Navigate directly to appointments (no payment in pilot)
+      navigate('/appointments');
     } catch (error) {
       toast({
         title: 'Αποτυχία Κράτησης',
