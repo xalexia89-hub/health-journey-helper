@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Plus, Trash2, Save } from 'lucide-react';
+import { Clock, Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
 
 interface AvailabilitySlot {
   id: string;
@@ -27,13 +28,13 @@ interface AvailabilitySlot {
 }
 
 const DAYS = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
+  { value: 0, label: 'Κυριακή' },
+  { value: 1, label: 'Δευτέρα' },
+  { value: 2, label: 'Τρίτη' },
+  { value: 3, label: 'Τετάρτη' },
+  { value: 4, label: 'Πέμπτη' },
+  { value: 5, label: 'Παρασκευή' },
+  { value: 6, label: 'Σάββατο' },
 ];
 
 const DoctorSchedule = () => {
@@ -96,14 +97,14 @@ const DoctorSchedule = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to add availability slot',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία προσθήκης διαθεσιμότητας',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Slot Added',
-        description: 'Availability slot has been added'
+        title: 'Διαθεσιμότητα Προστέθηκε',
+        description: 'Η ώρα διαθεσιμότητας προστέθηκε επιτυχώς'
       });
       fetchSlots(providerId);
     }
@@ -118,8 +119,8 @@ const DoctorSchedule = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update slot',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ενημέρωσης',
         variant: 'destructive'
       });
     } else if (providerId) {
@@ -135,14 +136,14 @@ const DoctorSchedule = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete slot',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία διαγραφής',
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Slot Deleted',
-        description: 'Availability slot has been removed'
+        title: 'Διαθεσιμότητα Διαγράφηκε',
+        description: 'Η ώρα διαθεσιμότητας αφαιρέθηκε'
       });
       if (providerId) fetchSlots(providerId);
     }
@@ -163,9 +164,11 @@ const DoctorSchedule = () => {
 
   return (
     <div className="space-y-6">
+      <AdvisorBanner />
+      
       <div>
-        <h1 className="text-2xl font-bold">Schedule Management</h1>
-        <p className="text-muted-foreground">Configure your availability for appointments</p>
+        <h1 className="text-2xl font-bold">Διαχείριση Προγράμματος</h1>
+        <p className="text-muted-foreground">Ρυθμίστε τη διαθεσιμότητά σας για ραντεβού συμβουλευτικής</p>
       </div>
 
       {/* Add New Slot */}
@@ -173,13 +176,13 @@ const DoctorSchedule = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            Add Availability Slot
+            Προσθήκη Διαθεσιμότητας
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
-              <Label>Day</Label>
+              <Label>Ημέρα</Label>
               <Select
                 value={newSlot.day_of_week.toString()}
                 onValueChange={(v) => setNewSlot({ ...newSlot, day_of_week: parseInt(v) })}
@@ -198,7 +201,7 @@ const DoctorSchedule = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Start Time</Label>
+              <Label>Ώρα Έναρξης</Label>
               <Input
                 type="time"
                 value={newSlot.start_time}
@@ -207,7 +210,7 @@ const DoctorSchedule = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>End Time</Label>
+              <Label>Ώρα Λήξης</Label>
               <Input
                 type="time"
                 value={newSlot.end_time}
@@ -216,7 +219,7 @@ const DoctorSchedule = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Slot Duration (min)</Label>
+              <Label>Διάρκεια Ραντεβού</Label>
               <Select
                 value={newSlot.slot_duration_minutes.toString()}
                 onValueChange={(v) => setNewSlot({ ...newSlot, slot_duration_minutes: parseInt(v) })}
@@ -225,10 +228,10 @@ const DoctorSchedule = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="15">15 minutes</SelectItem>
-                  <SelectItem value="30">30 minutes</SelectItem>
-                  <SelectItem value="45">45 minutes</SelectItem>
-                  <SelectItem value="60">60 minutes</SelectItem>
+                  <SelectItem value="15">15 λεπτά</SelectItem>
+                  <SelectItem value="30">30 λεπτά</SelectItem>
+                  <SelectItem value="45">45 λεπτά</SelectItem>
+                  <SelectItem value="60">60 λεπτά</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -236,7 +239,7 @@ const DoctorSchedule = () => {
             <div className="flex items-end">
               <Button onClick={handleAddSlot} disabled={saving} className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Slot
+                Προσθήκη
               </Button>
             </div>
           </div>
@@ -248,7 +251,7 @@ const DoctorSchedule = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Weekly Schedule
+            Εβδομαδιαίο Πρόγραμμα
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -262,7 +265,7 @@ const DoctorSchedule = () => {
               </h3>
               
               {day.slots.length === 0 ? (
-                <p className="text-sm text-muted-foreground pl-4">No availability set</p>
+                <p className="text-sm text-muted-foreground pl-4">Δεν έχει οριστεί διαθεσιμότητα</p>
               ) : (
                 <div className="space-y-2 pl-4">
                   {day.slots.map((slot) => (
@@ -280,7 +283,7 @@ const DoctorSchedule = () => {
                             {slot.start_time.slice(0, 5)} - {slot.end_time.slice(0, 5)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {slot.slot_duration_minutes || 30} min appointments
+                            {slot.slot_duration_minutes || 30} λεπτά ανά ραντεβού
                           </p>
                         </div>
                       </div>
@@ -307,15 +310,15 @@ const DoctorSchedule = () => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Total Active Slots</p>
+              <p className="font-medium">Συνολικές Ενεργές Διαθεσιμότητες</p>
               <p className="text-sm text-muted-foreground">
-                {slots.filter(s => s.is_active !== false).length} time slots across {
+                {slots.filter(s => s.is_active !== false).length} χρονικά διαστήματα σε {
                   new Set(slots.filter(s => s.is_active !== false).map(s => s.day_of_week)).size
-                } days
+                } ημέρες
               </p>
             </div>
             <Badge variant="secondary" className="text-lg px-4 py-2">
-              {slots.filter(s => s.is_active !== false).length} Active
+              {slots.filter(s => s.is_active !== false).length} Ενεργά
             </Badge>
           </div>
         </CardContent>
