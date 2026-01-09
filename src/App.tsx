@@ -35,6 +35,7 @@ import InterestFormPrint from "./pages/InterestFormPrint";
 import SystemDocumentation from "./pages/SystemDocumentation";
 import TermsOfUse from "./pages/TermsOfUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ProjectEvaluation from "./pages/ProjectEvaluation";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -75,6 +76,7 @@ const App = () => (
               <Route path="/documentation" element={<SystemDocumentation />} />
               <Route path="/terms" element={<TermsOfUse />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/evaluation" element={<ProjectEvaluation />} />
               
               {/* Protected patient routes */}
               <Route element={<PatientLayout />}>
