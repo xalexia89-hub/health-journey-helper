@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shield, AlertTriangle, Phone, Calendar, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -57,7 +56,7 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 min-h-0 pr-4">
+        <div className="flex-1 min-h-0 overflow-y-auto pr-4">
           <div className="space-y-4">
             {/* Pilot Notice */}
             <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
@@ -66,7 +65,7 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
                 <div>
                   <h4 className="font-semibold text-warning">Πιλοτική Έκδοση</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Αυτή είναι μια πειραματική έκδοση του Medithos για δοκιμαστική χρήση. 
+                    Αυτή είναι μια πειραματική έκδοση του Medithos για δοκιμαστική χρήση.
                     Τα δεδομένα και οι λειτουργίες ενδέχεται να αλλάξουν.
                   </p>
                 </div>
@@ -80,8 +79,8 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
                 <div>
                   <h4 className="font-semibold text-destructive">Σημαντική Ειδοποίηση Υγείας</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Το Medithos <strong>ΔΕΝ αποτελεί ιατρική συμβουλή</strong> και <strong>ΔΕΝ παρέχει διαγνώσεις</strong>. 
-                    Οι πληροφορίες είναι καθοδηγητικού χαρακτήρα μόνο. Για οποιοδήποτε ιατρικό ζήτημα, 
+                    Το Medithos <strong>ΔΕΝ αποτελεί ιατρική συμβουλή</strong> και <strong>ΔΕΝ παρέχει διαγνώσεις</strong>.
+                    Οι πληροφορίες είναι καθοδηγητικού χαρακτήρα μόνο. Για οποιοδήποτε ιατρικό ζήτημα,
                     συμβουλευτείτε πάντα έναν εξειδικευμένο επαγγελματία υγείας.
                   </p>
                 </div>
@@ -95,7 +94,7 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
                 <div>
                   <h4 className="font-semibold text-primary">Σε Περίπτωση Έκτακτης Ανάγκης</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Σε περίπτωση επείγουσας ιατρικής ανάγκης, καλέστε αμέσως το <strong>112</strong> ή 
+                    Σε περίπτωση επείγουσας ιατρικής ανάγκης, καλέστε αμέσως το <strong>112</strong> ή
                     το <strong>166</strong> (ΕΚΑΒ). Μην βασίζεστε σε αυτή την εφαρμογή για καταστάσεις έκτακτης ανάγκης.
                   </p>
                 </div>
@@ -124,7 +123,7 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
                   onCheckedChange={(checked) => setDisclaimerAccepted(checked === true)}
                 />
                 <label htmlFor="disclaimer-accept" className="text-sm leading-relaxed cursor-pointer">
-                  Κατανοώ ότι το Medithos <strong>δεν αποτελεί ιατρική συμβουλή</strong> και δεν υποκαθιστά 
+                  Κατανοώ ότι το Medithos <strong>δεν αποτελεί ιατρική συμβουλή</strong> και δεν υποκαθιστά
                   την επίσκεψη σε γιατρό.
                 </label>
               </div>
@@ -138,18 +137,18 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
                 />
                 <label htmlFor="terms-accept" className="text-sm leading-relaxed cursor-pointer">
                   Αποδέχομαι τους{" "}
-                  <Link 
-                    to="/terms" 
-                    target="_blank" 
+                  <Link
+                    to="/terms"
+                    target="_blank"
                     className="text-primary hover:underline inline-flex items-center gap-1"
                   >
                     Όρους Χρήσης
                     <ExternalLink className="h-3 w-3" />
                   </Link>
                   {" "}και την{" "}
-                  <Link 
-                    to="/privacy" 
-                    target="_blank" 
+                  <Link
+                    to="/privacy"
+                    target="_blank"
                     className="text-primary hover:underline inline-flex items-center gap-1"
                   >
                     Πολιτική Απορρήτου
@@ -160,7 +159,7 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
               </div>
             </div>
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="flex-shrink-0 pt-4 border-t border-border">
           <Button 
