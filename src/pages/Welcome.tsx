@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { ArrowRight, Stethoscope, Building2, Hospital, FileSignature } from "lucide-react";
+import { ArrowRight, Stethoscope, Users, Phone, AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Welcome() {
   return (
@@ -15,6 +16,13 @@ export default function Welcome() {
       <div className="absolute top-20 right-10 w-3 h-3 rounded-full bg-accent/60 animate-float shadow-glow-accent" />
       <div className="absolute top-40 left-20 w-2 h-2 rounded-full bg-primary/50 animate-float" style={{ animationDelay: '0.5s' }} />
       <div className="absolute bottom-40 right-1/4 w-4 h-4 rounded-full bg-accent/40 animate-float" style={{ animationDelay: '1.5s' }} />
+
+      {/* Pilot Banner */}
+      <div className="relative z-20 bg-primary/10 border-b border-primary/20 py-2 px-4">
+        <p className="text-center text-xs font-medium text-primary">
+          🧪 Pilot Version — Δοκιμαστική Έκδοση
+        </p>
+      </div>
 
       {/* Hero Section */}
       <div className="relative z-10 flex-1 flex flex-col">
@@ -30,16 +38,16 @@ export default function Welcome() {
               <span className="text-gradient-neon">Απλοποιημένη</span>
             </h1>
             <p className="text-muted-foreground max-w-sm mx-auto">
-              Συνδεθείτε με παρόχους υγείας και διαχειριστείτε το ιατρικό σας ταξίδι.
+              Συμμετέχετε στο πιλοτικό πρόγραμμα και βοηθήστε να διαμορφώσουμε το μέλλον της υγείας.
             </p>
           </div>
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons - Pilot Flow */}
         <div className="relative z-10 p-6 space-y-3">
           <Button asChild size="lg" className="w-full h-14 text-base font-semibold rounded-xl gradient-futuristic hover:shadow-neon border-0 transition-all duration-300">
-            <Link to="/auth?mode=signup">
-              Ξεκινήστε
+            <Link to="/pilot">
+              Συμμετοχή στο Pilot
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
@@ -49,35 +57,44 @@ export default function Welcome() {
             </Link>
           </Button>
           
-          {/* Provider Registration Links */}
+          {/* Provider Registration */}
           <div className="pt-4 border-t border-border/50 space-y-4">
-            <p className="text-xs text-center text-muted-foreground">Είστε πάροχος υγείας;</p>
-            <div className="flex justify-center gap-6">
-              <Link to="/doctor-registration?type=doctor" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <Stethoscope className="h-6 w-6 text-primary" />
-              </Link>
-              <Link to="/doctor-registration?type=clinic" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <Building2 className="h-6 w-6 text-accent" />
-              </Link>
-              <Link to="/doctor-registration?type=hospital" className="w-14 h-14 rounded-full glass border border-primary/30 hover:shadow-glow flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <Hospital className="h-6 w-6 text-emerald-500" />
+            <p className="text-xs text-center text-muted-foreground">Είστε Ιατρός;</p>
+            <div className="flex justify-center gap-4">
+              <Link 
+                to="/doctor-signup" 
+                className="flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/30 hover:shadow-glow transition-all duration-300 hover:scale-105"
+              >
+                <Stethoscope className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">Εγγραφή Ιατρού</span>
               </Link>
             </div>
-            <Button asChild variant="ghost" size="sm" className="w-full text-accent hover:text-accent hover:bg-accent/10">
-              <Link to="/interest">
-                <FileSignature className="h-4 w-4 mr-2" />
-                Εκδήλωση Ενδιαφέροντος
-              </Link>
-            </Button>
           </div>
         </div>
+      </div>
+
+      {/* Emergency Button */}
+      <div className="relative z-10 px-6 pb-4">
+        <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span className="text-sm">Έκτακτη Ανάγκη;</span>
+            <a 
+              href="tel:112" 
+              className="flex items-center gap-2 px-3 py-1 rounded-full bg-destructive text-destructive-foreground text-sm font-semibold"
+            >
+              <Phone className="h-4 w-4" />
+              Καλέστε 112
+            </a>
+          </AlertDescription>
+        </Alert>
       </div>
 
       {/* Medical Disclaimer */}
       <div className="relative z-10 px-6 py-4 glass border-t border-primary/20">
         <p className="text-xs text-center text-muted-foreground">
-          <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή παρέχει γενικές πληροφορίες υγείας και 
-          δεν αντικαθιστά επαγγελματικές ιατρικές συμβουλές, διάγνωση ή θεραπεία.
+          <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή δεν παρέχει ιατρικές συμβουλές, 
+          διάγνωση ή θεραπεία. Συμβουλευτείτε πάντα εξειδικευμένο επαγγελματία υγείας.
         </p>
       </div>
     </div>

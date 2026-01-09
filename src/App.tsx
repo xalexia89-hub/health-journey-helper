@@ -69,11 +69,19 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
+          <Routes>
               {/* Public routes */}
               <Route path="/" element={<Welcome />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/intro" element={<Intro />} />
+              
+              {/* Pilot routes */}
+              <Route path="/pilot" element={<PilotLanding />} />
+              <Route path="/pilot/enroll" element={<PilotEnroll />} />
+              <Route path="/pilot/waitlist" element={<PilotWaitlist />} />
+              <Route path="/doctor-signup" element={<DoctorSignup />} />
+              
+              {/* Legacy routes */}
               <Route path="/doctor-registration" element={<DoctorRegistration />} />
               <Route path="/pitch-deck" element={<PitchDeck />} />
               <Route path="/mesh-architecture" element={<MeshArchitecture />} />
