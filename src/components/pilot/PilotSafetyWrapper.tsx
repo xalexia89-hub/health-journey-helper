@@ -46,8 +46,6 @@ export function PilotSafetyWrapper({
       {showPilotBadge && <PilotBadge variant="corner" />}
       
       {children}
-      
-      {showEmergencyButton && <EmergencyButton variant="floating" />}
     </>
   );
 }
