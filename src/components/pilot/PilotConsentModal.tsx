@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Shield, AlertTriangle, Phone, Calendar, ExternalLink } from "lucide-react";
+import { Shield, AlertTriangle, Calendar, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CONSENT_KEY = "medithos_pilot_consent_v1";
@@ -87,19 +87,6 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
               </div>
             </div>
 
-            {/* Emergency Notice */}
-            <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-primary">Σε Περίπτωση Έκτακτης Ανάγκης</h4>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Σε περίπτωση επείγουσας ιατρικής ανάγκης, καλέστε αμέσως το <strong>112</strong> ή
-                    το <strong>166</strong> (ΕΚΑΒ). Μην βασίζεστε σε αυτή την εφαρμογή για καταστάσεις έκτακτης ανάγκης.
-                  </p>
-                </div>
-              </div>
-            </div>
 
             {/* Checkboxes inside scroll area */}
             <div className="space-y-4 pt-4 border-t border-border">

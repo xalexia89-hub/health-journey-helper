@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, FileText, Newspaper } from "lucide-react";
+import { Home, Calendar, FileText, Newspaper, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -13,6 +13,10 @@ export function MobileNav() {
     { path: "/appointments", icon: Calendar, labelKey: "nav.appointments" },
     { path: "/records", icon: FileText, labelKey: "nav.records" },
   ];
+
+  const handleEmergencyCall = () => {
+    window.location.href = "tel:112";
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-pb">
@@ -36,6 +40,15 @@ export function MobileNav() {
             </Link>
           );
         })}
+        {/* Emergency 112 button */}
+        <button
+          onClick={handleEmergencyCall}
+          className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors text-destructive hover:text-destructive/80"
+          aria-label="Κλήση 112"
+        >
+          <Phone className="h-5 w-5" />
+          <span className="text-xs font-medium">112</span>
+        </button>
       </div>
     </nav>
   );
