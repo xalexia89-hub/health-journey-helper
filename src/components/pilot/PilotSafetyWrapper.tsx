@@ -41,11 +41,5 @@ export function PilotSafetyWrapper({
   }
 
   // User has given consent - show full UI
-  return (
-    <>
-      {showPilotBadge && <PilotBadge variant="corner" />}
-      
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
