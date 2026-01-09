@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { GDPRSection } from '@/components/settings/GDPRSection';
 import {
   Bell,
   Shield,
@@ -247,14 +248,14 @@ const Settings = () => {
             </div>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" className="w-full justify-between">
+          <Button variant="ghost" className="w-full justify-between" onClick={() => navigate('/terms')}>
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               <span>{t('settings.help.terms')}</span>
             </div>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" className="w-full justify-between">
+          <Button variant="ghost" className="w-full justify-between" onClick={() => navigate('/privacy')}>
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               <span>{t('settings.help.privacy')}</span>
@@ -263,6 +264,9 @@ const Settings = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* GDPR Section */}
+      <GDPRSection />
 
       {/* Language */}
       <Card>
