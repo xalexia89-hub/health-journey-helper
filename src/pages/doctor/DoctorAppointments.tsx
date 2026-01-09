@@ -7,9 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Calendar, Clock, Search, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Calendar, Clock, Search, CheckCircle, XCircle, Eye, MessageSquare } from 'lucide-react';
 import { format, parseISO, isPast, isToday, isFuture } from 'date-fns';
+import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import { useDoctorAccessLog } from '@/hooks/useDoctorAccessLog';
+import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
 import {
   Dialog,
   DialogContent,
@@ -50,6 +53,7 @@ const statusColors = {
 const DoctorAppointments = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { logAccess } = useDoctorAccessLog();
   const [providerId, setProviderId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +112,7 @@ const DoctorAppointments = () => {
     }
   };
 
-  const handleUpdateStatus = async (appointmentId: string, newStatus: 'confirmed' | 'completed' | 'cancelled') => {
+  const handleUpdateStatus = async (appointmentId: string, newStatus: 'confirmed' | 'completed' | 'cancelled', patientId?: string) => {
     const { error } = await supabase
       .from('appointments')
       .update({ status: newStatus })
@@ -116,16 +120,28 @@ const DoctorAppointments = () => {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update appointment status',
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ενημέρωσης κατάστασης',
         variant: 'destructive'
       });
     } else {
+      // Log access
+      if (patientId) {
+        logAccess('update_appointment', patientId, 'appointment', appointmentId);
+      }
       toast({
-        title: 'Status Updated',
-        description: `Appointment marked as ${newStatus}`
+        title: 'Επιτυχής Ενημέρωση',
+        description: `Το αίτημα ενημερώθηκε σε ${newStatus === 'confirmed' ? 'επιβεβαιωμένο' : newStatus === 'completed' ? 'ολοκληρωμένο' : 'απορρίφθηκε'}`
       });
       if (providerId) fetchAppointments(providerId);
+    }
+  };
+
+  const handleViewDetails = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    // Log access when viewing appointment details
+    if (appointment.patient?.id) {
+      logAccess('view_appointment', appointment.patient.id, 'appointment', appointment.id);
     }
   };
 
@@ -156,17 +172,17 @@ const DoctorAppointments = () => {
             <Avatar className="h-12 w-12">
               <AvatarImage src={appointment.patient?.avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary">
-                {appointment.patient?.full_name?.charAt(0) || 'P'}
+                {appointment.patient?.full_name?.charAt(0) || 'Χ'}
               </AvatarFallback>
             </Avatar>
             
             <div>
-              <p className="font-semibold">{appointment.patient?.full_name || 'Patient'}</p>
+              <p className="font-semibold">{appointment.patient?.full_name || 'Χρήστης'}</p>
               <p className="text-sm text-muted-foreground">{appointment.patient?.email}</p>
               <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {format(parseISO(appointment.appointment_date), 'MMM d, yyyy')}
+                  {format(parseISO(appointment.appointment_date), 'd MMM yyyy', { locale: el })}
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
@@ -177,7 +193,10 @@ const DoctorAppointments = () => {
           </div>
 
           <Badge className={statusColors[appointment.status]}>
-            {appointment.status}
+            {appointment.status === 'pending' && 'Εκκρεμεί'}
+            {appointment.status === 'confirmed' && 'Επιβεβαιωμένο'}
+            {appointment.status === 'completed' && 'Ολοκληρώθηκε'}
+            {appointment.status === 'cancelled' && 'Ακυρώθηκε'}
           </Badge>
         </div>
 
@@ -185,28 +204,28 @@ const DoctorAppointments = () => {
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setSelectedAppointment(appointment)}
+            onClick={() => handleViewDetails(appointment)}
           >
             <Eye className="h-4 w-4 mr-1" />
-            Details
+            Λεπτομέρειες
           </Button>
           
           {appointment.status === 'pending' && (
             <>
               <Button
                 size="sm"
-                onClick={() => handleUpdateStatus(appointment.id, 'confirmed')}
+                onClick={() => handleUpdateStatus(appointment.id, 'confirmed', appointment.patient?.id)}
               >
                 <CheckCircle className="h-4 w-4 mr-1" />
-                Confirm
+                Αποδοχή
               </Button>
               <Button
                 size="sm"
                 variant="destructive"
-                onClick={() => handleUpdateStatus(appointment.id, 'cancelled')}
+                onClick={() => handleUpdateStatus(appointment.id, 'cancelled', appointment.patient?.id)}
               >
                 <XCircle className="h-4 w-4 mr-1" />
-                Decline
+                Απόρριψη
               </Button>
             </>
           )}
@@ -214,10 +233,10 @@ const DoctorAppointments = () => {
           {appointment.status === 'confirmed' && (
             <Button
               size="sm"
-              onClick={() => handleUpdateStatus(appointment.id, 'completed')}
+              onClick={() => handleUpdateStatus(appointment.id, 'completed', appointment.patient?.id)}
             >
               <CheckCircle className="h-4 w-4 mr-1" />
-              Mark Complete
+              Ολοκλήρωση
             </Button>
           )}
         </div>
@@ -235,16 +254,19 @@ const DoctorAppointments = () => {
 
   return (
     <div className="space-y-6">
+      {/* Advisor Banner */}
+      <AdvisorBanner />
+
       <div>
-        <h1 className="text-2xl font-bold">Appointments</h1>
-        <p className="text-muted-foreground">Manage your patient appointments</p>
+        <h1 className="text-2xl font-bold">Αιτήματα Πλοήγησης</h1>
+        <p className="text-muted-foreground">Διαχειριστείτε τα αιτήματα συμβουλευτικής καθοδήγησης</p>
       </div>
 
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search patients..."
+          placeholder="Αναζήτηση χρηστών..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -284,7 +306,7 @@ const DoctorAppointments = () => {
           {pendingAppointments.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">No pending appointments</p>
+                <p className="text-muted-foreground">Δεν υπάρχουν εκκρεμή αιτήματα</p>
               </CardContent>
             </Card>
           ) : (
@@ -296,7 +318,7 @@ const DoctorAppointments = () => {
           {upcomingAppointments.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">No upcoming appointments</p>
+                <p className="text-muted-foreground">Δεν υπάρχουν επερχόμενα αιτήματα</p>
               </CardContent>
             </Card>
           ) : (
@@ -308,7 +330,7 @@ const DoctorAppointments = () => {
           {pastAppointments.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">No past appointments</p>
+                <p className="text-muted-foreground">Δεν υπάρχει ιστορικό αιτημάτων</p>
               </CardContent>
             </Card>
           ) : (

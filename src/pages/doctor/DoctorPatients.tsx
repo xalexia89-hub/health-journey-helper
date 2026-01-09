@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Mail, Phone, Calendar, FileText } from 'lucide-react';
+import { Search, Mail, Phone, Calendar, FileText, Users } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { el } from 'date-fns/locale';
+import { useDoctorAccessLog } from '@/hooks/useDoctorAccessLog';
+import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +40,7 @@ interface MedicalRecord {
 
 const DoctorPatients = () => {
   const { user } = useAuth();
+  const { logAccess } = useDoctorAccessLog();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -115,6 +119,10 @@ const DoctorPatients = () => {
 
   const fetchMedicalRecord = async (patientId: string) => {
     setLoadingRecord(true);
+    
+    // Log access to medical record
+    logAccess('view_medical_record', patientId, 'medical_record');
+    
     const { data } = await supabase
       .from('medical_records')
       .select('allergies, chronic_conditions, current_medications, past_surgeries, notes')
@@ -127,6 +135,8 @@ const DoctorPatients = () => {
 
   const handleViewPatient = (patient: Patient) => {
     setSelectedPatient(patient);
+    // Log access to patient profile
+    logAccess('view_patient', patient.id, 'patient');
     fetchMedicalRecord(patient.id);
   };
 
@@ -145,16 +155,19 @@ const DoctorPatients = () => {
 
   return (
     <div className="space-y-6">
+      {/* Advisor Banner */}
+      <AdvisorBanner />
+
       <div>
-        <h1 className="text-2xl font-bold">Patients</h1>
-        <p className="text-muted-foreground">View your patient list and records</p>
+        <h1 className="text-2xl font-bold">Χρήστες Πλοήγησης</h1>
+        <p className="text-muted-foreground">Προβολή χρηστών με τους οποίους έχετε αλληλεπιδράσει</p>
       </div>
 
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search patients by name or email..."
+          placeholder="Αναζήτηση με όνομα ή email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -163,15 +176,16 @@ const DoctorPatients = () => {
 
       {/* Patient Count */}
       <p className="text-sm text-muted-foreground">
-        Showing {filteredPatients.length} of {patients.length} patients
+        Εμφάνιση {filteredPatients.length} από {patients.length} χρήστες
       </p>
 
       {/* Patients Grid */}
       {filteredPatients.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
+            <Users className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
             <p className="text-muted-foreground">
-              {searchQuery ? 'No patients match your search' : 'No patients yet'}
+              {searchQuery ? 'Δεν βρέθηκαν χρήστες με αυτήν την αναζήτηση' : 'Δεν υπάρχουν χρήστες ακόμα'}
             </p>
           </CardContent>
         </Card>
@@ -184,23 +198,23 @@ const DoctorPatients = () => {
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={patient.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      {patient.full_name?.charAt(0) || 'P'}
+                      {patient.full_name?.charAt(0) || 'Χ'}
                     </AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate">
-                      {patient.full_name || 'Patient'}
+                      {patient.full_name || 'Χρήστης'}
                     </p>
                     <p className="text-sm text-muted-foreground truncate">
                       {patient.email}
                     </p>
                     
                     <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span>{patient.appointmentCount} visits</span>
+                      <span>{patient.appointmentCount} επισκέψεις</span>
                       {patient.lastAppointment && (
                         <span>
-                          Last: {format(parseISO(patient.lastAppointment), 'MMM d')}
+                          Τελευταία: {format(parseISO(patient.lastAppointment), 'd MMM', { locale: el })}
                         </span>
                       )}
                     </div>
@@ -214,7 +228,7 @@ const DoctorPatients = () => {
                   onClick={() => handleViewPatient(patient)}
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  View Details
+                  Προβολή
                 </Button>
               </CardContent>
             </Card>
@@ -226,7 +240,7 @@ const DoctorPatients = () => {
       <Dialog open={!!selectedPatient} onOpenChange={() => setSelectedPatient(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Patient Details</DialogTitle>
+            <DialogTitle>Στοιχεία Χρήστη</DialogTitle>
           </DialogHeader>
           
           {selectedPatient && (
