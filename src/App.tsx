@@ -33,6 +33,8 @@ import MeshArchitecture from "./pages/MeshArchitecture";
 import InterestForm from "./pages/InterestForm";
 import InterestFormPrint from "./pages/InterestFormPrint";
 import SystemDocumentation from "./pages/SystemDocumentation";
+import TermsOfUse from "./pages/TermsOfUse";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -71,6 +73,8 @@ const App = () => (
               <Route path="/interest" element={<InterestForm />} />
               <Route path="/interest/print" element={<InterestFormPrint />} />
               <Route path="/documentation" element={<SystemDocumentation />} />
+              <Route path="/terms" element={<TermsOfUse />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               
               {/* Protected patient routes */}
               <Route element={<PatientLayout />}>

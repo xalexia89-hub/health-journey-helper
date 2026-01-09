@@ -9,7 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Shield, AlertTriangle, Phone, Calendar } from "lucide-react";
+import { Shield, AlertTriangle, Phone, Calendar, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CONSENT_KEY = "medithos_pilot_consent_v1";
 const AGE_KEY = "medithos_age_confirmed_v1";
@@ -137,8 +138,25 @@ export function PilotConsentModal({ onConsentGiven }: PilotConsentModalProps) {
               onCheckedChange={(checked) => setTermsAccepted(checked === true)}
             />
             <label htmlFor="terms-accept" className="text-sm leading-relaxed cursor-pointer">
-              Αποδέχομαι τους <strong>Όρους Χρήσης</strong> και την <strong>Πολιτική Απορρήτου</strong> 
-              της πιλοτικής έκδοσης.
+              Αποδέχομαι τους{" "}
+              <Link 
+                to="/terms" 
+                target="_blank" 
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                Όρους Χρήσης
+                <ExternalLink className="h-3 w-3" />
+              </Link>
+              {" "}και την{" "}
+              <Link 
+                to="/privacy" 
+                target="_blank" 
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                Πολιτική Απορρήτου
+                <ExternalLink className="h-3 w-3" />
+              </Link>
+              {" "}της πιλοτικής έκδοσης.
             </label>
           </div>
 
