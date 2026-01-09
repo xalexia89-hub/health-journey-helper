@@ -2,6 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { MobileNav } from "./MobileNav";
 import { Loader2 } from "lucide-react";
+import { PilotSafetyWrapper } from "@/components/pilot/PilotSafetyWrapper";
 
 export function PatientLayout() {
   const { user, loading } = useAuth();
@@ -19,9 +20,11 @@ export function PatientLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <Outlet />
-      <MobileNav />
-    </div>
+    <PilotSafetyWrapper>
+      <div className="min-h-screen bg-background pb-20">
+        <Outlet />
+        <MobileNav />
+      </div>
+    </PilotSafetyWrapper>
   );
 }
