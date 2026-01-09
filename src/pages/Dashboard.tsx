@@ -14,7 +14,7 @@ import {
   Bell, AlertTriangle, CheckCircle2, Clock, TrendingUp, Shield,
   ChevronRight, Sparkles, Zap
 } from "lucide-react";
-import medithosMIcon from "@/assets/medithos-m-logo.png";
+
 
 interface Profile {
   full_name: string | null;
@@ -303,17 +303,13 @@ export default function Dashboard() {
                 <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
                 <div className="absolute inset-2 rounded-full bg-primary/20 blur-lg animate-pulse" style={{ animationDelay: '200ms' }} />
                 
-                {/* Hologram core with Medithos logo */}
+                {/* Hologram core with Activity icon */}
                 <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-primary/40 via-primary/20 to-transparent backdrop-blur-sm border border-primary/30 flex items-center justify-center overflow-hidden group-hover:scale-110 transition-transform duration-300">
                   {/* Scan lines effect */}
                   <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,hsl(var(--primary)/0.1)_2px,hsl(var(--primary)/0.1)_4px)] animate-[scan_2s_linear_infinite]" />
                   
-                  {/* Medithos Logo */}
-                  <img 
-                    src={medithosMIcon} 
-                    alt="Medithos" 
-                    className="h-14 w-14 drop-shadow-[0_0_10px_hsl(var(--primary))] z-10"
-                  />
+                  {/* Activity Icon */}
+                  <Activity className="h-14 w-14 text-primary drop-shadow-[0_0_10px_hsl(var(--primary))] z-10" />
                 </div>
                 
                 {/* Rotating ring */}
