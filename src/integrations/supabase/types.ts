@@ -466,6 +466,95 @@ export type Database = {
           },
         ]
       }
+      doctor_access_logs: {
+        Row: {
+          access_type: string
+          accessed_at: string
+          doctor_user_id: string
+          id: string
+          ip_address: string | null
+          patient_user_id: string
+          resource_id: string | null
+          resource_type: string
+        }
+        Insert: {
+          access_type: string
+          accessed_at?: string
+          doctor_user_id: string
+          id?: string
+          ip_address?: string | null
+          patient_user_id: string
+          resource_id?: string | null
+          resource_type: string
+        }
+        Update: {
+          access_type?: string
+          accessed_at?: string
+          doctor_user_id?: string
+          id?: string
+          ip_address?: string | null
+          patient_user_id?: string
+          resource_id?: string | null
+          resource_type?: string
+        }
+        Relationships: []
+      }
+      doctor_advisor_agreements: {
+        Row: {
+          availability_notes: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          languages: string[] | null
+          navigation_only_acknowledged: boolean
+          no_patient_relationship_acknowledged: boolean
+          provider_id: string
+          public_listing_opted_in: boolean
+          terms_accepted: boolean
+          terms_accepted_at: string | null
+          unpaid_volunteer_acknowledged: boolean
+          updated_at: string
+        }
+        Insert: {
+          availability_notes?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          languages?: string[] | null
+          navigation_only_acknowledged?: boolean
+          no_patient_relationship_acknowledged?: boolean
+          provider_id: string
+          public_listing_opted_in?: boolean
+          terms_accepted?: boolean
+          terms_accepted_at?: string | null
+          unpaid_volunteer_acknowledged?: boolean
+          updated_at?: string
+        }
+        Update: {
+          availability_notes?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          languages?: string[] | null
+          navigation_only_acknowledged?: boolean
+          no_patient_relationship_acknowledged?: boolean
+          provider_id?: string
+          public_listing_opted_in?: boolean
+          terms_accepted?: boolean
+          terms_accepted_at?: string | null
+          unpaid_volunteer_acknowledged?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_advisor_agreements_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: true
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       examary_reports: {
         Row: {
           created_at: string | null
@@ -942,6 +1031,93 @@ export type Database = {
           },
         ]
       }
+      pilot_enrollments: {
+        Row: {
+          age_confirmed: boolean
+          consent_accepted: boolean
+          consent_accepted_at: string | null
+          created_at: string
+          enrolled_at: string
+          id: string
+          invite_code: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_confirmed?: boolean
+          consent_accepted?: boolean
+          consent_accepted_at?: string | null
+          created_at?: string
+          enrolled_at?: string
+          id?: string
+          invite_code?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_confirmed?: boolean
+          consent_accepted?: boolean
+          consent_accepted_at?: string | null
+          created_at?: string
+          enrolled_at?: string
+          id?: string
+          invite_code?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pilot_settings: {
+        Row: {
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pilot_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
       prevention_plans: {
         Row: {
           based_on_age: boolean | null
@@ -1371,6 +1547,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_pilot_enrollment_count: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1378,6 +1555,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_pilot_full: { Args: never; Returns: boolean }
     }
     Enums: {
       academy_category:

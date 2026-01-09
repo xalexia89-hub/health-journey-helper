@@ -37,6 +37,12 @@ import TermsOfUse from "./pages/TermsOfUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProjectEvaluation from "./pages/ProjectEvaluation";
 
+// Pilot Pages
+import PilotLanding from "./pages/PilotLanding";
+import PilotEnroll from "./pages/PilotEnroll";
+import PilotWaitlist from "./pages/PilotWaitlist";
+import DoctorSignup from "./pages/DoctorSignup";
+
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import DoctorAppointments from "./pages/doctor/DoctorAppointments";
