@@ -59,6 +59,7 @@ interface FamilyMember {
   name: string;
   relationship: string;
   conditions: string[];
+  photoUrl?: string;
 }
 
 interface FamilyHistory {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,14 +10,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, X, User, Edit2, Check } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Plus, X, User, Edit2, Check, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface FamilyMember {
   id: string;
   name: string;
   relationship: string;
   conditions: string[];
+  photoUrl?: string;
 }
 
 interface FamilyHistory {
@@ -39,6 +43,7 @@ function TreeNode({
   onRemove,
   onAddCondition,
   onRemoveCondition,
+  onPhotoChange,
   isEditing,
   setEditing,
   className,
@@ -48,6 +53,7 @@ function TreeNode({
   onRemove: () => void;
   onAddCondition: (condition: string) => void;
   onRemoveCondition: (condition: string) => void;
+  onPhotoChange: (photoUrl: string) => void;
   isEditing: boolean;
   setEditing: (editing: boolean) => void;
   className?: string;
@@ -55,31 +61,118 @@ function TreeNode({
   const [editName, setEditName] = useState(member.name);
   const [newCondition, setNewCondition] = useState('');
   const [showConditionInput, setShowConditionInput] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Σφάλμα',
+        description: 'Επιλέξτε αρχείο εικόνας',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: 'Σφάλμα',
+        description: 'Η εικόνα πρέπει να είναι μικρότερη από 2MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${member.id}-${Date.now()}.${fileExt}`;
+      const filePath = `family-members/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      onPhotoChange(urlData.publicUrl);
+      toast({
+        title: 'Επιτυχία',
+        description: 'Η φωτογραφία ανέβηκε',
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: 'Σφάλμα',
+        description: 'Αποτυχία ανεβάσματος φωτογραφίας',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+      />
+      
       {/* Node circle */}
       <div className="relative group">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/80 to-accent/60 flex items-center justify-center shadow-lg shadow-primary/20 border-2 border-primary/30">
-          {isEditing ? (
-            <Input
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              className="w-12 h-6 text-[10px] text-center p-0 bg-transparent border-none text-white"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  onEdit(editName);
-                  setEditing(false);
-                }
-              }}
-            />
+        <Avatar className="w-14 h-14 shadow-lg shadow-primary/20 border-2 border-primary/30">
+          {member.photoUrl ? (
+            <AvatarImage src={member.photoUrl} alt={member.name} className="object-cover" />
+          ) : null}
+          <AvatarFallback className="bg-gradient-to-br from-primary/80 to-accent/60">
+            {isEditing ? (
+              <Input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="w-12 h-6 text-[10px] text-center p-0 bg-transparent border-none text-white"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onEdit(editName);
+                    setEditing(false);
+                  }
+                }}
+              />
+            ) : (
+              <span className="text-white font-semibold text-lg">
+                {member.name.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </AvatarFallback>
+        </Avatar>
+        
+        {/* Photo upload button */}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingPhoto}
+          className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/80"
+        >
+          {uploadingPhoto ? (
+            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <span className="text-white font-semibold text-lg">
-              {member.name.charAt(0).toUpperCase()}
-            </span>
+            <Camera className="w-3 h-3" />
           )}
-        </div>
+        </button>
         
         {/* Edit/Remove buttons */}
         <div className="absolute -top-1 -right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -301,6 +394,15 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
     }));
   };
 
+  const handlePhotoChange = (generation: keyof FamilyHistory, memberId: string, photoUrl: string) => {
+    setHistory(prev => ({
+      ...prev,
+      [generation]: prev[generation].map(m => 
+        m.id === memberId ? { ...m, photoUrl } : m
+      ),
+    }));
+  };
+
   const handleSave = () => {
     onSave(history);
     setOpen(false);
@@ -327,6 +429,7 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
           onRemove={() => handleRemoveMember(generation, member.id)}
           onAddCondition={(condition) => handleAddCondition(generation, member.id, condition)}
           onRemoveCondition={(condition) => handleRemoveCondition(generation, member.id, condition)}
+          onPhotoChange={(photoUrl) => handlePhotoChange(generation, member.id, photoUrl)}
           isEditing={editingMemberId === member.id}
           setEditing={(editing) => setEditingMemberId(editing ? member.id : null)}
         />
@@ -435,6 +538,7 @@ export const FamilyTreeDialog = ({ familyHistory, onSave, trigger }: FamilyTreeD
                         onRemove={() => handleRemoveMember('siblings', sibling.id)}
                         onAddCondition={(condition) => handleAddCondition('siblings', sibling.id, condition)}
                         onRemoveCondition={(condition) => handleRemoveCondition('siblings', sibling.id, condition)}
+                        onPhotoChange={(photoUrl) => handlePhotoChange('siblings', sibling.id, photoUrl)}
                         isEditing={editingMemberId === sibling.id}
                         setEditing={(editing) => setEditingMemberId(editing ? sibling.id : null)}
                       />
