@@ -18,7 +18,6 @@ import {
   Save,
   FileText,
   Share2,
-  Upload,
   Users,
   User,
   Bot,
@@ -37,6 +36,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialog';
 import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
+import { DocumentUploadDialog } from '@/components/medical-records/DocumentUploadDialog';
 import {
   Tooltip,
   TooltipContent,
@@ -323,9 +323,7 @@ const MedicalRecords = () => {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-8 w-8">
-                    <Upload className="h-4 w-4" />
-                  </Button>
+                  <DocumentUploadDialog />
                 </TooltipTrigger>
                 <TooltipContent>Ανέβασμα Αρχείων</TooltipContent>
               </Tooltip>

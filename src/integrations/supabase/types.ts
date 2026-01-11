@@ -714,6 +714,7 @@ export type Database = {
       medical_documents: {
         Row: {
           description: string | null
+          document_category: string | null
           file_name: string
           file_type: string | null
           file_url: string
@@ -723,6 +724,7 @@ export type Database = {
         }
         Insert: {
           description?: string | null
+          document_category?: string | null
           file_name: string
           file_type?: string | null
           file_url: string
@@ -732,6 +734,7 @@ export type Database = {
         }
         Update: {
           description?: string | null
+          document_category?: string | null
           file_name?: string
           file_type?: string | null
           file_url?: string
