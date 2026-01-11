@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import { MedicalDisclaimer } from "@/components/pilot/MedicalDisclaimer";
-import { EmergencyButton } from "@/components/pilot/EmergencyButton";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   FlaskConical, 
@@ -80,9 +79,6 @@ export default function PilotLanding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Emergency Button */}
-      <EmergencyButton variant="floating" />
-
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
