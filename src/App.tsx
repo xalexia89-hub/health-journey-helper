@@ -70,8 +70,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
           <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Welcome />} />
+            {/* Public routes - PilotLanding is the main entry point */}
+              <Route path="/" element={<PilotLanding />} />
+              <Route path="/welcome" element={<Welcome />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/intro" element={<Intro />} />
               
