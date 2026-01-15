@@ -67,6 +67,17 @@ const Profile = () => {
       }
     }
 
+    // Generate signed URL for avatar if it exists and looks like a storage path
+    if (data?.avatar_url && !data.avatar_url.startsWith('http')) {
+      const { data: signedUrlData } = await supabase.storage
+        .from('avatars')
+        .createSignedUrl(data.avatar_url, 3600); // 1 hour expiry
+      
+      if (signedUrlData) {
+        data = { ...data, avatar_url: signedUrlData.signedUrl };
+      }
+    }
+
     if (data) setProfile(data);
     setLoading(false);
   };
@@ -109,17 +120,19 @@ const Profile = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
+      // Get signed URL (bucket is private for privacy)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from('avatars')
-        .getPublicUrl(fileName);
+        .createSignedUrl(fileName, 3600); // 1 hour expiry
 
-      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+      if (signedUrlError) throw signedUrlError;
 
-      // Update profile with new avatar URL
+      const avatarUrl = signedUrlData.signedUrl;
+
+      // Update profile with the file path (not URL) for later signed URL generation
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: avatarUrl })
+        .update({ avatar_url: fileName })
         .eq('id', user.id);
 
       if (updateError) throw updateError;
