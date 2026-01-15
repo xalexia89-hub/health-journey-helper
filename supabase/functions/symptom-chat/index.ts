@@ -52,12 +52,71 @@ serve(async (req) => {
 
     const { messages } = await req.json();
     
-    // Validate messages input
+    // === INPUT VALIDATION ===
+    const MAX_MESSAGES = 50;
+    const MAX_MESSAGE_LENGTH = 10000;
+    const VALID_ROLES = ['user', 'assistant'];
+    
+    // Validate messages is an array
     if (!messages || !Array.isArray(messages)) {
+      console.error("Invalid messages format: not an array");
       return new Response(JSON.stringify({ error: "Μη έγκυρα μηνύματα" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Validate messages array size (prevent DoS)
+    if (messages.length > MAX_MESSAGES) {
+      console.error(`Too many messages: ${messages.length} > ${MAX_MESSAGES}`);
+      return new Response(JSON.stringify({ error: "Πολλά μηνύματα. Ξεκινήστε νέα συνομιλία." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate each message structure
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      
+      // Check message is an object
+      if (!msg || typeof msg !== 'object') {
+        console.error(`Invalid message at index ${i}: not an object`);
+        return new Response(JSON.stringify({ error: "Μη έγκυρη δομή μηνύματος" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Validate role
+      if (!msg.role || !VALID_ROLES.includes(msg.role)) {
+        console.error(`Invalid role at index ${i}: ${msg.role}`);
+        return new Response(JSON.stringify({ error: "Μη έγκυρος ρόλος μηνύματος" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Validate content exists and is a string
+      if (typeof msg.content !== 'string') {
+        console.error(`Invalid content type at index ${i}: ${typeof msg.content}`);
+        return new Response(JSON.stringify({ error: "Μη έγκυρο περιεχόμενο μηνύματος" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Validate content length
+      if (msg.content.length > MAX_MESSAGE_LENGTH) {
+        console.error(`Content too long at index ${i}: ${msg.content.length} > ${MAX_MESSAGE_LENGTH}`);
+        return new Response(JSON.stringify({ error: "Το μήνυμα είναι πολύ μεγάλο" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Sanitize content - remove potential control characters
+      messages[i].content = msg.content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
