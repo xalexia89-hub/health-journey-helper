@@ -78,6 +78,7 @@ const App = () => (
               
               {/* Pilot routes */}
               <Route path="/pilot" element={<PilotLanding />} />
+              <Route path="/pilot/landing" element={<PilotLanding />} />
               <Route path="/medithos" element={<PilotLanding />} />
               <Route path="/pilot/enroll" element={<PilotEnroll />} />
               <Route path="/pilot/waitlist" element={<PilotWaitlist />} />
