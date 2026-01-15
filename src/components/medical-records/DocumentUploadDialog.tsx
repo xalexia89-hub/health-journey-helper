@@ -72,7 +72,20 @@ export function DocumentUploadDialog() {
       .order('uploaded_at', { ascending: false });
 
     if (!error && data) {
-      setDocuments(data as MedicalDocument[]);
+      // Generate signed URLs for each document
+      const docsWithSignedUrls = await Promise.all(
+        data.map(async (doc) => {
+          const { data: signedData } = await supabase.storage
+            .from('medical-documents')
+            .createSignedUrl(doc.file_url, 3600); // 1 hour expiry
+          
+          return {
+            ...doc,
+            file_url: signedData?.signedUrl || doc.file_url
+          };
+        })
+      );
+      setDocuments(docsWithSignedUrls as MedicalDocument[]);
     }
     setLoading(false);
   };
@@ -122,18 +135,13 @@ export function DocumentUploadDialog() {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('medical-documents')
-        .getPublicUrl(fileName);
-
-      // Save to database
+      // Save file path to database (not public URL for security)
       const { error: dbError } = await supabase
         .from('medical_documents')
         .insert({
           user_id: user.id,
           file_name: selectedFile.name,
-          file_url: urlData.publicUrl,
+          file_url: fileName, // Store path, not public URL
           file_type: selectedFile.type,
           document_category: category,
           description: description || null
@@ -171,14 +179,21 @@ export function DocumentUploadDialog() {
     if (!user) return;
     
     try {
-      // Extract file path from URL
-      const urlParts = doc.file_url.split('/');
-      const filePath = `${user.id}/${urlParts[urlParts.length - 1]}`;
+      // Get the original file path from database for deletion
+      const { data: docData } = await supabase
+        .from('medical_documents')
+        .select('file_url')
+        .eq('id', doc.id)
+        .single();
+      
+      const filePath = docData?.file_url || '';
       
       // Delete from storage
-      await supabase.storage
-        .from('medical-documents')
-        .remove([filePath]);
+      if (filePath && !filePath.startsWith('http')) {
+        await supabase.storage
+          .from('medical-documents')
+          .remove([filePath]);
+      }
 
       // Delete from database
       const { error } = await supabase

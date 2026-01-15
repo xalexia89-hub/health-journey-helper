@@ -244,17 +244,14 @@ export default function DoctorRegistration() {
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("provider-documents")
-          .getPublicUrl(fileName);
-
+        // Store file path, not public URL (signed URLs generated on access)
         const { error: docError } = await supabase
           .from("provider_documents")
           .insert({
             provider_id: providerId,
             document_type: type,
             file_name: file.name,
-            file_url: publicUrl,
+            file_url: fileName, // Store path for signed URL generation
             status: "pending",
           });
 
