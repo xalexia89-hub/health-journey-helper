@@ -416,6 +416,258 @@ export type Database = {
           },
         ]
       }
+      community_follows: {
+        Row: {
+          created_at: string | null
+          follower_user_id: string
+          following_provider_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          follower_user_id: string
+          following_provider_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          follower_user_id?: string
+          following_provider_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_follows_following_provider_id_fkey"
+            columns: ["following_provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_post_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          like_count: number | null
+          parent_comment_id: string | null
+          post_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          like_count?: number | null
+          parent_comment_id?: string | null
+          post_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          like_count?: number | null
+          parent_comment_id?: string | null
+          post_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_post_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "community_post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_post_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_post_saves: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_post_saves_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          comment_count: number | null
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_pinned: boolean | null
+          like_count: number | null
+          post_type: string
+          provider_id: string
+          share_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          comment_count?: number | null
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_pinned?: boolean | null
+          like_count?: number | null
+          post_type?: string
+          provider_id: string
+          share_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          comment_count?: number | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_pinned?: boolean | null
+          like_count?: number | null
+          post_type?: string
+          provider_id?: string
+          share_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_stories: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          expires_at: string
+          id: string
+          image_url: string
+          provider_id: string
+          view_count: number | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          image_url: string
+          provider_id: string
+          view_count?: number | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          image_url?: string
+          provider_id?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_stories_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_story_views: {
+        Row: {
+          id: string
+          story_id: string
+          user_id: string
+          viewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          story_id: string
+          user_id: string
+          viewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          story_id?: string
+          user_id?: string
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "community_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consents: {
         Row: {
           case_id: string | null

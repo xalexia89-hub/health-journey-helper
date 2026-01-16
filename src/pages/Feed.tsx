@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, MapPin, Stethoscope, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Loader2, Stethoscope, Users } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { StoryViewer } from "@/components/feed/StoryViewer";
+import { CommunityHeader } from "@/components/community/CommunityHeader";
+import { CommunityStoryItem } from "@/components/community/CommunityStoryItem";
+import { CommunityPostCard } from "@/components/community/CommunityPostCard";
+import { CreatePostDialog } from "@/components/community/CreatePostDialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface Provider {
   id: string;
@@ -18,261 +21,220 @@ interface Provider {
   city: string | null;
   type: string;
   is_verified: boolean;
-  gallery: {
-    id: string;
-    image_url: string;
-  }[];
+  user_id: string | null;
 }
 
 interface Story {
   id: string;
   name: string;
-  avatarUrl: string;
+  avatarUrl: string | null;
   hasNewStory: boolean;
   isOwn: boolean;
-  type: "doctor" | "clinic";
+  type: "doctor" | "clinic" | "hospital";
   specialty?: string;
 }
 
-interface Post {
+interface CommunityPost {
   id: string;
-  author: {
-    name: string;
-    avatarUrl: string;
-    type: "doctor" | "clinic";
-    specialty?: string;
-    isVerified: boolean;
-    city?: string;
-  };
+  provider_id: string;
   content: string;
-  imageUrl?: string;
-  likes: number;
-  comments: number;
-  timeAgo: string;
-  isLiked: boolean;
-  isSaved: boolean;
+  image_url: string | null;
+  post_type: string;
+  like_count: number;
+  comment_count: number;
+  created_at: string;
+  provider: {
+    id: string;
+    name: string;
+    specialty: string | null;
+    avatar_url: string | null;
+    city: string | null;
+    type: string;
+    is_verified: boolean;
+  };
+  is_liked?: boolean;
+  is_saved?: boolean;
 }
-
-interface StoryItemProps {
-  story: Story;
-  onClick: () => void;
-}
-
-const StoryItem = ({ story, onClick }: StoryItemProps) => {
-  return (
-    <div 
-      className="flex flex-col items-center gap-1.5 cursor-pointer group"
-      onClick={onClick}
-    >
-      <div 
-        className={`relative p-0.5 rounded-full ${
-          story.hasNewStory 
-            ? 'bg-gradient-to-tr from-primary via-accent to-primary' 
-            : 'bg-border'
-        }`}
-      >
-        <div className="bg-background p-0.5 rounded-full">
-          <Avatar className="h-16 w-16 ring-2 ring-background">
-            <AvatarImage src={story.avatarUrl} alt={story.name} />
-            <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-medium">
-              {story.name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      </div>
-      <span className="text-xs text-center max-w-[72px] truncate text-foreground/80 group-hover:text-foreground transition-colors">
-        {story.name.split(" ").slice(-1)[0]}
-      </span>
-    </div>
-  );
-};
-
-interface PostCardProps {
-  post: Post;
-  onLike: (id: string) => void;
-  onSave: (id: string) => void;
-}
-
-const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
-  const navigate = useNavigate();
-
-  return (
-    <Card className="border-0 border-b border-border rounded-none bg-card shadow-none">
-      <CardHeader className="flex flex-row items-center gap-3 p-3 pb-2">
-        <Avatar 
-          className="h-10 w-10 cursor-pointer ring-2 ring-primary/20"
-          onClick={() => navigate(`/providers/${post.id}`)}
-        >
-          <AvatarImage src={post.author.avatarUrl} alt={post.author.name} />
-          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-            {post.author.name.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span 
-              className="font-semibold text-sm cursor-pointer hover:text-primary transition-colors truncate"
-              onClick={() => navigate(`/providers/${post.id}`)}
-            >
-              {post.author.name}
-            </span>
-            {post.author.isVerified && (
-              <Badge variant="secondary" className="h-4 px-1 text-[10px] bg-primary/10 text-primary border-0">
-                ✓
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {post.author.specialty && (
-              <span className="flex items-center gap-1">
-                <Stethoscope className="h-3 w-3" />
-                {post.author.specialty}
-              </span>
-            )}
-            {post.author.city && (
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                {post.author.city}
-              </span>
-            )}
-          </div>
-        </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
-      </CardHeader>
-      
-      {post.imageUrl && (
-        <div className="relative aspect-[4/3] bg-muted">
-          <img 
-            src={post.imageUrl} 
-            alt="Post" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-      
-      <CardContent className="p-3 pt-2 space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className={`h-9 w-9 ${post.isLiked ? 'text-destructive' : 'text-foreground'}`}
-              onClick={() => onLike(post.id)}
-            >
-              <Heart className={`h-6 w-6 ${post.isLiked ? 'fill-current' : ''}`} />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-foreground">
-              <MessageCircle className="h-6 w-6" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-foreground">
-              <Share2 className="h-5 w-5" />
-            </Button>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={`h-9 w-9 ${post.isSaved ? 'text-primary' : 'text-foreground'}`}
-            onClick={() => onSave(post.id)}
-          >
-            <Bookmark className={`h-6 w-6 ${post.isSaved ? 'fill-current' : ''}`} />
-          </Button>
-        </div>
-        
-        <div>
-          <p className="text-sm font-semibold">{post.likes.toLocaleString('el-GR')} likes</p>
-          <p className="text-sm mt-1">
-            <span className="font-semibold">{post.author.name}</span>{" "}
-            <span className="text-foreground/90 whitespace-pre-line">{post.content}</span>
-          </p>
-        </div>
-      </CardContent>
-      
-      <CardFooter className="p-3 pt-0">
-        <Button 
-          variant="link" 
-          className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
-          onClick={() => navigate(`/providers/${post.id}`)}
-        >
-          Προβολή προφίλ
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-};
 
 const Feed = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [userProvider, setUserProvider] = useState<Provider | null>(null);
+  const [userLikes, setUserLikes] = useState<Set<string>>(new Set());
+  const [userSaves, setUserSaves] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetchProviders();
-  }, []);
+    fetchData();
+  }, [user]);
+
+  const fetchData = async () => {
+    await Promise.all([
+      fetchProviders(),
+      fetchPosts(),
+      fetchUserInteractions()
+    ]);
+    setLoading(false);
+  };
 
   const fetchProviders = async () => {
     const { data, error } = await supabase
       .from('providers')
-      .select(`
-        id,
-        name,
-        specialty,
-        description,
-        avatar_url,
-        city,
-        type,
-        is_verified,
-        gallery:provider_gallery (
-          id,
-          image_url
-        )
-      `)
+      .select('*')
       .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (data) {
-      setProviders(data as unknown as Provider[]);
+      setProviders(data as Provider[]);
       
-      // Transform providers to stories
-      const transformedStories: Story[] = data.map((p: any) => ({
+      // Check if current user is a provider
+      if (user) {
+        const currentUserProvider = data.find((p: Provider) => p.user_id === user.id);
+        setUserProvider(currentUserProvider || null);
+      }
+      
+      // Transform to stories
+      const transformedStories: Story[] = data.map((p: Provider) => ({
         id: p.id,
         name: p.name,
-        avatarUrl: p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random`,
-        hasNewStory: p.gallery && p.gallery.length > 0,
-        isOwn: false,
-        type: p.type === 'clinic' || p.type === 'hospital' ? 'clinic' : 'doctor',
+        avatarUrl: p.avatar_url,
+        hasNewStory: true, // TODO: Check actual stories
+        isOwn: p.user_id === user?.id,
+        type: (p.type === 'clinic' || p.type === 'hospital' ? p.type : 'doctor') as "doctor" | "clinic" | "hospital",
         specialty: p.specialty || undefined,
       }));
+      
+      // Move own story to front if exists
+      const ownStoryIndex = transformedStories.findIndex(s => s.isOwn);
+      if (ownStoryIndex > 0) {
+        const ownStory = transformedStories.splice(ownStoryIndex, 1)[0];
+        transformedStories.unshift(ownStory);
+      }
+      
       setStories(transformedStories);
-
-      // Transform providers to posts
-      const transformedPosts: Post[] = data
-        .filter((p: any) => p.description || (p.gallery && p.gallery.length > 0))
-        .map((p: any) => ({
-          id: p.id,
-          author: {
-            name: p.name,
-            avatarUrl: p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random`,
-            type: p.type === 'clinic' || p.type === 'hospital' ? 'clinic' : 'doctor',
-            specialty: p.specialty || undefined,
-            isVerified: p.is_verified || false,
-            city: p.city || undefined,
-          },
-          content: p.description || `Καλωσήρθατε στο προφίλ μου! Είμαι ${p.specialty || 'ιατρός'} στην ${p.city || 'περιοχή σας'}.`,
-          imageUrl: p.gallery?.[0]?.image_url || undefined,
-          likes: Math.floor(Math.random() * 500) + 50,
-          comments: Math.floor(Math.random() * 50) + 5,
-          timeAgo: 'Πρόσφατα',
-          isLiked: false,
-          isSaved: false,
-        }));
-      setPosts(transformedPosts);
     }
-    setLoading(false);
+  };
+
+  const fetchPosts = async () => {
+    // First try to fetch from community_posts table
+    const { data: communityPosts, error } = await supabase
+      .from('community_posts')
+      .select(`
+        id,
+        provider_id,
+        content,
+        image_url,
+        post_type,
+        like_count,
+        comment_count,
+        created_at,
+        provider:providers (
+          id,
+          name,
+          specialty,
+          avatar_url,
+          city,
+          type,
+          is_verified
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (communityPosts && communityPosts.length > 0) {
+      // Transform the data
+      const transformedPosts: CommunityPost[] = communityPosts.map((p: any) => ({
+        id: p.id,
+        provider_id: p.provider_id,
+        content: p.content,
+        image_url: p.image_url,
+        post_type: p.post_type,
+        like_count: p.like_count || 0,
+        comment_count: p.comment_count || 0,
+        created_at: p.created_at,
+        provider: p.provider,
+        is_liked: userLikes.has(p.id),
+        is_saved: userSaves.has(p.id),
+      }));
+      setPosts(transformedPosts);
+    } else {
+      // Fallback: Generate posts from provider data if no community posts exist
+      const { data: providerData } = await supabase
+        .from('providers')
+        .select(`
+          id,
+          name,
+          specialty,
+          description,
+          avatar_url,
+          city,
+          type,
+          is_verified,
+          gallery:provider_gallery (
+            id,
+            image_url
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (providerData) {
+        const fallbackPosts: CommunityPost[] = providerData
+          .filter((p: any) => p.description)
+          .map((p: any) => ({
+            id: p.id,
+            provider_id: p.id,
+            content: p.description || `Καλωσήρθατε στο προφίλ μας! Είμαστε ${p.specialty || 'πάροχος υγείας'} στην ${p.city || 'περιοχή σας'}.`,
+            image_url: p.gallery?.[0]?.image_url || null,
+            post_type: 'update',
+            like_count: Math.floor(Math.random() * 200) + 20,
+            comment_count: Math.floor(Math.random() * 30) + 2,
+            created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+            provider: {
+              id: p.id,
+              name: p.name,
+              specialty: p.specialty,
+              avatar_url: p.avatar_url,
+              city: p.city,
+              type: p.type,
+              is_verified: p.is_verified || false,
+            },
+            is_liked: false,
+            is_saved: false,
+          }));
+        setPosts(fallbackPosts);
+      }
+    }
+  };
+
+  const fetchUserInteractions = async () => {
+    if (!user) return;
+
+    // Fetch user likes
+    const { data: likes } = await supabase
+      .from('community_post_likes')
+      .select('post_id')
+      .eq('user_id', user.id);
+
+    if (likes) {
+      setUserLikes(new Set(likes.map(l => l.post_id)));
+    }
+
+    // Fetch user saves
+    const { data: saves } = await supabase
+      .from('community_post_saves')
+      .select('post_id')
+      .eq('user_id', user.id);
+
+    if (saves) {
+      setUserSaves(new Set(saves.map(s => s.post_id)));
+    }
   };
 
   const handleStoryClick = (storyIndex: number) => {
@@ -283,24 +245,182 @@ const Feed = () => {
     setActiveStoryIndex(null);
   };
 
-  const handleLike = (postId: string) => {
+  const handleLike = async (postId: string) => {
+    if (!user) {
+      toast({
+        title: "Σύνδεση απαιτείται",
+        description: "Συνδεθείτε για να κάνετε like σε δημοσιεύσεις.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const isLiked = userLikes.has(postId);
+
+    // Optimistic update
     setPosts(prev => prev.map(post => 
       post.id === postId 
         ? { 
             ...post, 
-            isLiked: !post.isLiked,
-            likes: post.isLiked ? post.likes - 1 : post.likes + 1
+            is_liked: !isLiked,
+            like_count: isLiked ? post.like_count - 1 : post.like_count + 1
           }
         : post
     ));
+
+    if (isLiked) {
+      setUserLikes(prev => {
+        const next = new Set(prev);
+        next.delete(postId);
+        return next;
+      });
+      
+      await supabase
+        .from('community_post_likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', user.id);
+    } else {
+      setUserLikes(prev => new Set(prev).add(postId));
+      
+      await supabase
+        .from('community_post_likes')
+        .insert({ post_id: postId, user_id: user.id });
+    }
   };
 
-  const handleSave = (postId: string) => {
+  const handleSave = async (postId: string) => {
+    if (!user) {
+      toast({
+        title: "Σύνδεση απαιτείται",
+        description: "Συνδεθείτε για να αποθηκεύσετε δημοσιεύσεις.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const isSaved = userSaves.has(postId);
+
+    // Optimistic update
     setPosts(prev => prev.map(post => 
       post.id === postId 
-        ? { ...post, isSaved: !post.isSaved }
+        ? { ...post, is_saved: !isSaved }
         : post
     ));
+
+    if (isSaved) {
+      setUserSaves(prev => {
+        const next = new Set(prev);
+        next.delete(postId);
+        return next;
+      });
+      
+      await supabase
+        .from('community_post_saves')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', user.id);
+    } else {
+      setUserSaves(prev => new Set(prev).add(postId));
+      
+      await supabase
+        .from('community_post_saves')
+        .insert({ post_id: postId, user_id: user.id });
+    }
+  };
+
+  const handleComment = async (postId: string, comment: string) => {
+    if (!user) {
+      toast({
+        title: "Σύνδεση απαιτείται",
+        description: "Συνδεθείτε για να σχολιάσετε.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('community_post_comments')
+      .insert({
+        post_id: postId,
+        user_id: user.id,
+        content: comment,
+      });
+
+    if (!error) {
+      // Update comment count optimistically
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { ...post, comment_count: post.comment_count + 1 }
+          : post
+      ));
+      
+      toast({
+        title: "Το σχόλιο δημοσιεύτηκε",
+      });
+    }
+  };
+
+  const handleCreatePost = async (content: string, postType: string, imageUrl?: string) => {
+    if (!user || !userProvider) {
+      toast({
+        title: "Μόνο πάροχοι μπορούν να δημοσιεύσουν",
+        description: "Εγγραφείτε ως πάροχος υγείας για να δημοσιεύσετε.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('community_posts')
+      .insert({
+        provider_id: userProvider.id,
+        content,
+        post_type: postType,
+        image_url: imageUrl || null,
+      })
+      .select(`
+        id,
+        provider_id,
+        content,
+        image_url,
+        post_type,
+        like_count,
+        comment_count,
+        created_at
+      `)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Σφάλμα",
+        description: "Δεν ήταν δυνατή η δημοσίευση.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Add new post to the top
+    const newPost: CommunityPost = {
+      ...data,
+      provider: {
+        id: userProvider.id,
+        name: userProvider.name,
+        specialty: userProvider.specialty,
+        avatar_url: userProvider.avatar_url,
+        city: userProvider.city,
+        type: userProvider.type,
+        is_verified: userProvider.is_verified,
+      },
+      is_liked: false,
+      is_saved: false,
+    };
+
+    setPosts(prev => [newPost, ...prev]);
+    
+    toast({
+      title: "Δημοσίευση επιτυχής!",
+    });
   };
 
   if (loading) {
@@ -312,15 +432,15 @@ const Feed = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Story Viewer Modal */}
       {activeStoryIndex !== null && (
         <StoryViewer
           stories={stories.map(s => ({
             id: s.id,
             name: s.name,
-            avatarUrl: s.avatarUrl,
-            type: s.type,
+            avatarUrl: s.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&background=random`,
+            type: s.type === 'hospital' ? 'clinic' : s.type,
             specialty: s.specialty,
           }))}
           initialStoryIndex={activeStoryIndex}
@@ -328,13 +448,26 @@ const Feed = () => {
         />
       )}
 
+      {/* Create Post Dialog */}
+      <CreatePostDialog
+        open={showCreatePost}
+        onOpenChange={setShowCreatePost}
+        provider={userProvider}
+        onSubmit={handleCreatePost}
+      />
+
+      {/* Header */}
+      <CommunityHeader 
+        onCreatePost={userProvider ? () => setShowCreatePost(true) : undefined}
+      />
+
       {/* Stories Section */}
       {stories.length > 0 && (
         <section className="bg-card border-b border-border">
           <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex gap-4 p-4">
+            <div className="flex gap-3 p-3">
               {stories.map((story, index) => (
-                <StoryItem
+                <CommunityStoryItem
                   key={story.id}
                   story={story}
                   onClick={() => handleStoryClick(index)}
@@ -349,41 +482,43 @@ const Feed = () => {
       {/* Posts Section */}
       <section className="max-w-lg mx-auto">
         {posts.length === 0 ? (
-          <div className="py-12 text-center">
-            <Stethoscope className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Δεν υπάρχουν ακόμα πάροχοι</h3>
-            <p className="text-muted-foreground mb-4">
-              Οι εγγεγραμμένοι γιατροί και κλινικές θα εμφανίζονται εδώ
+          <div className="py-12 px-4 text-center">
+            <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-base font-semibold mb-2">Καλωσήρθατε στην Κοινότητα</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Οι δημοσιεύσεις από γιατρούς, κλινικές και νοσοκομεία θα εμφανίζονται εδώ
             </p>
-            <Button onClick={() => navigate('/providers')}>
+            <Button onClick={() => navigate('/providers')} size="sm">
+              <Stethoscope className="h-4 w-4 mr-2" />
               Εξερεύνηση Παρόχων
             </Button>
           </div>
         ) : (
-          posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onLike={handleLike}
-              onSave={handleSave}
-            />
-          ))
-        )}
-
-        {/* Load more indicator */}
-        {posts.length > 0 && (
-          <div className="py-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Ακολουθήστε περισσότερους γιατρούς και κλινικές για περισσότερα νέα
-            </p>
-            <Button 
-              variant="link" 
-              className="mt-2 text-primary"
-              onClick={() => navigate('/providers')}
-            >
-              Ανακαλύψτε παρόχους υγείας
-            </Button>
-          </div>
+          <>
+            {posts.map((post) => (
+              <CommunityPostCard
+                key={post.id}
+                post={post}
+                onLike={handleLike}
+                onSave={handleSave}
+                onComment={handleComment}
+              />
+            ))}
+            
+            {/* Load more indicator */}
+            <div className="py-8 text-center">
+              <p className="text-xs text-muted-foreground">
+                Ακολουθήστε περισσότερους παρόχους για νέο περιεχόμενο
+              </p>
+              <Button 
+                variant="link" 
+                className="mt-2 text-primary text-xs"
+                onClick={() => navigate('/providers')}
+              >
+                Ανακαλύψτε παρόχους υγείας
+              </Button>
+            </div>
+          </>
         )}
       </section>
     </div>
