@@ -169,13 +169,6 @@ export default function Symptoms() {
             )}
           </TabsContent>
         </Tabs>
-
-        <Card className="mt-6 bg-warning/10 border-warning/20">
-          <CardContent className="p-4 flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-warning shrink-0" />
-            <p className="text-sm">Αυτό δεν αποτελεί ιατρική διάγνωση. Παρακαλώ συμβουλευτείτε έναν επαγγελματία υγείας.</p>
-          </CardContent>
-        </Card>
       </main>
 
       {mode === "manual" && (
