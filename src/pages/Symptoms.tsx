@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight, AlertCircle, Loader2, MessageCircle, Hand } from "lucide-react";
-import { MedicalDisclaimer } from "@/components/pilot/MedicalDisclaimer";
+
 import type { Database } from "@/integrations/supabase/types";
 
 type BodyArea = Database['public']['Enums']['body_area'];
@@ -95,7 +95,7 @@ export default function Symptoms() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <Header title="Έλεγχος Συμπτωμάτων" showBack />
-      <MedicalDisclaimer variant="banner" />
+      
 
       <main className="px-4 py-6">
         <Tabs value={mode} onValueChange={(v) => setMode(v as "chat" | "manual")} className="w-full">
