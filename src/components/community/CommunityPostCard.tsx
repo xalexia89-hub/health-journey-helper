@@ -145,13 +145,14 @@ export function CommunityPostCard({ post, onLike, onSave, onComment }: Community
         <p className="text-sm whitespace-pre-line leading-relaxed">{post.content}</p>
       </CardContent>
       
-      {/* Image */}
+      {/* Post Image */}
       {post.image_url && (
-        <div className="relative aspect-[4/3] bg-muted">
+        <div className="relative w-full bg-muted overflow-hidden">
           <img 
             src={post.image_url} 
-            alt="Post" 
-            className="w-full h-full object-cover"
+            alt="Post image" 
+            className="w-full max-h-[400px] object-cover"
+            loading="lazy"
           />
         </div>
       )}
