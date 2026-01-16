@@ -94,7 +94,7 @@ export default function Symptoms() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="Έλεγχος Συμπτωμάτων" showBack />
+      <Header showBack />
       
 
       <main className="px-4 py-6">
