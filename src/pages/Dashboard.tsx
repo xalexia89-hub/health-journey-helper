@@ -197,57 +197,55 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="px-4 py-6 space-y-6 pb-24">
+      <main className="px-3 py-4 space-y-4 pb-24">
         {/* Welcome Section with Health Score */}
         <section className="animate-slide-up">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl font-bold text-foreground truncate">
                 Καλώς ήρθες, <span className="text-primary">{firstName}</span> 
               </h1>
-              <p className="text-muted-foreground mt-1">Πώς νιώθεις σήμερα;</p>
+              <p className="text-sm text-muted-foreground">Πώς νιώθεις σήμερα;</p>
             </div>
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative"
-                onClick={() => navigate('/settings')}
-              >
-                <Bell className="h-5 w-5" />
-                {unreadNotifications > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center">
-                    {unreadNotifications}
-                  </span>
-                )}
-              </Button>
-            </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative shrink-0"
+              onClick={() => navigate('/settings')}
+            >
+              <Bell className="h-5 w-5" />
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center">
+                  {unreadNotifications}
+                </span>
+              )}
+            </Button>
           </div>
 
           {/* Health Score Card */}
-          <Card className="mt-4 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Shield className="h-7 w-7 text-primary" />
+          <Card className="mt-3 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="relative shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Shield className="h-5 w-5 text-primary" />
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-                      <Sparkles className="h-3 w-3 text-primary" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
+                      <Sparkles className="h-2.5 w-2.5 text-primary" />
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Σκορ Υγείας</p>
-                    <p className="text-2xl font-bold text-primary">{healthScore}%</p>
+                    <p className="text-xs text-muted-foreground">Σκορ Υγείας</p>
+                    <p className="text-xl font-bold text-primary">{healthScore}%</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right shrink-0">
                   <div className="flex items-center gap-1 text-green-600">
-                    <TrendingUp className="h-4 w-4" />
-                    <span className="text-sm font-medium">+5%</span>
+                    <TrendingUp className="h-3 w-3" />
+                    <span className="text-xs font-medium">+5%</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">από τον προηγ. μήνα</p>
+                  <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
                 </div>
               </div>
             </CardContent>
@@ -255,24 +253,24 @@ export default function Dashboard() {
         </section>
 
         {/* Hologram Hub with Orbital Actions */}
-        <section className="animate-slide-up relative flex-1 flex items-center justify-center" style={{ animationDelay: '100ms' }}>
-          <div className="relative w-full aspect-square max-w-[380px] mx-auto">
+        <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>
+          <div className="relative w-full max-w-[300px] aspect-square mx-auto">
             
-            {/* Orbital Rings */}
+            {/* Orbital Rings - smaller for mobile */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[340px] h-[340px] rounded-full border border-primary/20 animate-[spin_30s_linear_infinite]" />
+              <div className="w-[260px] h-[260px] rounded-full border border-primary/20 animate-[spin_30s_linear_infinite]" />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[280px] h-[280px] rounded-full border border-primary/10 animate-[spin_25s_linear_infinite_reverse]" />
+              <div className="w-[210px] h-[210px] rounded-full border border-primary/10 animate-[spin_25s_linear_infinite_reverse]" />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[220px] h-[220px] rounded-full border border-dashed border-primary/15 animate-[spin_20s_linear_infinite]" />
+              <div className="w-[160px] h-[160px] rounded-full border border-dashed border-primary/15 animate-[spin_20s_linear_infinite]" />
             </div>
             
             {/* Connection Lines (Axes) */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="-190 -190 380 380">
+            <svg className="absolute inset-0 w-full h-full" viewBox="-150 -150 300 300">
               {quickActions.map((_, index) => {
-                const pos = getOrbitalPosition(index, quickActions.length, 145);
+                const pos = getOrbitalPosition(index, quickActions.length, 110);
                 return (
                   <line
                     key={index}
@@ -282,7 +280,7 @@ export default function Dashboard() {
                     y2={pos.y}
                     stroke="url(#lineGradient)"
                     strokeWidth="1"
-                    strokeDasharray="4 4"
+                    strokeDasharray="3 3"
                     className="animate-pulse"
                     style={{ animationDelay: `${index * 100}ms` }}
                   />
@@ -296,56 +294,54 @@ export default function Dashboard() {
               </defs>
             </svg>
 
-            {/* Central Medithos Hub */}
+            {/* Central Medithos Hub - smaller for mobile */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <Link to="/symptoms" className="relative w-28 h-28 group cursor-pointer">
+              <Link to="/symptoms" className="relative w-20 h-20 group cursor-pointer">
                 {/* Glow effect */}
-                <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
-                <div className="absolute inset-2 rounded-full bg-primary/20 blur-lg animate-pulse" style={{ animationDelay: '200ms' }} />
+                <div className="absolute inset-0 rounded-full bg-primary/30 blur-lg animate-pulse" />
+                <div className="absolute inset-1 rounded-full bg-primary/20 blur-md animate-pulse" style={{ animationDelay: '200ms' }} />
                 
                 {/* Hologram core with Activity icon */}
-                <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-primary/40 via-primary/20 to-transparent backdrop-blur-sm border border-primary/30 flex items-center justify-center overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-primary/40 via-primary/20 to-transparent backdrop-blur-sm border border-primary/30 flex items-center justify-center overflow-hidden group-active:scale-95 transition-transform duration-200">
                   {/* Scan lines effect */}
                   <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,hsl(var(--primary)/0.1)_2px,hsl(var(--primary)/0.1)_4px)] animate-[scan_2s_linear_infinite]" />
                   
                   {/* Activity Icon */}
-                  <Activity className="h-14 w-14 text-primary drop-shadow-[0_0_10px_hsl(var(--primary))] z-10" />
+                  <Activity className="h-10 w-10 text-primary drop-shadow-[0_0_8px_hsl(var(--primary))] z-10" />
                 </div>
                 
                 {/* Rotating ring */}
-                <div className="absolute -inset-2 rounded-full border-2 border-dashed border-primary/30 animate-[spin_10s_linear_infinite]" />
+                <div className="absolute -inset-1.5 rounded-full border-2 border-dashed border-primary/30 animate-[spin_10s_linear_infinite]" />
                 
                 {/* Pulse indicator */}
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-background/90 rounded-full px-2 py-0.5 border border-primary/20">
-                  <Zap className="h-3 w-3 text-primary" />
-                  <span className="text-[10px] font-medium text-primary">Active</span>
+                <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-background/90 rounded-full px-1.5 py-0.5 border border-primary/20">
+                  <Zap className="h-2.5 w-2.5 text-primary" />
+                  <span className="text-[8px] font-medium text-primary">Active</span>
                 </div>
               </Link>
             </div>
 
-            {/* Orbital Action Buttons */}
+            {/* Orbital Action Buttons - smaller for mobile */}
             <TooltipProvider>
               {quickActions.map((action, index) => {
-                const pos = getOrbitalPosition(index, quickActions.length, 145);
+                const pos = getOrbitalPosition(index, quickActions.length, 110);
                 return (
                   <Tooltip key={action.path}>
                     <TooltipTrigger asChild>
                       <Link
                         to={action.path}
-                        className={`absolute w-12 h-12 rounded-full ${action.color} flex items-center justify-center transition-all duration-300 hover:scale-125 hover:shadow-[0_0_20px_hsl(var(--primary)/0.5)] z-10 group`}
+                        className={`absolute w-10 h-10 rounded-full ${action.color} flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm z-10`}
                         style={{
-                          left: `calc(50% + ${pos.x}px - 24px)`,
-                          top: `calc(50% + ${pos.y}px - 24px)`,
+                          left: `calc(50% + ${pos.x}px - 20px)`,
+                          top: `calc(50% + ${pos.y}px - 20px)`,
                         }}
                       >
-                        <action.icon className="h-5 w-5" />
-                        {/* Pulse ring on hover */}
-                        <div className="absolute inset-0 rounded-full border-2 border-current opacity-0 group-hover:opacity-100 animate-ping" />
+                        <action.icon className="h-4 w-4" />
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" className="bg-background/95 backdrop-blur-sm border-primary/20 px-3 py-2">
-                      <p className="font-medium text-sm">{action.label}</p>
-                      <p className="text-xs text-muted-foreground">{action.description}</p>
+                    <TooltipContent side="bottom" className="bg-background/95 backdrop-blur-sm border-primary/20 px-2 py-1.5">
+                      <p className="font-medium text-xs">{action.label}</p>
+                      <p className="text-[10px] text-muted-foreground">{action.description}</p>
                     </TooltipContent>
                   </Tooltip>
                 );
@@ -355,72 +351,68 @@ export default function Dashboard() {
         </section>
 
         {/* Quick Status Cards */}
-        <section className="grid grid-cols-2 gap-3 animate-slide-up" style={{ animationDelay: '200ms' }}>
+        <section className="grid grid-cols-1 gap-2.5 animate-slide-up" style={{ animationDelay: '200ms' }}>
           {/* Upcoming Appointments */}
-          <Card className="col-span-2 sm:col-span-1">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
+          <Card>
+            <CardHeader className="pb-1.5 pt-3 px-3">
+              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-primary" />
                 Επόμενα Ραντεβού
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 px-3 pb-2">
               {appointments.length > 0 ? (
-                <ScrollArea className="max-h-32">
-                  <div className="space-y-2">
-                    {appointments.slice(0, 2).map((apt) => (
-                      <div key={apt.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30">
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate">{apt.provider?.name || 'Γιατρός'}</p>
-                          <p className="text-xs text-muted-foreground">{apt.appointment_date} · {apt.appointment_time}</p>
-                        </div>
-                        <Badge className={`text-[10px] ${getStatusColor(apt.status)}`}>
-                          {apt.status === 'confirmed' ? 'Επιβεβ.' : apt.status === 'pending' ? 'Αναμονή' : apt.status}
-                        </Badge>
+                <div className="space-y-1.5">
+                  {appointments.slice(0, 2).map((apt) => (
+                    <div key={apt.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30 gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium truncate">{apt.provider?.name || 'Γιατρός'}</p>
+                        <p className="text-[10px] text-muted-foreground">{apt.appointment_date} · {apt.appointment_time}</p>
                       </div>
-                    ))}
-                  </div>
-                </ScrollArea>
+                      <Badge className={`text-[9px] px-1.5 py-0.5 shrink-0 ${getStatusColor(apt.status)}`}>
+                        {apt.status === 'confirmed' ? 'Επιβεβ.' : apt.status === 'pending' ? 'Αναμονή' : apt.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground py-2">Κανένα προγραμματισμένο ραντεβού</p>
+                <p className="text-xs text-muted-foreground py-1.5">Κανένα προγραμματισμένο ραντεβού</p>
               )}
-              <Button variant="ghost" size="sm" className="w-full mt-2 text-xs" onClick={() => navigate('/appointments')}>
-                Δες όλα <ChevronRight className="h-3 w-3 ml-1" />
+              <Button variant="ghost" size="sm" className="w-full mt-1.5 text-[10px] h-7" onClick={() => navigate('/appointments')}>
+                Δες όλα <ChevronRight className="h-3 w-3 ml-0.5" />
               </Button>
             </CardContent>
           </Card>
 
           {/* Active Medications */}
-          <Card className="col-span-2 sm:col-span-1">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Pill className="h-4 w-4 text-orange-500" />
+          <Card>
+            <CardHeader className="pb-1.5 pt-3 px-3">
+              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                <Pill className="h-3.5 w-3.5 text-orange-500" />
                 Ενεργά Φάρμακα
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 px-3 pb-2">
               {medications.length > 0 ? (
-                <ScrollArea className="max-h-32">
-                  <div className="space-y-2">
-                    {medications.slice(0, 2).map((med) => (
-                      <div key={med.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30">
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate">{med.medication_name}</p>
-                          <p className="text-xs text-muted-foreground">{med.dosage || 'Χωρίς δοσολογία'}</p>
-                        </div>
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <Clock className="h-3 w-3" />
-                          <span className="text-[10px]">{med.reminder_times?.[0] || '-'}</span>
-                        </div>
+                <div className="space-y-1.5">
+                  {medications.slice(0, 2).map((med) => (
+                    <div key={med.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30 gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium truncate">{med.medication_name}</p>
+                        <p className="text-[10px] text-muted-foreground">{med.dosage || 'Χωρίς δοσολογία'}</p>
                       </div>
-                    ))}
-                  </div>
-                </ScrollArea>
+                      <div className="flex items-center gap-0.5 text-muted-foreground shrink-0">
+                        <Clock className="h-2.5 w-2.5" />
+                        <span className="text-[9px]">{med.reminder_times?.[0] || '-'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground py-2">Κανένα ενεργό φάρμακο</p>
+                <p className="text-xs text-muted-foreground py-1.5">Κανένα ενεργό φάρμακο</p>
               )}
-              <Button variant="ghost" size="sm" className="w-full mt-2 text-xs" onClick={() => navigate('/medications')}>
-                Διαχείριση <ChevronRight className="h-3 w-3 ml-1" />
+              <Button variant="ghost" size="sm" className="w-full mt-1.5 text-[10px] h-7" onClick={() => navigate('/medications')}>
+                Διαχείριση <ChevronRight className="h-3 w-3 ml-0.5" />
               </Button>
             </CardContent>
           </Card>
@@ -430,30 +422,30 @@ export default function Dashboard() {
         {recentSymptoms.length > 0 && (
           <section className="animate-slide-up" style={{ animationDelay: '300ms' }}>
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-health-coral" />
+              <CardHeader className="pb-1.5 pt-3 px-3">
+                <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                  <Activity className="h-3.5 w-3.5 text-health-coral" />
                   Πρόσφατες AI Αναλύσεις
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-2">
+              <CardContent className="pt-0 px-3 pb-2">
+                <div className="space-y-1.5">
                   {recentSymptoms.map((symptom) => (
-                    <div key={symptom.id} className="p-3 rounded-lg bg-secondary/30 border border-border/50">
+                    <div key={symptom.id} className="p-2 rounded-lg bg-secondary/30 border border-border/50">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm line-clamp-2 flex-1">{symptom.ai_summary || 'Ανάλυση συμπτωμάτων'}</p>
-                        <Badge className={`shrink-0 text-[10px] ${getUrgencyColor(symptom.urgency_level)}`}>
+                        <p className="text-xs line-clamp-2 flex-1">{symptom.ai_summary || 'Ανάλυση συμπτωμάτων'}</p>
+                        <Badge className={`shrink-0 text-[9px] px-1.5 py-0.5 ${getUrgencyColor(symptom.urgency_level)}`}>
                           {symptom.urgency_level === 'high' ? 'Υψηλή' : symptom.urgency_level === 'medium' ? 'Μέτρια' : 'Χαμηλή'}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
                         {new Date(symptom.created_at).toLocaleDateString('el-GR')}
                       </p>
                     </div>
                   ))}
                 </div>
-                <Button variant="ghost" size="sm" className="w-full mt-2 text-xs" onClick={() => navigate('/records')}>
-                  Δες το ιστορικό <ChevronRight className="h-3 w-3 ml-1" />
+                <Button variant="ghost" size="sm" className="w-full mt-1.5 text-[10px] h-7" onClick={() => navigate('/records')}>
+                  Δες το ιστορικό <ChevronRight className="h-3 w-3 ml-0.5" />
                 </Button>
               </CardContent>
             </Card>
@@ -464,48 +456,46 @@ export default function Dashboard() {
         {notifications.length > 0 && (
           <section className="animate-slide-up" style={{ animationDelay: '400ms' }}>
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Bell className="h-4 w-4 text-primary" />
+              <CardHeader className="pb-1.5 pt-3 px-3">
+                <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                  <Bell className="h-3.5 w-3.5 text-primary" />
                   Ειδοποιήσεις
                   {unreadNotifications > 0 && (
-                    <Badge variant="destructive" className="text-[10px] px-1.5">{unreadNotifications}</Badge>
+                    <Badge variant="destructive" className="text-[9px] px-1 py-0">{unreadNotifications}</Badge>
                   )}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0">
-                <ScrollArea className="max-h-40">
-                  <div className="space-y-2">
-                    {notifications.slice(0, 3).map((notification) => (
-                      <div 
-                        key={notification.id} 
-                        className={`p-3 rounded-lg border transition-colors cursor-pointer ${
-                          notification.is_read 
-                            ? 'bg-secondary/20 border-border/30' 
-                            : 'bg-primary/5 border-primary/20'
-                        }`}
-                        onClick={() => markNotificationRead(notification.id)}
-                      >
-                        <div className="flex items-start gap-2">
-                          {notification.type === 'appointment' ? (
-                            <Calendar className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                          ) : notification.type === 'warning' ? (
-                            <AlertTriangle className="h-4 w-4 text-yellow-500 shrink-0 mt-0.5" />
-                          ) : (
-                            <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium">{notification.title}</p>
-                            <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
-                          </div>
-                          {!notification.is_read && (
-                            <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                          )}
+              <CardContent className="pt-0 px-3 pb-2">
+                <div className="space-y-1.5">
+                  {notifications.slice(0, 3).map((notification) => (
+                    <div 
+                      key={notification.id} 
+                      className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                        notification.is_read 
+                          ? 'bg-secondary/20 border-border/30' 
+                          : 'bg-primary/5 border-primary/20'
+                      }`}
+                      onClick={() => markNotificationRead(notification.id)}
+                    >
+                      <div className="flex items-start gap-2">
+                        {notification.type === 'appointment' ? (
+                          <Calendar className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        ) : notification.type === 'warning' ? (
+                          <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 shrink-0 mt-0.5" />
+                        ) : (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium">{notification.title}</p>
+                          <p className="text-[10px] text-muted-foreground line-clamp-2">{notification.message}</p>
                         </div>
+                        {!notification.is_read && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                        )}
                       </div>
-                    ))}
-                  </div>
-                </ScrollArea>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </section>
