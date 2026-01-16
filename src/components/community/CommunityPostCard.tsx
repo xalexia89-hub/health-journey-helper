@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, MapPin, Stethoscope, BadgeCheck, Send } from "lucide-react";
+import { ImagePreviewDialog } from "./ImagePreviewDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ export function CommunityPostCard({ post, onLike, onSave, onComment }: Community
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
   const getPostTypeLabel = (type: string) => {
     switch (type) {
@@ -147,14 +149,24 @@ export function CommunityPostCard({ post, onLike, onSave, onComment }: Community
       
       {/* Post Image */}
       {post.image_url && (
-        <div className="relative w-full bg-muted overflow-hidden">
-          <img 
-            src={post.image_url} 
-            alt="Post image" 
-            className="w-full max-h-[400px] object-cover"
-            loading="lazy"
+        <>
+          <div 
+            className="relative w-full bg-muted overflow-hidden cursor-pointer"
+            onClick={() => setIsImagePreviewOpen(true)}
+          >
+            <img 
+              src={post.image_url} 
+              alt="Post image" 
+              className="w-full max-h-[400px] object-cover hover:opacity-95 transition-opacity"
+              loading="lazy"
+            />
+          </div>
+          <ImagePreviewDialog 
+            imageUrl={post.image_url}
+            isOpen={isImagePreviewOpen}
+            onClose={() => setIsImagePreviewOpen(false)}
           />
-        </div>
+        </>
       )}
       
       {/* Engagement Stats */}
