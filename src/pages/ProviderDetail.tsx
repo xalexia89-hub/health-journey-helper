@@ -8,11 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MapPin, Clock, CheckCircle, Phone, Mail, AlertCircle, CalendarCheck } from 'lucide-react';
+import { Star, MapPin, Clock, CheckCircle, Phone, Mail, AlertCircle, CalendarCheck, Video } from 'lucide-react';
 import { format, addDays, setHours, setMinutes, parseISO } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { BookingConfirmationDialog } from '@/components/appointments/BookingConfirmationDialog';
+import { CallButtons } from '@/components/communication';
 
 interface Provider {
   id: string;
@@ -336,6 +337,28 @@ const ProviderDetail = () => {
               </a>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Voice & Video Call Options */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Video className="h-5 w-5" />
+            Άμεση Επικοινωνία
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Επικοινωνήστε απευθείας με φωνητική ή βιντεοκλήση
+          </p>
+          <CallButtons
+            providerId={provider.id}
+            providerName={provider.name}
+            providerAvatar={provider.avatar_url}
+            providerSpecialty={provider.specialty}
+            className="flex gap-3"
+          />
         </CardContent>
       </Card>
 
