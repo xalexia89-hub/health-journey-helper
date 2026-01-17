@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, Clock, MapPin, AlertCircle, Heart } from 'lucide-react';
+import { Calendar, Clock, MapPin, AlertCircle, Heart, Phone, Video } from 'lucide-react';
 import { format, parseISO, isPast, isToday } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import { CallButtons } from '@/components/communication';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -209,38 +210,52 @@ const Appointments = () => {
               )}
 
               {isUpcoming && appointment.status !== 'cancelled' && (
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    size="sm" 
-                    onClick={() => navigate(`/providers/${appointment.provider.id}`)}
-                  >
-                    Προβολή Παρόχου
-                  </Button>
+                <div className="space-y-3 pt-2">
+                  {/* Call buttons for confirmed appointments */}
+                  {appointment.status === 'confirmed' && (
+                    <CallButtons
+                      providerId={appointment.provider.id}
+                      providerName={appointment.provider.name}
+                      providerAvatar={appointment.provider.avatar_url}
+                      providerSpecialty={appointment.provider.specialty}
+                      variant="compact"
+                      className="flex gap-2"
+                    />
+                  )}
                   
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="text-health-danger">
-                        Ακύρωση
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Ακύρωση Ραντεβού;</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Είστε σίγουροι ότι θέλετε να ακυρώσετε το ραντεβού σας με {appointment.provider.name} στις {format(appointmentDate, 'PPP', { locale: el })};
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Διατήρηση Ραντεβού</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleCancel(appointment.id)}
-                          className="bg-health-danger hover:bg-health-danger/90"
-                        >
-                          Ακύρωση Ραντεβού
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      onClick={() => navigate(`/providers/${appointment.provider.id}`)}
+                    >
+                      Προβολή Παρόχου
+                    </Button>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="text-health-danger">
+                          Ακύρωση
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Ακύρωση Ραντεβού;</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Είστε σίγουροι ότι θέλετε να ακυρώσετε το ραντεβού σας με {appointment.provider.name} στις {format(appointmentDate, 'PPP', { locale: el })};
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Διατήρηση Ραντεβού</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleCancel(appointment.id)}
+                            className="bg-health-danger hover:bg-health-danger/90"
+                          >
+                            Ακύρωση Ραντεβού
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               )}
             </div>
