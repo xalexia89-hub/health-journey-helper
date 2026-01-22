@@ -31,7 +31,7 @@ export function SymptomChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Γεια σας! Είμαι εδώ για να σας βοηθήσω να περιγράψετε τα συμπτώματά σας. Πείτε μου, τι σας ενοχλεί σήμερα;",
+      content: "Γεια σας! Είμαι το Medithos και είμαι εδώ δίπλα σας να σας βοηθήσω. Πείτε μου, τι σας ενοχλεί σήμερα;",
     },
   ]);
   const [input, setInput] = useState("");

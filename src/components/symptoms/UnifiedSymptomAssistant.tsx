@@ -78,7 +78,7 @@ export function UnifiedSymptomAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Γεια σας! Είμαι ο ψηφιακός σας βοηθός υγείας. Μπορείτε να πατήσετε στο σώμα για να δείξετε πού πονάτε, ή να μου περιγράψετε τα συμπτώματά σας.",
+      content: "Γεια σας! Είμαι το Medithos και είμαι εδώ δίπλα σας να σας βοηθήσω. Μπορείτε να πατήσετε στο σώμα για να δείξετε πού πονάτε, ή να μου περιγράψετε τα συμπτώματά σας.",
       timestamp: new Date(),
       type: "text",
     },
