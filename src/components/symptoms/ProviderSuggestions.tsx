@@ -14,9 +14,9 @@ import {
   ChevronRight, 
   Building2, 
   Hospital,
-  User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InlineBookingDialog } from "./InlineBookingDialog";
 import type { Database } from "@/integrations/supabase/types";
 
 type BodyArea = Database['public']['Enums']['body_area'];
@@ -76,6 +76,28 @@ const specialtyLabels: Record<string, string> = {
   "ENT": "ΩΡΛ",
 };
 
+// Body area labels in Greek
+const bodyAreaLabels: Record<string, string> = {
+  head: "Κεφάλι",
+  face: "Πρόσωπο",
+  neck: "Λαιμός",
+  chest: "Στήθος",
+  upper_back: "Άνω Πλάτη",
+  lower_back: "Κάτω Πλάτη",
+  left_shoulder: "Αριστερός Ώμος",
+  right_shoulder: "Δεξιός Ώμος",
+  left_arm: "Αριστερό Χέρι",
+  right_arm: "Δεξί Χέρι",
+  left_hand: "Αριστερή Παλάμη",
+  right_hand: "Δεξιά Παλάμη",
+  abdomen: "Κοιλιά",
+  pelvis: "Λεκάνη",
+  left_leg: "Αριστερό Πόδι",
+  right_leg: "Δεξί Πόδι",
+  left_foot: "Αριστερό Πέλμα",
+  right_foot: "Δεξί Πέλμα",
+};
+
 export function ProviderSuggestions({ 
   bodyAreas, 
   urgencyLevel, 
@@ -85,6 +107,8 @@ export function ProviderSuggestions({
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [suggestedSpecialties, setSuggestedSpecialties] = useState<string[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchSuggestedProviders();
@@ -130,6 +154,13 @@ export function ProviderSuggestions({
     setLoading(false);
   };
 
+  const handleBookClick = (provider: Provider, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedProvider(provider);
+    setBookingDialogOpen(true);
+  };
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "hospital": return Hospital;
@@ -149,6 +180,13 @@ export function ProviderSuggestions({
 
   const getSpecialtyLabel = (specialty: string) => {
     return specialtyLabels[specialty] || specialty;
+  };
+
+  // Prepare symptom summary for booking
+  const symptomSummary = {
+    bodyAreas: bodyAreas.map(area => bodyAreaLabels[area] || area),
+    symptoms: symptoms,
+    urgencyLevel: urgencyLevel,
   };
 
   if (loading) {
@@ -199,44 +237,43 @@ export function ProviderSuggestions({
   }
 
   return (
-    <Card className={cn("border-primary/30 overflow-hidden", className)}>
-      <div className="h-1 w-full bg-gradient-to-r from-primary via-primary/70 to-success" />
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-base">
-            <Stethoscope className="h-5 w-5 text-primary" />
-            Προτεινόμενοι Πάροχοι
-          </div>
-          <Badge variant="secondary" className="text-xs">
-            {providers.length} διαθέσιμοι
-          </Badge>
-        </CardTitle>
-        <p className="text-xs text-muted-foreground">
-          Βάσει των συμπτωμάτων σας, προτείνουμε:
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Suggested specialties */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {suggestedSpecialties.slice(0, 4).map((specialty, i) => (
-            <Badge key={i} variant="outline" className="text-xs bg-primary/5">
-              {getSpecialtyLabel(specialty)}
+    <>
+      <Card className={cn("border-primary/30 overflow-hidden", className)}>
+        <div className="h-1 w-full bg-gradient-to-r from-primary via-primary/70 to-success" />
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-base">
+              <Stethoscope className="h-5 w-5 text-primary" />
+              Προτεινόμενοι Πάροχοι
+            </div>
+            <Badge variant="secondary" className="text-xs">
+              {providers.length} διαθέσιμοι
             </Badge>
-          ))}
-        </div>
-        
-        {/* Provider cards */}
-        <div className="space-y-2">
-          {providers.slice(0, 3).map((provider) => {
-            const TypeIcon = getTypeIcon(provider.type);
-            
-            return (
-              <Link 
-                key={provider.id} 
-                to={`/providers/${provider.id}`}
-                className="block"
-              >
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 border border-border/50 hover:border-primary/30 transition-all group">
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Βάσει των συμπτωμάτων σας, προτείνουμε:
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {/* Suggested specialties */}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {suggestedSpecialties.slice(0, 4).map((specialty, i) => (
+              <Badge key={i} variant="outline" className="text-xs bg-primary/5">
+                {getSpecialtyLabel(specialty)}
+              </Badge>
+            ))}
+          </div>
+          
+          {/* Provider cards */}
+          <div className="space-y-2">
+            {providers.slice(0, 3).map((provider) => {
+              const TypeIcon = getTypeIcon(provider.type);
+              
+              return (
+                <div 
+                  key={provider.id}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 border border-border/50 hover:border-primary/30 transition-all group"
+                >
                   <Avatar className="h-12 w-12 border-2 border-primary/20">
                     {provider.avatar_url ? (
                       <AvatarImage src={provider.avatar_url} alt={provider.name} />
@@ -277,38 +314,53 @@ export function ProviderSuggestions({
                     </div>
                   </div>
                   
-                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={(e) => handleBookClick(provider, e)}
+                    className="shrink-0 gap-1"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    <span className="hidden sm:inline">Ραντεβού</span>
+                  </Button>
                 </div>
-              </Link>
-            );
-          })}
-        </div>
-        
-        {/* CTA buttons */}
-        <div className="flex gap-2 pt-2">
-          <Link to={`/providers?specialty=${encodeURIComponent(suggestedSpecialties[0] || '')}`} className="flex-1">
-            <Button variant="outline" className="w-full gap-2">
-              <Calendar className="h-4 w-4" />
-              Κλείστε Ραντεβού
-            </Button>
-          </Link>
-          <Link to="/providers" className="flex-1">
-            <Button className="w-full gap-2">
-              Όλοι οι Πάροχοι
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-        
-        {/* Urgency notice */}
-        {urgencyLevel === "high" && (
-          <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 mt-2">
-            <p className="text-xs text-destructive font-medium">
-              ⚠️ Λόγω υψηλού επείγοντος, συνιστούμε άμεση επικοινωνία με γιατρό ή επίσκεψη σε νοσοκομείο.
-            </p>
+              );
+            })}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          {/* CTA buttons */}
+          <div className="flex gap-2 pt-2">
+            <Link to="/providers" className="flex-1">
+              <Button className="w-full gap-2">
+                Όλοι οι Πάροχοι
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Urgency notice */}
+          {urgencyLevel === "high" && (
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 mt-2">
+              <p className="text-xs text-destructive font-medium">
+                ⚠️ Λόγω υψηλού επείγοντος, συνιστούμε άμεση επικοινωνία με γιατρό ή επίσκεψη σε νοσοκομείο.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Inline Booking Dialog */}
+      {selectedProvider && (
+        <InlineBookingDialog
+          open={bookingDialogOpen}
+          onOpenChange={setBookingDialogOpen}
+          provider={selectedProvider}
+          symptomSummary={symptomSummary}
+          onBookingComplete={() => {
+            setBookingDialogOpen(false);
+          }}
+        />
+      )}
+    </>
   );
 }
