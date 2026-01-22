@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, Loader2, Bot, User, FileText, CheckCircle, AlertTriangle, MapPin, Mic, MicOff } from "lucide-react";
+import { Send, Loader2, Bot, User, FileText, CheckCircle, AlertTriangle, MapPin, Mic, MicOff, Stethoscope, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +21,7 @@ interface Message {
   content: string;
   timestamp: Date;
   bodyArea?: BodyArea;
-  type?: "text" | "body_selection" | "summary";
+  type?: "text" | "body_selection" | "summary" | "recommendation";
 }
 
 interface SymptomEntry {
@@ -39,6 +39,13 @@ interface ExecutiveSummary {
   recommendations: string[];
   generatedAt: string;
   symptomEntries: SymptomEntry[];
+}
+
+interface SpecialtyRecommendation {
+  specialty: string;
+  reason: string;
+  urgency: "low" | "medium" | "high";
+  timestamp: Date;
 }
 
 // Body area labels in Greek
@@ -63,7 +70,64 @@ const bodyAreaLabels: Record<BodyArea, string> = {
   right_foot: "Δεξί Πέλμα",
 };
 
+// Specialty labels in Greek
+const specialtyLabels: Record<string, string> = {
+  Cardiology: "Καρδιολογία",
+  Neurology: "Νευρολογία",
+  Orthopedics: "Ορθοπεδική",
+  Dermatology: "Δερματολογία",
+  Gastroenterology: "Γαστρεντερολογία",
+  Pulmonology: "Πνευμονολογία",
+  Ophthalmology: "Οφθαλμολογία",
+  ENT: "ΩΡΛ",
+  Urology: "Ουρολογία",
+  Gynecology: "Γυναικολογία",
+  Psychiatry: "Ψυχιατρική",
+  "General Practice": "Γενική Ιατρική",
+};
+
+// Map specialty to body areas for provider suggestions
+const specialtyToBodyAreas: Record<string, BodyArea[]> = {
+  Cardiology: ["chest"],
+  Neurology: ["head", "neck"],
+  Orthopedics: ["left_shoulder", "right_shoulder", "left_arm", "right_arm", "lower_back", "left_leg", "right_leg"],
+  Dermatology: ["face", "left_arm", "right_arm"],
+  Gastroenterology: ["abdomen"],
+  Pulmonology: ["chest"],
+  Ophthalmology: ["head", "face"],
+  ENT: ["head", "face", "neck"],
+  Urology: ["pelvis", "abdomen"],
+  Gynecology: ["pelvis", "abdomen"],
+  Psychiatry: ["head"],
+  "General Practice": ["head"],
+};
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/symptom-chat`;
+
+// Parse specialty recommendation from AI response
+function parseSpecialtyRecommendation(content: string): SpecialtyRecommendation | null {
+  const match = content.match(/\[SPECIALTY_RECOMMENDATION\]([\s\S]*?)\[\/SPECIALTY_RECOMMENDATION\]/);
+  if (!match) return null;
+  
+  const block = match[1];
+  const specialtyMatch = block.match(/specialty:\s*(.+)/i);
+  const reasonMatch = block.match(/reason:\s*(.+)/i);
+  const urgencyMatch = block.match(/urgency:\s*(low|medium|high)/i);
+  
+  if (!specialtyMatch) return null;
+  
+  return {
+    specialty: specialtyMatch[1].trim(),
+    reason: reasonMatch ? reasonMatch[1].trim() : "",
+    urgency: (urgencyMatch?.[1]?.toLowerCase() as "low" | "medium" | "high") || "medium",
+    timestamp: new Date(),
+  };
+}
+
+// Remove the recommendation block from display text
+function cleanMessageContent(content: string): string {
+  return content.replace(/\[SPECIALTY_RECOMMENDATION\][\s\S]*?\[\/SPECIALTY_RECOMMENDATION\]/g, "").trim();
+}
 
 export function UnifiedSymptomAssistant() {
   const { user } = useAuth();
@@ -92,6 +156,11 @@ export function UnifiedSymptomAssistant() {
   const [showSummary, setShowSummary] = useState(false);
   const [executiveSummary, setExecutiveSummary] = useState<ExecutiveSummary | null>(null);
   const [autoSaved, setAutoSaved] = useState(false);
+  
+  // Specialty recommendation state
+  const [specialtyRecommendation, setSpecialtyRecommendation] = useState<SpecialtyRecommendation | null>(null);
+  const [showProviderSuggestions, setShowProviderSuggestions] = useState(false);
+  const [userConfirmedBooking, setUserConfirmedBooking] = useState(false);
 
   // Voice input
   const {
@@ -293,6 +362,28 @@ export function UnifiedSymptomAssistant() {
           }
         }
       }
+      
+      // After streaming complete, check for specialty recommendation
+      const recommendation = parseSpecialtyRecommendation(assistantContent);
+      if (recommendation) {
+        setSpecialtyRecommendation(recommendation);
+        setShowProviderSuggestions(true);
+        
+        // Log the recommendation to medical record
+        logRecommendationToRecord(recommendation);
+        
+        // Update the last message to clean version (without recommendation block)
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { 
+            role: "assistant", 
+            content: cleanMessageContent(assistantContent),
+            timestamp: new Date(),
+            type: "recommendation",
+          };
+          return updated;
+        });
+      }
     } catch (error) {
       console.error("Chat error:", error);
       toast({
@@ -304,6 +395,38 @@ export function UnifiedSymptomAssistant() {
     } finally {
       setIsLoading(false);
       setAvatarState("idle");
+    }
+  };
+
+  // Log specialty recommendation to medical record
+  const logRecommendationToRecord = async (recommendation: SpecialtyRecommendation) => {
+    if (!user) return;
+    
+    try {
+      const logEntry = `
+[AI ΣΥΣΤΑΣΗ ΕΙΔΙΚΟΤΗΤΑΣ - ${recommendation.timestamp.toLocaleString('el-GR')}]
+Ειδικότητα: ${specialtyLabels[recommendation.specialty] || recommendation.specialty}
+Αιτιολόγηση: ${recommendation.reason}
+Επείγον: ${recommendation.urgency === 'high' ? 'Υψηλό' : recommendation.urgency === 'medium' ? 'Μέτριο' : 'Χαμηλό'}
+---`;
+      
+      // Get current medical record
+      const { data: record } = await supabase
+        .from('medical_records')
+        .select('notes')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      const updatedNotes = (record?.notes || '') + logEntry;
+      
+      await supabase
+        .from('medical_records')
+        .update({ notes: updatedNotes })
+        .eq('user_id', user.id);
+        
+      console.log("Recommendation logged to medical record");
+    } catch (error) {
+      console.error("Error logging recommendation:", error);
     }
   };
 
@@ -594,7 +717,7 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                       )}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {message.content}
+                        {cleanMessageContent(message.content)}
                         {isLoading && index === messages.length - 1 && message.role === "assistant" && !message.content && (
                           <span className="inline-flex items-center gap-1">
                             <span className="animate-pulse">●</span>
@@ -610,6 +733,61 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                   </div>
                 </div>
               ))}
+              
+              {/* Inline Specialty Recommendation Card */}
+              {showProviderSuggestions && specialtyRecommendation && !showSummary && (
+                <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5 animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Stethoscope className="h-5 w-5 text-primary" />
+                      Σύσταση Ειδικότητας
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge className={getUrgencyColor(specialtyRecommendation.urgency)}>
+                        Επείγον: {specialtyRecommendation.urgency === 'high' ? 'Υψηλό' : specialtyRecommendation.urgency === 'medium' ? 'Μέτριο' : 'Χαμηλό'}
+                      </Badge>
+                      <Badge variant="secondary" className="gap-1">
+                        <Stethoscope className="h-3 w-3" />
+                        {specialtyLabels[specialtyRecommendation.specialty] || specialtyRecommendation.specialty}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {specialtyRecommendation.reason}
+                    </p>
+                    
+                    {!userConfirmedBooking ? (
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => setUserConfirmedBooking(true)}
+                          className="gap-1"
+                        >
+                          <Calendar className="h-4 w-4" />
+                          Δείτε Διαθέσιμους Γιατρούς
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowProviderSuggestions(false)}
+                        >
+                          Όχι Τώρα
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="pt-2">
+                        <ProviderSuggestions
+                          bodyAreas={specialtyToBodyAreas[specialtyRecommendation.specialty] || selectedAreas}
+                          urgencyLevel={specialtyRecommendation.urgency}
+                          symptoms={messages.filter(m => m.role === "user").map(m => m.content).slice(-3)}
+                          className="border-0 shadow-none p-0"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </ScrollArea>
 
