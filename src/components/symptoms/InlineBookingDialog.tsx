@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { format, addDays, isSameDay, startOfDay } from "date-fns";
+import { format, addDays } from "date-fns";
 import { el } from "date-fns/locale";
 import { 
   Calendar, 
@@ -7,10 +7,11 @@ import {
   MapPin, 
   Star, 
   ChevronLeft, 
-  ChevronRight,
   Loader2,
   CheckCircle,
-  Stethoscope
+  Stethoscope,
+  Video,
+  Building2
 } from "lucide-react";
 import {
   Dialog,
@@ -52,6 +53,8 @@ interface SymptomSummary {
   urgencyLevel?: string;
 }
 
+type VisitType = "in_person" | "telemedicine";
+
 interface InlineBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -70,7 +73,8 @@ export function InlineBookingDialog({
   const { user } = useAuth();
   const { toast } = useToast();
   
-  const [step, setStep] = useState<"date" | "time" | "confirm" | "success">("date");
+  const [step, setStep] = useState<"visitType" | "date" | "time" | "confirm" | "success">("visitType");
+  const [visitType, setVisitType] = useState<VisitType | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
@@ -155,6 +159,11 @@ export function InlineBookingDialog({
     return times.sort();
   };
 
+  const handleVisitTypeSelect = (type: VisitType) => {
+    setVisitType(type);
+    setStep("date");
+  };
+
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setSelectedTime(null);
@@ -194,16 +203,17 @@ export function InlineBookingDialog({
       }
 
       // Create the appointment
+      const visitTypeLabel = visitType === "telemedicine" ? "telemedicine" : "in_person";
       const { error } = await supabase.from("appointments").insert({
         patient_id: user.id,
         provider_id: provider.id,
         appointment_date: dateStr,
         appointment_time: selectedTime,
         notes: symptomSummary
-          ? `Συμπτώματα: ${symptomSummary.symptoms.join(", ")}\nΠεριοχές: ${symptomSummary.bodyAreas.join(", ")}`
-          : null,
+          ? `Τύπος: ${visitType === "telemedicine" ? "Τηλεϊατρική" : "Δια ζώσης"}\nΣυμπτώματα: ${symptomSummary.symptoms.join(", ")}\nΠεριοχές: ${symptomSummary.bodyAreas.join(", ")}`
+          : `Τύπος: ${visitType === "telemedicine" ? "Τηλεϊατρική" : "Δια ζώσης"}`,
         status: "pending",
-        visit_type: "consultation",
+        visit_type: visitTypeLabel,
       });
 
       if (error) throw error;
@@ -230,7 +240,8 @@ export function InlineBookingDialog({
     onOpenChange(false);
     // Reset state after animation
     setTimeout(() => {
-      setStep("date");
+      setStep("visitType");
+      setVisitType(null);
       setSelectedDate(null);
       setSelectedTime(null);
     }, 300);
@@ -275,25 +286,92 @@ export function InlineBookingDialog({
 
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2 py-2">
-          {["date", "time", "confirm"].map((s, i) => (
-            <div
-              key={s}
-              className={cn(
-                "h-2 w-8 rounded-full transition-colors",
-                step === s || (step === "success" && i < 3)
-                  ? "bg-primary"
-                  : ["date", "time", "confirm"].indexOf(step) > i
-                  ? "bg-primary/50"
-                  : "bg-muted"
-              )}
-            />
-          ))}
+          {["visitType", "date", "time", "confirm"].map((s, i) => {
+            const steps = ["visitType", "date", "time", "confirm"];
+            const currentIndex = steps.indexOf(step);
+            return (
+              <div
+                key={s}
+                className={cn(
+                  "h-2 w-6 rounded-full transition-colors",
+                  step === s || (step === "success" && i < 4)
+                    ? "bg-primary"
+                    : currentIndex > i
+                    ? "bg-primary/50"
+                    : "bg-muted"
+                )}
+              />
+            );
+          })}
         </div>
 
         <ScrollArea className="flex-1 -mx-6 px-6">
+          {/* Visit Type Selection */}
+          {step === "visitType" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="font-medium text-sm">Επιλέξτε τύπο ραντεβού</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex items-center gap-4 justify-start"
+                  onClick={() => handleVisitTypeSelect("in_person")}
+                >
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+                    <Building2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Δια ζώσης</p>
+                    <p className="text-xs text-muted-foreground">
+                      Επίσκεψη στο ιατρείο
+                    </p>
+                  </div>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex items-center gap-4 justify-start"
+                  onClick={() => handleVisitTypeSelect("telemedicine")}
+                >
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-success/10">
+                    <Video className="h-6 w-6 text-success" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Τηλεϊατρική</p>
+                    <p className="text-xs text-muted-foreground">
+                      Βιντεοκλήση από το σπίτι σας
+                    </p>
+                  </div>
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Date Selection */}
           {step === "date" && (
             <div className="space-y-3 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStep("visitType")}
+                  className="gap-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Πίσω
+                </Button>
+                <Badge variant="outline" className="gap-1">
+                  {visitType === "telemedicine" ? (
+                    <>
+                      <Video className="h-3 w-3" />
+                      Τηλεϊατρική
+                    </>
+                  ) : (
+                    <>
+                      <Building2 className="h-3 w-3" />
+                      Δια ζώσης
+                    </>
+                  )}
+                </Badge>
+              </div>
               <h3 className="font-medium text-sm">Επιλέξτε ημερομηνία</h3>
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
@@ -382,7 +460,7 @@ export function InlineBookingDialog({
 
           {/* Confirmation */}
           {step === "confirm" && selectedDate && selectedTime && (
-            <div className="space-y-4 animate-fade-in">
+            <div className="space-y-4 animate-fade-in pb-4">
               <Button
                 variant="ghost"
                 size="sm"
@@ -396,6 +474,21 @@ export function InlineBookingDialog({
               <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
                 <h3 className="font-semibold">Επιβεβαίωση Ραντεβού</h3>
                 
+                {/* Visit type badge */}
+                <div className="flex items-center gap-2">
+                  {visitType === "telemedicine" ? (
+                    <Badge className="gap-1 bg-success/20 text-success border-success/30">
+                      <Video className="h-3 w-3" />
+                      Τηλεϊατρική
+                    </Badge>
+                  ) : (
+                    <Badge className="gap-1 bg-primary/20 text-primary border-primary/30">
+                      <Building2 className="h-3 w-3" />
+                      Δια ζώσης
+                    </Badge>
+                  )}
+                </div>
+                
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="h-4 w-4 text-primary" />
                   <span>{format(selectedDate, "EEEE, d MMMM yyyy", { locale: el })}</span>
@@ -406,10 +499,17 @@ export function InlineBookingDialog({
                   <span className="font-medium">{selectedTime}</span>
                 </div>
 
-                {provider.address && (
+                {visitType === "in_person" && provider.address && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4" />
                     <span>{provider.address}</span>
+                  </div>
+                )}
+
+                {visitType === "telemedicine" && (
+                  <div className="flex items-center gap-2 text-sm text-success">
+                    <Video className="h-4 w-4" />
+                    <span>Θα λάβετε σύνδεσμο για βιντεοκλήση</span>
                   </div>
                 )}
               </div>
@@ -432,6 +532,7 @@ export function InlineBookingDialog({
 
               <Button
                 className="w-full gap-2"
+                size="lg"
                 onClick={handleBooking}
                 disabled={isBooking}
               >
