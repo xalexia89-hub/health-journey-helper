@@ -48,11 +48,11 @@ export function InteractiveAvatar({
   const getStateStyles = () => {
     switch (state) {
       case "listening":
-        return "ring-4 ring-primary/50 ring-offset-2 ring-offset-background";
+        return "hologram-listening";
       case "processing":
-        return "animate-pulse";
+        return "hologram-processing";
       case "responding":
-        return "ring-4 ring-success/50 ring-offset-2 ring-offset-background";
+        return "hologram-responding";
       default:
         return "";
     }
@@ -64,33 +64,33 @@ export function InteractiveAvatar({
 
   return (
     <div className={cn("relative flex flex-col items-center gap-3", className)}>
-      {/* State indicator */}
+      {/* State indicator with holographic style */}
       <div className="flex items-center gap-2 mb-1">
         <div className={cn(
-          "w-3 h-3 rounded-full transition-all duration-300",
-          state === "idle" && "bg-muted",
-          state === "listening" && "bg-primary",
-          state === "processing" && "bg-warning",
-          state === "responding" && "bg-success",
+          "w-3 h-3 rounded-full transition-all duration-300 relative",
+          state === "idle" && "bg-cyan-500/50",
+          state === "listening" && "bg-cyan-400",
+          state === "processing" && "bg-cyan-300",
+          state === "responding" && "bg-emerald-400",
         )}>
           <div className={cn(
-            "w-3 h-3 rounded-full",
-            state === "listening" && "bg-primary animate-ping",
-            state === "processing" && "bg-warning animate-pulse",
-            state === "responding" && "bg-success animate-ping",
+            "absolute inset-0 w-3 h-3 rounded-full",
+            state === "listening" && "bg-cyan-400 animate-ping",
+            state === "processing" && "bg-cyan-300 animate-pulse",
+            state === "responding" && "bg-emerald-400 animate-ping",
           )} />
         </div>
-        <span className="text-xs text-muted-foreground">
-          {state === "idle" && "Πατήστε για επιλογή περιοχής"}
-          {state === "listening" && "Σας ακούω..."}
-          {state === "processing" && "Επεξεργάζομαι..."}
-          {state === "responding" && "Απαντώ..."}
+        <span className="text-xs text-cyan-300/80 font-mono tracking-wider">
+          {state === "idle" && "// READY FOR INPUT"}
+          {state === "listening" && "// LISTENING..."}
+          {state === "processing" && "// ANALYZING..."}
+          {state === "responding" && "// RESPONDING..."}
         </span>
       </div>
 
       {/* Avatar with side labels */}
       <div className="relative flex items-start justify-center gap-2">
-        {/* Left side labels */}
+        {/* Left side labels with holographic style */}
         <div className="flex flex-col gap-1 min-w-[80px] items-end pt-8">
           {leftAreas.map(area => {
             const areaData = bodyAreas.find(a => a.id === area);
@@ -100,7 +100,7 @@ export function InteractiveAvatar({
               <button
                 key={area}
                 onClick={() => onAreaClick(area)}
-                className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium transition-all hover:bg-primary/80 animate-fade-in"
+                className="flex items-center gap-1 px-2 py-1 rounded border border-cyan-400/60 bg-cyan-950/40 text-cyan-300 text-xs font-mono transition-all hover:bg-cyan-900/50 hover:border-cyan-300 animate-fade-in backdrop-blur-sm shadow-[0_0_10px_rgba(34,211,238,0.3)]"
               >
                 <span>{areaData.label}</span>
                 <X className="h-3 w-3" />
@@ -109,44 +109,106 @@ export function InteractiveAvatar({
           })}
         </div>
 
-        {/* Avatar SVG */}
+        {/* Holographic Avatar Container */}
         <div className={cn(
-          "relative rounded-2xl overflow-hidden transition-all duration-500 bg-gradient-to-b from-secondary/50 to-background p-3",
+          "relative rounded-2xl overflow-hidden transition-all duration-500",
+          "bg-gradient-to-b from-cyan-950/30 via-slate-950/50 to-cyan-950/30",
+          "border border-cyan-500/30 p-3",
+          "shadow-[0_0_30px_rgba(34,211,238,0.15),inset_0_0_20px_rgba(34,211,238,0.05)]",
           getStateStyles()
         )}>
+          {/* Scan lines overlay */}
+          <div 
+            className="absolute inset-0 pointer-events-none z-10 opacity-20"
+            style={{
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(34, 211, 238, 0.03) 2px, rgba(34, 211, 238, 0.03) 4px)',
+            }}
+          />
+          
+          {/* Moving scan line */}
+          <div 
+            className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent pointer-events-none z-10"
+            style={{
+              animation: 'scanline 3s linear infinite',
+            }}
+          />
+          
+          {/* Holographic flicker effect */}
+          <div 
+            className="absolute inset-0 pointer-events-none z-10 bg-cyan-400/5"
+            style={{
+              animation: 'hologramFlicker 4s ease-in-out infinite',
+            }}
+          />
+
           <svg
             viewBox="0 0 300 600"
-            className="w-[160px] h-auto"
+            className="w-[160px] h-auto relative z-0"
             style={{ maxHeight: '45vh' }}
           >
-            {/* Glow filters */}
+            {/* Holographic glow filters */}
             <defs>
-              <filter id="avatarGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+              {/* Neon glow effect */}
+              <filter id="holoGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="4" result="blur1"/>
+                <feGaussianBlur stdDeviation="8" result="blur2"/>
                 <feMerge>
-                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="blur2"/>
+                  <feMergeNode in="blur1"/>
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
-              <filter id="selectedGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+              
+              {/* Selected area intense glow */}
+              <filter id="selectedHoloGlow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="6" result="blur1"/>
+                <feGaussianBlur stdDeviation="12" result="blur2"/>
+                <feGaussianBlur stdDeviation="18" result="blur3"/>
                 <feMerge>
-                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="blur3"/>
+                  <feMergeNode in="blur2"/>
+                  <feMergeNode in="blur1"/>
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
-              <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="hsl(var(--primary) / 0.3)" />
-                <stop offset="100%" stopColor="hsl(var(--primary) / 0.1)" />
+
+              {/* Holographic gradient */}
+              <linearGradient id="holoGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(34, 211, 238, 0.15)" />
+                <stop offset="50%" stopColor="rgba(34, 211, 238, 0.05)" />
+                <stop offset="100%" stopColor="rgba(34, 211, 238, 0.15)" />
               </linearGradient>
-              <linearGradient id="selectedGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="hsl(var(--primary))" />
-                <stop offset="100%" stopColor="hsl(var(--primary) / 0.7)" />
+              
+              {/* Selected area gradient */}
+              <linearGradient id="selectedHoloGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(34, 211, 238, 0.9)" />
+                <stop offset="50%" stopColor="rgba(34, 211, 238, 0.7)" />
+                <stop offset="100%" stopColor="rgba(34, 211, 238, 0.9)" />
               </linearGradient>
+
+              {/* Grid pattern for holographic effect */}
+              <pattern id="holoGrid" patternUnits="userSpaceOnUse" width="20" height="20">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34, 211, 238, 0.1)" strokeWidth="0.5"/>
+              </pattern>
             </defs>
 
-            {/* Background silhouette */}
-            <g opacity="0.3" fill="url(#avatarGradient)">
+            {/* Grid background */}
+            <rect width="300" height="600" fill="url(#holoGrid)" opacity="0.5" />
+
+            {/* Background silhouette with holographic style */}
+            <g fill="url(#holoGradient)" filter="url(#holoGlow)">
+              <ellipse cx="150" cy="80" rx="45" ry="55" />
+              <rect x="130" y="130" width="40" height="25" rx="5" />
+              <path d="M80,155 L220,155 L225,340 L75,340 Z" />
+              <path d="M75,340 L225,340 L210,390 L90,390 Z" />
+              <path d="M90,390 L150,390 L145,590 L75,590 Z" />
+              <path d="M150,390 L210,390 L225,590 L155,590 Z" />
+              <path d="M50,170 L80,160 L60,340 L30,330 Z" />
+              <path d="M220,160 L250,170 L270,330 L240,340 Z" />
+            </g>
+
+            {/* Wireframe outline */}
+            <g fill="none" stroke="rgba(34, 211, 238, 0.4)" strokeWidth="1">
               <ellipse cx="150" cy="80" rx="45" ry="55" />
               <rect x="130" y="130" width="40" height="25" rx="5" />
               <path d="M80,155 L220,155 L225,340 L75,340 Z" />
@@ -167,62 +229,100 @@ export function InteractiveAvatar({
                   className={cn(
                     "cursor-pointer transition-all duration-300",
                     isSelected 
-                      ? "fill-primary stroke-primary-foreground stroke-2" 
-                      : "fill-primary/10 stroke-primary/30 stroke-1 hover:fill-primary/30 hover:stroke-primary"
+                      ? "fill-cyan-400/40 stroke-cyan-300 stroke-2" 
+                      : "fill-transparent stroke-cyan-500/30 stroke-1 hover:fill-cyan-500/20 hover:stroke-cyan-400/60"
                   )}
                   onClick={() => onAreaClick(area.id)}
-                  filter={isSelected ? "url(#selectedGlow)" : undefined}
+                  filter={isSelected ? "url(#selectedHoloGlow)" : undefined}
                 >
                   <title>{area.label}</title>
                 </path>
               );
             })}
 
-            {/* Face features */}
+            {/* Face features - holographic eyes */}
             <g className="pointer-events-none">
+              {/* Eye glow circles */}
+              <circle 
+                cx="135" cy="75" r="10" 
+                className="fill-cyan-400/10"
+                filter="url(#holoGlow)"
+              />
+              <circle 
+                cx="165" cy="75" r="10" 
+                className="fill-cyan-400/10"
+                filter="url(#holoGlow)"
+              />
+              
+              {/* Eyes */}
               <ellipse 
                 cx="135" cy="75" rx="8" ry="6" 
                 className={cn(
-                  "fill-primary/60 transition-all duration-300",
+                  "fill-cyan-400/80 transition-all duration-300",
                   state === "processing" && "animate-pulse"
                 )}
+                filter="url(#holoGlow)"
               />
               <ellipse 
                 cx="165" cy="75" rx="8" ry="6" 
                 className={cn(
-                  "fill-primary/60 transition-all duration-300",
+                  "fill-cyan-400/80 transition-all duration-300",
                   state === "processing" && "animate-pulse"
                 )}
+                filter="url(#holoGlow)"
               />
-              <ellipse cx="137" cy="73" rx="3" ry="2" className="fill-white/60" />
-              <ellipse cx="167" cy="73" rx="3" ry="2" className="fill-white/60" />
               
+              {/* Eye highlights */}
+              <ellipse cx="137" cy="73" rx="3" ry="2" className="fill-white/80" />
+              <ellipse cx="167" cy="73" rx="3" ry="2" className="fill-white/80" />
+              
+              {/* Mouth expressions */}
               {state === "idle" && (
-                <path d="M140,100 Q150,105 160,100" className="stroke-primary/60 stroke-2 fill-none" />
+                <path d="M140,100 Q150,105 160,100" className="stroke-cyan-400/60 stroke-2 fill-none" filter="url(#holoGlow)" />
               )}
               {state === "listening" && (
-                <ellipse cx="150" cy="102" rx="8" ry="5" className="fill-primary/40 animate-pulse" />
+                <ellipse cx="150" cy="102" rx="8" ry="5" className="fill-cyan-400/50 animate-pulse" filter="url(#holoGlow)" />
               )}
               {state === "processing" && (
-                <path d="M140,102 L160,102" className="stroke-primary/60 stroke-2" />
+                <path d="M140,102 L160,102" className="stroke-cyan-400/60 stroke-2" filter="url(#holoGlow)" />
               )}
               {state === "responding" && (
-                <ellipse cx="150" cy="102" rx="10" ry="6" className="fill-primary/50">
+                <ellipse cx="150" cy="102" rx="10" ry="6" className="fill-cyan-400/60" filter="url(#holoGlow)">
                   <animate attributeName="ry" values="6;8;6" dur="0.5s" repeatCount="indefinite" />
                 </ellipse>
               )}
             </g>
 
-            {/* Center line */}
+            {/* Center line - holographic */}
             <line 
               x1="150" y1="130" x2="150" y2="390" 
-              stroke="hsl(var(--border))" 
+              stroke="rgba(34, 211, 238, 0.3)" 
               strokeWidth="1" 
-              strokeDasharray="4 4" 
-              opacity="0.3" 
+              strokeDasharray="8 4" 
             />
 
-            {/* Pulse rings for selected areas */}
+            {/* Data points along body */}
+            {[145, 200, 250, 300, 350].map((y, i) => (
+              <g key={y}>
+                <circle cx="150" cy={y} r="2" className="fill-cyan-400/60" />
+                <circle cx="150" cy={y} r="4" className="fill-none stroke-cyan-400/30">
+                  <animate 
+                    attributeName="r" 
+                    values="4;8;4" 
+                    dur={`${1 + i * 0.2}s`}
+                    repeatCount="indefinite" 
+                  />
+                  <animate 
+                    attributeName="opacity" 
+                    values="0.5;0;0.5" 
+                    dur={`${1 + i * 0.2}s`}
+                    repeatCount="indefinite" 
+                  />
+                </circle>
+              </g>
+            ))}
+
+            {/* Pulse rings for selected areas - holographic style */}
             {selectedAreas.map(area => {
               const centers: Record<string, { cx: number; cy: number }> = {
                 head: { cx: 150, cy: 75 },
@@ -247,32 +347,71 @@ export function InteractiveAvatar({
               if (!center) return null;
               
               return (
-                <circle
-                  key={`pulse-${area}`}
-                  cx={center.cx}
-                  cy={center.cy}
-                  r="15"
-                  className="fill-none stroke-primary stroke-2 opacity-60"
-                >
-                  <animate 
-                    attributeName="r" 
-                    values="15;25;15" 
-                    dur="1.5s" 
-                    repeatCount="indefinite" 
+                <g key={`pulse-${area}`}>
+                  {/* Multiple concentric rings */}
+                  <circle
+                    cx={center.cx}
+                    cy={center.cy}
+                    r="15"
+                    className="fill-none stroke-cyan-400 stroke-1"
+                    filter="url(#holoGlow)"
+                  >
+                    <animate 
+                      attributeName="r" 
+                      values="15;30;15" 
+                      dur="2s" 
+                      repeatCount="indefinite" 
+                    />
+                    <animate 
+                      attributeName="opacity" 
+                      values="0.8;0;0.8" 
+                      dur="2s" 
+                      repeatCount="indefinite" 
+                    />
+                  </circle>
+                  <circle
+                    cx={center.cx}
+                    cy={center.cy}
+                    r="10"
+                    className="fill-none stroke-cyan-300 stroke-2"
+                    filter="url(#holoGlow)"
+                  >
+                    <animate 
+                      attributeName="r" 
+                      values="10;25;10" 
+                      dur="2s"
+                      begin="0.3s"
+                      repeatCount="indefinite" 
+                    />
+                    <animate 
+                      attributeName="opacity" 
+                      values="0.6;0;0.6" 
+                      dur="2s" 
+                      begin="0.3s"
+                      repeatCount="indefinite" 
+                    />
+                  </circle>
+                  {/* Center glow point */}
+                  <circle
+                    cx={center.cx}
+                    cy={center.cy}
+                    r="5"
+                    className="fill-cyan-400/80"
+                    filter="url(#selectedHoloGlow)"
                   />
-                  <animate 
-                    attributeName="opacity" 
-                    values="0.6;0;0.6" 
-                    dur="1.5s" 
-                    repeatCount="indefinite" 
-                  />
-                </circle>
+                </g>
               );
             })}
           </svg>
+
+          {/* Corner decorations */}
+          <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-cyan-400/50" />
+          <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-cyan-400/50" />
+          <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-cyan-400/50" />
+          <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-cyan-400/50" />
         </div>
 
-        {/* Right side labels */}
+        {/* Right side labels with holographic style */}
         <div className="flex flex-col gap-1 min-w-[80px] items-start pt-8">
           {rightAreas.map(area => {
             const areaData = bodyAreas.find(a => a.id === area);
@@ -282,7 +421,7 @@ export function InteractiveAvatar({
               <button
                 key={area}
                 onClick={() => onAreaClick(area)}
-                className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium transition-all hover:bg-primary/80 animate-fade-in"
+                className="flex items-center gap-1 px-2 py-1 rounded border border-cyan-400/60 bg-cyan-950/40 text-cyan-300 text-xs font-mono transition-all hover:bg-cyan-900/50 hover:border-cyan-300 animate-fade-in backdrop-blur-sm shadow-[0_0_10px_rgba(34,211,238,0.3)]"
               >
                 <span>{areaData.label}</span>
                 <X className="h-3 w-3" />
@@ -294,17 +433,57 @@ export function InteractiveAvatar({
 
       {/* Instructions - only show when no areas selected */}
       {selectedAreas.length === 0 && (
-        <p className="text-xs text-muted-foreground text-center max-w-[250px]">
-          Πατήστε στο σώμα για να δείξετε πού αισθάνεστε ενόχληση
+        <p className="text-xs text-cyan-400/70 text-center max-w-[250px] font-mono">
+          [ Πατήστε στο σώμα για επιλογή περιοχής ]
         </p>
       )}
 
-      {/* Selected count */}
+      {/* Selected count with holographic style */}
       {selectedAreas.length > 0 && (
-        <p className="text-xs text-primary font-medium">
-          {selectedAreas.length} περιοχ{selectedAreas.length === 1 ? 'ή' : 'ές'} επιλεγμέν{selectedAreas.length === 1 ? 'η' : 'ες'}
-        </p>
+        <div className="flex items-center gap-2 px-3 py-1 rounded border border-cyan-400/40 bg-cyan-950/30 backdrop-blur-sm">
+          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <p className="text-xs text-cyan-300 font-mono">
+            {selectedAreas.length} περιοχ{selectedAreas.length === 1 ? 'ή' : 'ές'} ενεργ{selectedAreas.length === 1 ? 'ή' : 'ές'}
+          </p>
+        </div>
       )}
+
+      {/* CSS for holographic animations */}
+      <style>{`
+        @keyframes scanline {
+          0% { top: 0; }
+          100% { top: 100%; }
+        }
+        
+        @keyframes hologramFlicker {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.05; }
+          52% { opacity: 0; }
+          54% { opacity: 0.08; }
+          56% { opacity: 0; }
+        }
+        
+        .hologram-listening {
+          box-shadow: 0 0 30px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.2), inset 0 0 30px rgba(34, 211, 238, 0.1);
+        }
+        
+        .hologram-processing {
+          animation: hologramPulse 1s ease-in-out infinite;
+        }
+        
+        .hologram-responding {
+          box-shadow: 0 0 40px rgba(52, 211, 153, 0.4), 0 0 80px rgba(52, 211, 153, 0.2), inset 0 0 30px rgba(52, 211, 153, 0.1);
+        }
+        
+        @keyframes hologramPulse {
+          0%, 100% { 
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3), inset 0 0 20px rgba(34, 211, 238, 0.05);
+          }
+          50% { 
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.5), inset 0 0 40px rgba(34, 211, 238, 0.1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
