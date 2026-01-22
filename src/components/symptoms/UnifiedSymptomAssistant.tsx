@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, Loader2, Bot, User, Save, FileText, CheckCircle, AlertTriangle, MapPin, Mic, MicOff } from "lucide-react";
+import { Send, Loader2, Bot, User, FileText, CheckCircle, AlertTriangle, MapPin, Mic, MicOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { InteractiveAvatar } from "./InteractiveAvatar";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { Database } from "@/integrations/supabase/types";
 
 type BodyArea = Database['public']['Enums']['body_area'];
@@ -91,12 +92,61 @@ export function UnifiedSymptomAssistant() {
   const [executiveSummary, setExecutiveSummary] = useState<ExecutiveSummary | null>(null);
   const [autoSaved, setAutoSaved] = useState(false);
 
+  // Voice input
+  const {
+    isListening,
+    isSupported: isSpeechSupported,
+    interimTranscript,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useSpeechRecognition({
+    language: "el-GR",
+    continuous: true,
+    interimResults: true,
+    onResult: (text, isFinal) => {
+      if (isFinal) {
+        setInput(prev => prev + text);
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Σφάλμα μικροφώνου",
+        description: error,
+        variant: "destructive",
+      });
+      setAvatarState("idle");
+    },
+    onEnd: () => {
+      setAvatarState("idle");
+    },
+  });
+
+  // Sync avatar state with listening
+  useEffect(() => {
+    if (isListening) {
+      setAvatarState("listening");
+    }
+  }, [isListening]);
+
   // Scroll to bottom on new messages
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Handle voice toggle
+  const handleVoiceToggle = useCallback(() => {
+    if (isListening) {
+      stopListening();
+      setAvatarState("idle");
+    } else {
+      resetTranscript();
+      startListening();
+      setAvatarState("listening");
+    }
+  }, [isListening, startListening, stopListening, resetTranscript]);
 
   // Handle body area click - triggers contextual chat prompt
   const handleBodyAreaClick = useCallback((area: BodyArea) => {
@@ -591,12 +641,47 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
 
           {/* Input */}
           <div className="p-4 border-t border-border bg-background/50">
+            {/* Voice status indicator */}
+            {isListening && (
+              <div className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-primary/10 border border-primary/30 animate-pulse">
+                <div className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                <span className="text-sm text-primary font-medium">Σας ακούω...</span>
+                {interimTranscript && (
+                  <span className="text-sm text-muted-foreground italic ml-2 truncate flex-1">
+                    "{interimTranscript}"
+                  </span>
+                )}
+              </div>
+            )}
+            
             <div className="flex gap-2">
+              {/* Voice input button */}
+              {isSpeechSupported && (
+                <Button
+                  type="button"
+                  onClick={handleVoiceToggle}
+                  disabled={isLoading || showSummary}
+                  size="icon"
+                  variant={isListening ? "default" : "outline"}
+                  className={cn(
+                    "shrink-0 transition-all",
+                    isListening && "bg-primary text-primary-foreground animate-pulse ring-2 ring-primary/50"
+                  )}
+                  title={isListening ? "Σταματήστε την εγγραφή" : "Μιλήστε τα συμπτώματά σας"}
+                >
+                  {isListening ? (
+                    <MicOff className="h-4 w-4" />
+                  ) : (
+                    <Mic className="h-4 w-4" />
+                  )}
+                </Button>
+              )}
+              
               <Input
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Περιγράψτε τα συμπτώματά σας..."
+                placeholder={isListening ? "Μιλάτε... ή γράψτε εδώ" : "Περιγράψτε τα συμπτώματά σας..."}
                 disabled={isLoading || showSummary}
                 className="flex-1 bg-secondary/30"
               />
@@ -613,6 +698,13 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                 )}
               </Button>
             </div>
+            
+            {/* Browser support message */}
+            {!isSpeechSupported && (
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Η φωνητική εισαγωγή δεν υποστηρίζεται σε αυτόν τον browser
+              </p>
+            )}
           </div>
         </Card>
       </div>
