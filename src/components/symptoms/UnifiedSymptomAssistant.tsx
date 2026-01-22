@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { InteractiveAvatar } from "./InteractiveAvatar";
+import { ProviderSuggestions } from "./ProviderSuggestions";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -614,7 +615,8 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
 
           {/* Summary Card */}
           {showSummary && executiveSummary && (
-            <div className="p-4 border-t border-border bg-gradient-to-r from-primary/5 to-success/5">
+            <div className="p-4 border-t border-border bg-gradient-to-r from-primary/5 to-success/5 space-y-4">
+              {/* Summary Card */}
               <Card className="border-primary/30">
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -636,6 +638,13 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                   </p>
                 </CardContent>
               </Card>
+              
+              {/* Provider Suggestions */}
+              <ProviderSuggestions
+                bodyAreas={executiveSummary.bodyAreas}
+                urgencyLevel={executiveSummary.urgencyLevel}
+                symptoms={executiveSummary.mainSymptoms}
+              />
             </div>
           )}
 
