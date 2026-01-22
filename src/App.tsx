@@ -22,6 +22,7 @@ import Payment from "./pages/Payment";
 import Appointments from "./pages/Appointments";
 import MedicalRecords from "./pages/MedicalRecords";
 import MedicationReminders from "./pages/MedicationReminders";
+import SymptomAssistant from "./pages/SymptomAssistant";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Feed from "./pages/Feed";
@@ -98,7 +99,7 @@ const App = () => (
               {/* Protected patient routes */}
               <Route element={<PatientLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/symptoms" element={<Symptoms />} />
+                <Route path="/symptoms" element={<SymptomAssistant />} />
                 <Route path="/providers" element={<Providers />} />
                 <Route path="/nurses" element={<Nurses />} />
                 <Route path="/providers/:id" element={<ProviderDetail />} />
