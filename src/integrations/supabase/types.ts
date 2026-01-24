@@ -963,6 +963,81 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_access_grants: {
+        Row: {
+          created_at: string
+          doctor_user_id: string
+          expires_at: string | null
+          grant_type: string
+          granted_at: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          patient_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doctor_user_id: string
+          expires_at?: string | null
+          grant_type?: string
+          granted_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          patient_user_id: string
+        }
+        Update: {
+          created_at?: string
+          doctor_user_id?: string
+          expires_at?: string | null
+          grant_type?: string
+          granted_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          patient_user_id?: string
+        }
+        Relationships: []
+      }
+      medical_audit_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          patient_user_id: string
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          patient_user_id: string
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          patient_user_id?: string
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       medical_documents: {
         Row: {
           description: string | null
@@ -995,6 +1070,110 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      medical_entries: {
+        Row: {
+          created_at: string
+          description: string | null
+          entry_date: string
+          entry_type: Database["public"]["Enums"]["medical_entry_type"]
+          id: string
+          metadata: Json | null
+          provider_id: string | null
+          provider_name: string | null
+          symptom_session_id: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          entry_date?: string
+          entry_type: Database["public"]["Enums"]["medical_entry_type"]
+          id?: string
+          metadata?: Json | null
+          provider_id?: string | null
+          provider_name?: string | null
+          symptom_session_id?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          entry_date?: string
+          entry_type?: Database["public"]["Enums"]["medical_entry_type"]
+          id?: string
+          metadata?: Json | null
+          provider_id?: string | null
+          provider_name?: string | null
+          symptom_session_id?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_entries_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_entries_symptom_session_id_fkey"
+            columns: ["symptom_session_id"]
+            isOneToOne: false
+            referencedRelation: "symptom_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_entry_attachments: {
+        Row: {
+          created_at: string
+          entry_id: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string
+          id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type: string
+          id?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_entry_attachments_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "medical_entries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       medical_record_shares: {
         Row: {
@@ -1802,6 +1981,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_patient_medical_data: {
+        Args: { _accessor_id: string; _patient_id: string }
+        Returns: boolean
+      }
       get_pilot_enrollment_count: { Args: never; Returns: number }
       has_role: {
         Args: {
@@ -1850,6 +2033,7 @@ export type Database = {
         | "right_leg"
         | "left_foot"
         | "right_foot"
+      medical_entry_type: "blood_test" | "imaging" | "diagnosis"
       payment_status: "pending" | "paid" | "refunded" | "failed"
       provider_type: "doctor" | "clinic" | "hospital" | "nurse" | "lab"
       urgency_level: "low" | "medium" | "high" | "emergency"
@@ -2020,6 +2204,7 @@ export const Constants = {
         "left_foot",
         "right_foot",
       ],
+      medical_entry_type: ["blood_test", "imaging", "diagnosis"],
       payment_status: ["pending", "paid", "refunded", "failed"],
       provider_type: ["doctor", "clinic", "hospital", "nurse", "lab"],
       urgency_level: ["low", "medium", "high", "emergency"],

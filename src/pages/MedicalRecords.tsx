@@ -33,6 +33,7 @@ import { ShareRecordDialog } from '@/components/medical-records/ShareRecordDialo
 import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog';
 import { DocumentUploadDialog } from '@/components/medical-records/DocumentUploadDialog';
 import { SymptomHistorySection } from '@/components/medical-records/SymptomHistorySection';
+import { TestsDiagnosesSection } from '@/components/medical-records/TestsDiagnosesSection';
 import {
   Tooltip,
   TooltipContent,
@@ -464,6 +465,9 @@ const MedicalRecords = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Tests & Diagnoses Section - NEW */}
+        <TestsDiagnosesSection />
 
         {/* Symptom History Section */}
         <SymptomHistorySection />
