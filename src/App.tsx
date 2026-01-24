@@ -26,6 +26,7 @@ import SymptomAssistant from "./pages/SymptomAssistant";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Feed from "./pages/Feed";
+import Community from "./pages/Community";
 import Academy from "./pages/Academy";
 import NotFound from "./pages/NotFound";
 import DoctorRegistration from "./pages/DoctorRegistration";
@@ -110,6 +111,7 @@ const App = () => (
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/feed" element={<Feed />} />
+                <Route path="/community" element={<Community />} />
                 <Route path="/academy" element={<Academy />} />
               </Route>
 
