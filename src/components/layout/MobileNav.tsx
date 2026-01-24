@@ -9,7 +9,7 @@ export function MobileNav() {
 
   const navItems = [
     { path: "/dashboard", icon: Home, label: "Αρχική" },
-    { path: "/feed", icon: Users, label: "Κοινότητα" },
+    { path: "/community", icon: Users, label: "Κοινότητα" },
     { path: "/records", icon: FileText, label: "Φάκελος" },
     { path: "/appointments", icon: Calendar, label: "Ραντεβού" },
     { path: "/profile", icon: User, label: "Προφίλ" },
