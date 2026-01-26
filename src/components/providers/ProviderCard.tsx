@@ -8,7 +8,7 @@ interface ProviderCardProps {
   id: string;
   name: string;
   specialty?: string;
-  type: 'doctor' | 'clinic' | 'hospital' | 'nurse';
+  type: 'doctor' | 'clinic' | 'hospital' | 'nurse' | 'lab';
   rating?: number;
   reviewCount?: number;
   priceMin?: number;
@@ -25,7 +25,8 @@ const typeLabels: Record<string, string> = {
   doctor: 'Γιατρός',
   clinic: 'Κλινική',
   hospital: 'Νοσοκομείο',
-  nurse: 'Νοσηλευτής/τρια'
+  nurse: 'Νοσηλευτής/τρια',
+  lab: 'Εργαστήριο'
 };
 
 // Default cover images for clinics and hospitals (multiple options)
@@ -67,10 +68,12 @@ export function ProviderCard({
   onClick,
   className,
 }: ProviderCardProps) {
-  const typeColors = {
+  const typeColors: Record<string, string> = {
     doctor: 'bg-health-mint-light text-primary',
     clinic: 'bg-health-blue-light text-health-blue',
     hospital: 'bg-health-coral-light text-health-coral',
+    nurse: 'bg-pink-100 text-pink-600',
+    lab: 'bg-amber-100 text-amber-600',
   };
 
   const formatPrice = (min?: number, max?: number) => {
@@ -79,11 +82,11 @@ export function ProviderCard({
     return `€${min} - €${max}`;
   };
 
-  const isClinicOrHospital = type === 'clinic' || type === 'hospital';
-  const coverImage = coverImageUrl || (isClinicOrHospital ? getDefaultCoverImage(type, name) : undefined);
+  const isClinicOrHospitalOrLab = type === 'clinic' || type === 'hospital' || type === 'lab';
+  const coverImage = coverImageUrl || (isClinicOrHospitalOrLab ? getDefaultCoverImage(type, name) : undefined);
 
   // Card with cover image for clinics and hospitals
-  if (isClinicOrHospital) {
+  if (isClinicOrHospitalOrLab) {
     return (
       <Card
         className={cn(
