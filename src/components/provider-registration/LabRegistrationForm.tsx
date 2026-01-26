@@ -1,0 +1,547 @@
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Logo } from "@/components/ui/logo";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  FlaskConical,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Loader2
+} from "lucide-react";
+import { labSchema, LabFormData, labTestTypes, greekCities } from "./types";
+import { RegistrationStepIndicator } from "./RegistrationStepIndicator";
+import { DocumentUploadSection, UploadedDocument } from "./DocumentUploadSection";
+import { ServicesSection, ServiceItem } from "./ServicesSection";
+import { AvailabilitySection, DayAvailability, defaultAvailability } from "./AvailabilitySection";
+
+interface LabRegistrationFormProps {
+  onBack: () => void;
+}
+
+const labTypes = [
+  { value: 'blood_tests', label: 'Αιματολογικό' },
+  { value: 'imaging', label: 'Απεικονιστικό' },
+  { value: 'pathology', label: 'Παθολογοανατομικό' },
+  { value: 'microbiology', label: 'Μικροβιολογικό' },
+  { value: 'general', label: 'Γενικό Διαγνωστικό' },
+];
+
+export default function LabRegistrationForm({ onBack }: LabRegistrationFormProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [documents, setDocuments] = useState<UploadedDocument[]>([]);
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [availability, setAvailability] = useState<DayAvailability[]>(defaultAvailability);
+
+  const form = useForm<LabFormData>({
+    resolver: zodResolver(labSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      organizationName: "",
+      licenseNumber: "",
+      labType: 'general',
+      city: "",
+      address: "",
+      bio: "",
+      onlineResults: false,
+      homeCollection: false,
+      termsAccepted: false,
+      privacyAccepted: false,
+    },
+  });
+
+  const onSubmit = async (data: LabFormData) => {
+    setLoading(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: { full_name: data.fullName }
+        }
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        await supabase
+          .from('profiles')
+          .update({
+            full_name: data.fullName,
+            phone: data.phone,
+            city: data.city || null,
+            address: data.address || null,
+            gdpr_consent: true,
+            terms_accepted: true,
+          })
+          .eq('id', authData.user.id);
+
+        const { data: providerData, error: providerError } = await supabase
+          .from('providers')
+          .insert({
+            user_id: authData.user.id,
+            name: data.organizationName,
+            type: 'lab',
+            specialty: labTypes.find(t => t.value === data.labType)?.label || 'Διαγνωστικό',
+            license_number: data.licenseNumber,
+            phone: data.phone,
+            email: data.email,
+            city: data.city || null,
+            address: data.address || null,
+            description: data.bio || null,
+            services: services.map(s => s.name),
+            is_active: true,
+            is_verified: false,
+            registration_status: 'pending',
+          })
+          .select()
+          .single();
+
+        if (providerError) throw providerError;
+
+        // Create availability slots
+        for (const slot of availability.filter(a => a.isActive)) {
+          await supabase.from('availability_slots').insert({
+            provider_id: providerData.id,
+            day_of_week: slot.dayOfWeek,
+            start_time: slot.startTime,
+            end_time: slot.endTime,
+            is_active: true,
+          });
+        }
+
+        toast({
+          title: "Επιτυχής Εγγραφή! 🔬",
+          description: "Τα στοιχεία σας θα επαληθευτούν εντός 24-48 ωρών.",
+        });
+
+        navigate('/providers');
+      }
+    } catch (error: any) {
+      console.error('Lab signup error:', error);
+      toast({
+        title: "Σφάλμα Εγγραφής",
+        description: error.message || "Κάτι πήγε στραβά.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-amber-500/5">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Πίσω
+          </Button>
+          <Logo size="sm" />
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">
+            <FlaskConical className="h-3 w-3 mr-1" />
+            Εργαστήριο
+          </Badge>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8 max-w-lg pb-24">
+        <RegistrationStepIndicator currentStep={step} totalSteps={4} />
+
+        <Card className="border-border/50">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl">
+              {step === 1 && "Στοιχεία Λογαριασμού"}
+              {step === 2 && "Στοιχεία Εργαστηρίου"}
+              {step === 3 && "Εξετάσεις & Ωράριο"}
+              {step === 4 && "Έγγραφα & Όροι"}
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                
+                {/* Step 1: Account */}
+                {step === 1 && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="fullName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Όνομα Υπεύθυνου *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ονοματεπώνυμο" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email *</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="lab@example.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Κωδικός *</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input 
+                                type={showPassword ? "text" : "password"} 
+                                placeholder="Τουλάχιστον 8 χαρακτήρες"
+                                {...field} 
+                              />
+                              <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Επιβεβαίωση Κωδικού *</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Επαναλάβετε τον κωδικό" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button 
+                      type="button" 
+                      className="w-full mt-6"
+                      onClick={() => {
+                        form.trigger(['fullName', 'email', 'password', 'confirmPassword']).then((isValid) => {
+                          if (isValid) setStep(2);
+                        });
+                      }}
+                    >
+                      Συνέχεια
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+
+                {/* Step 2: Lab Info */}
+                {step === 2 && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="organizationName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Επωνυμία Εργαστηρίου *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="π.χ. Διαγνωστικό Κέντρο Υγεία" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="labType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Τύπος Εργαστηρίου *</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Επιλέξτε τύπο" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {labTypes.map((type) => (
+                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="licenseNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Αριθμός Αδείας *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Αριθμός αδείας λειτουργίας" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Τηλέφωνο *</FormLabel>
+                          <FormControl>
+                            <Input type="tel" placeholder="+30 210 xxx xxxx" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Πόλη</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Επιλέξτε πόλη" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {greekCities.map((city) => (
+                                <SelectItem key={city} value={city}>{city}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Διεύθυνση</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Οδός, αριθμός, ΤΚ" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="space-y-3 pt-2">
+                      <FormField
+                        control={form.control}
+                        name="onlineResults"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center gap-3">
+                            <FormControl>
+                              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">Αποτελέσματα Online</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="homeCollection"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center gap-3">
+                            <FormControl>
+                              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">Αιμοληψία κατ' οίκον</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
+                      <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Πίσω
+                      </Button>
+                      <Button 
+                        type="button" 
+                        className="flex-1"
+                        onClick={() => {
+                          form.trigger(['organizationName', 'labType', 'licenseNumber', 'phone']).then((isValid) => {
+                            if (isValid) setStep(3);
+                          });
+                        }}
+                      >
+                        Συνέχεια
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+
+                {/* Step 3: Tests & Availability */}
+                {step === 3 && (
+                  <>
+                    <ServicesSection
+                      services={services}
+                      onServicesChange={setServices}
+                      suggestedServices={labTestTypes.slice(0, 8)}
+                      title="Διαθέσιμες Εξετάσεις"
+                    />
+
+                    <div className="border-t border-border my-6" />
+
+                    <AvailabilitySection
+                      availability={availability}
+                      onAvailabilityChange={setAvailability}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="bio"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>Περιγραφή</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Περιγράψτε το εργαστήριό σας..."
+                              rows={3}
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex gap-3 mt-6">
+                      <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Πίσω
+                      </Button>
+                      <Button type="button" className="flex-1" onClick={() => setStep(4)}>
+                        Συνέχεια
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+
+                {/* Step 4: Documents & Terms */}
+                {step === 4 && (
+                  <>
+                    <DocumentUploadSection
+                      documents={documents}
+                      onDocumentsChange={setDocuments}
+                      requiredTypes={['license']}
+                    />
+
+                    <div className="border-t border-border my-6" />
+
+                    <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
+                      <FormField
+                        control={form.control}
+                        name="termsAccepted"
+                        render={({ field }) => (
+                          <FormItem className="flex items-start gap-3">
+                            <FormControl>
+                              <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              Αποδέχομαι τους <Link to="/terms" className="text-primary underline">Όρους Χρήσης</Link> *
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="privacyAccepted"
+                        render={({ field }) => (
+                          <FormItem className="flex items-start gap-3">
+                            <FormControl>
+                              <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              Αποδέχομαι την <Link to="/privacy" className="text-primary underline">Πολιτική Απορρήτου</Link> *
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
+                      <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(3)}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Πίσω
+                      </Button>
+                      <Button type="submit" className="flex-1" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Εγγραφή...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Ολοκλήρωση
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+}

@@ -44,6 +44,7 @@ import PilotLanding from "./pages/PilotLanding";
 import PilotEnroll from "./pages/PilotEnroll";
 import PilotWaitlist from "./pages/PilotWaitlist";
 import DoctorSignup from "./pages/DoctorSignup";
+import ProviderSignup from "./pages/ProviderSignup";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -85,6 +86,8 @@ const App = () => (
               <Route path="/pilot/enroll" element={<PilotEnroll />} />
               <Route path="/pilot/waitlist" element={<PilotWaitlist />} />
               <Route path="/doctor-signup" element={<DoctorSignup />} />
+              <Route path="/provider-signup" element={<ProviderSignup />} />
+              <Route path="/signup/provider" element={<ProviderSignup />} />
               
               {/* Legacy routes */}
               <Route path="/doctor-registration" element={<DoctorRegistration />} />
