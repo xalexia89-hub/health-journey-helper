@@ -679,7 +679,48 @@ export default function CompetitiveAnalysis() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 print:bg-white">
-      {/* Header */}
+      {/* Print Watermark */}
+      <div className="hidden print:block print-watermark">CONFIDENTIAL</div>
+      
+      {/* Print Header - Shows only in PDF */}
+      <div className="hidden print:block print-logo mb-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-primary mb-1">🏥 MEDITHOS</h1>
+          <p className="text-sm text-muted-foreground">AI Health Navigation Platform</p>
+          <p className="text-xs mt-2">Business Plan & Market Analysis | {new Date().toLocaleDateString('el-GR', { month: 'long', year: 'numeric' })}</p>
+        </div>
+      </div>
+
+      {/* Executive Summary - Print Only */}
+      <div className="hidden print:block executive-summary mb-8">
+        <h2 className="text-lg font-bold mb-3">📋 Executive Summary</h2>
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          <div className="kpi-box">
+            <div className="kpi-value">€2.5B</div>
+            <div className="kpi-label">EU Market Size</div>
+          </div>
+          <div className="kpi-box">
+            <div className="kpi-value">8</div>
+            <div className="kpi-label">Key Competitors</div>
+          </div>
+          <div className="kpi-box">
+            <div className="kpi-value">€9.99</div>
+            <div className="kpi-label">Premium Plan</div>
+          </div>
+          <div className="kpi-box">
+            <div className="kpi-value">Month 14</div>
+            <div className="kpi-label">Break-even Target</div>
+          </div>
+        </div>
+        <p className="text-sm">
+          <strong>Medithos</strong> είναι μια AI-powered πλατφόρμα πλοήγησης υγείας που συνδυάζει intelligent symptom triage, 
+          ενοποιημένο ιατρικό ιστορικό, και επαγγελματικό δίκτυο παρόχων υγείας. Στοχεύει στην ελληνική αγορά με 
+          επέκταση στη Νοτιοανατολική Ευρώπη, διαφοροποιούμενο από τους ανταγωνιστές μέσω AI navigation (όχι diagnosis) 
+          και unified health ecosystem.
+        </p>
+      </div>
+
+      {/* Header - Screen Only */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 print:hidden">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
@@ -689,20 +730,20 @@ export default function CompetitiveAnalysis() {
           <Logo size="sm" />
           <Button variant="outline" size="sm" onClick={handlePrint}>
             <Download className="h-4 w-4 mr-2" />
-            PDF
+            Εξαγωγή PDF
           </Button>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Title */}
-        <div className="text-center mb-8 print:mb-4">
+        <div className="text-center mb-8 print:mb-4 print:hidden">
           <Badge variant="outline" className="mb-4">Complete Business Analysis</Badge>
           <h1 className="text-3xl font-bold mb-2">Medithos Business Plan</h1>
           <p className="text-muted-foreground">Ανταγωνισμός • Τιμολόγηση • Unit Economics • Τεχνικά • Ομάδα</p>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - Screen Only */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="print:hidden">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-6">
             <TabsTrigger value="competitors" className="text-xs">
@@ -732,7 +773,13 @@ export default function CompetitiveAnalysis() {
           </TabsList>
 
           {/* Competitors Tab */}
-          <TabsContent value="competitors" className="space-y-6">
+          <TabsContent value="competitors" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                📊 1. Ανταγωνιστικό Τοπίο
+              </h2>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -878,7 +925,13 @@ export default function CompetitiveAnalysis() {
           </TabsContent>
 
           {/* Marketing Tab */}
-          <TabsContent value="marketing" className="space-y-6">
+          <TabsContent value="marketing" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                📢 2. Marketing Plan & Go-To-Market Strategy
+              </h2>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -985,7 +1038,13 @@ export default function CompetitiveAnalysis() {
           </TabsContent>
 
           {/* Pricing Tab */}
-          <TabsContent value="pricing" className="space-y-6">
+          <TabsContent value="pricing" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                💰 3. Στρατηγική Τιμολόγησης
+              </h2>
+            </div>
             {/* B2C Pricing */}
             <Card>
               <CardHeader>
@@ -1128,7 +1187,13 @@ export default function CompetitiveAnalysis() {
           </TabsContent>
 
           {/* Unit Economics Tab */}
-          <TabsContent value="economics" className="space-y-6">
+          <TabsContent value="economics" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                📈 4. Unit Economics & Financial Projections
+              </h2>
+            </div>
             {/* CAC by Channel */}
             <Card>
               <CardHeader>
@@ -1315,7 +1380,13 @@ export default function CompetitiveAnalysis() {
           </TabsContent>
 
           {/* Technical Tab */}
-          <TabsContent value="technical" className="space-y-6">
+          <TabsContent value="technical" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                🔧 5. Technical Architecture & Specifications
+              </h2>
+            </div>
             {/* Architecture */}
             <Card>
               <CardHeader>
@@ -1466,7 +1537,13 @@ export default function CompetitiveAnalysis() {
           </TabsContent>
 
           {/* Team Tab */}
-          <TabsContent value="team" className="space-y-6">
+          <TabsContent value="team" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                👥 6. Team Structure & Hiring Plan
+              </h2>
+            </div>
             {/* Phase-based Team Structure */}
             {teamStructure.phases.map((phase, index) => (
               <Card key={phase.name}>
@@ -1608,7 +1685,20 @@ export default function CompetitiveAnalysis() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Print-only content that shows all sections */}
+        <div className="hidden print:block space-y-6">
+          {/* All sections are already shown via print:block on TabsContent */}
+        </div>
       </main>
+
+      {/* Print Footer */}
+      <div className="hidden print:block print-footer">
+        <p>
+          Medithos Business Plan | Confidential | Prepared {new Date().toLocaleDateString('el-GR')} | 
+          Contact: info@medithos.com
+        </p>
+      </div>
     </div>
   );
 }
