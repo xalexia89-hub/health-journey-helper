@@ -30,10 +30,12 @@ import {
   TrendingDown,
   Percent,
   Clock,
-  Euro
+  Euro,
+  FileSearch
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "@/components/ui/logo";
+import { CompetitorAnalysisSection } from "@/components/competitive/CompetitorAnalysisSection";
 
 // Competitor Data
 const competitors = [
@@ -745,7 +747,11 @@ export default function CompetitiveAnalysis() {
 
         {/* Tabs - Screen Only */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="print:hidden">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 mb-6">
+            <TabsTrigger value="swot" className="text-xs">
+              <FileSearch className="h-3 w-3 mr-1" />
+              SWOT
+            </TabsTrigger>
             <TabsTrigger value="competitors" className="text-xs">
               <Target className="h-3 w-3 mr-1" />
               Ανταγωνισμός
@@ -771,6 +777,17 @@ export default function CompetitiveAnalysis() {
               Ομάδα
             </TabsTrigger>
           </TabsList>
+
+          {/* SWOT Analysis Tab - Detailed Competitor Analysis */}
+          <TabsContent value="swot" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
+            {/* Print Section Header */}
+            <div className="hidden print:block print-section">
+              <h2 className="text-xl font-bold border-b-2 border-primary pb-2 mb-4">
+                🔍 Αναλυτική Ανάλυση Ανταγωνισμού (SWOT)
+              </h2>
+            </div>
+            <CompetitorAnalysisSection />
+          </TabsContent>
 
           {/* Competitors Tab */}
           <TabsContent value="competitors" className="space-y-6 print:block print:!opacity-100 print:!h-auto">
