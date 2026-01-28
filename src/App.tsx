@@ -45,6 +45,7 @@ import PilotLanding from "./pages/PilotLanding";
 import PilotEnroll from "./pages/PilotEnroll";
 import PilotWaitlist from "./pages/PilotWaitlist";
 import DoctorSignup from "./pages/DoctorSignup";
+import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
 
 // Doctor Pages
@@ -101,6 +102,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/evaluation" element={<ProjectEvaluation />} />
               <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
+              <Route path="/advisor" element={<AdvisorProfile />} />
               
               {/* Protected patient routes */}
               <Route element={<PatientLayout />}>
