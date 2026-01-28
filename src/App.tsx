@@ -38,6 +38,7 @@ import SystemDocumentation from "./pages/SystemDocumentation";
 import TermsOfUse from "./pages/TermsOfUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProjectEvaluation from "./pages/ProjectEvaluation";
+import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 
 // Pilot Pages
 import PilotLanding from "./pages/PilotLanding";
@@ -99,6 +100,7 @@ const App = () => (
               <Route path="/terms" element={<TermsOfUse />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/evaluation" element={<ProjectEvaluation />} />
+              <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
               
               {/* Protected patient routes */}
               <Route element={<PatientLayout />}>
