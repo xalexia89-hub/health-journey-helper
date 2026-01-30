@@ -73,29 +73,20 @@ const UNLOCK_CODE = "medithos2024";
 
 const AppContent = () => {
   const [searchParams] = useSearchParams();
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  // DEVELOPMENT MODE: Coming Soon gate disabled
+  // To re-enable, uncomment the unlock logic below
+  const [isUnlocked] = useState(true);
 
-  useEffect(() => {
-    // Check URL parameter
-    const unlockParam = searchParams.get("unlock");
-    if (unlockParam === UNLOCK_CODE) {
-      localStorage.setItem("medithos_unlocked", "true");
-      setIsUnlocked(true);
-    } else {
-      // Check localStorage
-      const stored = localStorage.getItem("medithos_unlocked");
-      setIsUnlocked(stored === "true");
-    }
-  }, [searchParams]);
-
-  // Show Coming Soon if not unlocked
-  if (!isUnlocked) {
-    return (
-      <Routes>
-        <Route path="*" element={<ComingSoon />} />
-      </Routes>
-    );
-  }
+  // useEffect(() => {
+  //   const unlockParam = searchParams.get("unlock");
+  //   if (unlockParam === UNLOCK_CODE) {
+  //     localStorage.setItem("medithos_unlocked", "true");
+  //     setIsUnlocked(true);
+  //   } else {
+  //     const stored = localStorage.getItem("medithos_unlocked");
+  //     setIsUnlocked(stored === "true");
+  //   }
+  // }, [searchParams]);
 
   // Full app when unlocked
   return (
