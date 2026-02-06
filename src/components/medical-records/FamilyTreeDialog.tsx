@@ -209,26 +209,33 @@ function TreeNode({
         <p className="text-[10px] text-muted-foreground">{member.relationship}</p>
       </div>
       
-      {/* Conditions */}
-      <div className="mt-1 flex flex-wrap justify-center gap-0.5 max-w-[120px]">
-        {member.conditions.map((condition, i) => (
-          <Badge 
-            key={i} 
-            variant="outline" 
-            className="text-[9px] px-1.5 py-0 h-4 bg-destructive/10 border-destructive/30 text-destructive cursor-pointer hover:bg-destructive/20"
-            onClick={() => onRemoveCondition(condition)}
-          >
-            {condition}
-            <X className="w-2 h-2 ml-0.5" />
-          </Badge>
-        ))}
+      {/* Conditions Section - More Prominent */}
+      <div className="mt-2 flex flex-col items-center gap-1.5 max-w-[140px]">
+        {/* Existing conditions */}
+        {member.conditions.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-1">
+            {member.conditions.map((condition, i) => (
+              <Badge 
+                key={i} 
+                variant="destructive" 
+                className="text-[10px] px-2 py-0.5 h-5 cursor-pointer hover:bg-destructive/80 flex items-center gap-1"
+                onClick={() => onRemoveCondition(condition)}
+              >
+                {condition}
+                <X className="w-3 h-3" />
+              </Badge>
+            ))}
+          </div>
+        )}
+        
+        {/* Add condition input or button */}
         {showConditionInput ? (
-          <div className="flex items-center gap-0.5 mt-0.5">
+          <div className="flex items-center gap-1 w-full">
             <Input
               value={newCondition}
               onChange={(e) => setNewCondition(e.target.value)}
-              placeholder="Πάθηση..."
-              className="h-5 w-16 text-[9px] px-1"
+              placeholder="π.χ. Διαβήτης..."
+              className="h-7 flex-1 text-xs px-2"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && newCondition.trim()) {
@@ -250,18 +257,18 @@ function TreeNode({
                 }
                 setShowConditionInput(false);
               }}
-              className="w-4 h-4 rounded bg-primary flex items-center justify-center text-white"
+              className="w-6 h-6 rounded bg-primary flex items-center justify-center text-white hover:bg-primary/80"
             >
-              <Check className="w-2.5 h-2.5" />
+              <Check className="w-3.5 h-3.5" />
             </button>
           </div>
         ) : (
           <button
             onClick={() => setShowConditionInput(true)}
-            className="text-[9px] px-1.5 py-0 h-4 rounded-full border border-dashed border-muted-foreground/50 text-muted-foreground hover:border-primary hover:text-primary flex items-center"
+            className="text-xs px-3 py-1 h-6 rounded-full bg-destructive/10 border border-destructive/30 text-destructive hover:bg-destructive/20 flex items-center gap-1 font-medium transition-colors"
           >
-            <Plus className="w-2 h-2 mr-0.5" />
-            Πάθηση
+            <Plus className="w-3 h-3" />
+            Ασθένεια
           </button>
         )}
       </div>
