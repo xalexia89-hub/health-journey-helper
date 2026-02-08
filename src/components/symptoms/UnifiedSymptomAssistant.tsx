@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { InteractiveAvatar } from "./InteractiveAvatar";
 import { ProviderSuggestions } from "./ProviderSuggestions";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import ReactMarkdown from "react-markdown";
 import type { Database } from "@/integrations/supabase/types";
 
 type BodyArea = Database['public']['Enums']['body_area'];
@@ -716,16 +717,19 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                           : "bg-secondary text-secondary-foreground rounded-bl-md"
                       )}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {cleanMessageContent(message.content)}
-                        {isLoading && index === messages.length - 1 && message.role === "assistant" && !message.content && (
+                    <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                      {cleanMessageContent(message.content) ? (
+                        <ReactMarkdown>{cleanMessageContent(message.content)}</ReactMarkdown>
+                      ) : (
+                        isLoading && index === messages.length - 1 && message.role === "assistant" && (
                           <span className="inline-flex items-center gap-1">
                             <span className="animate-pulse">●</span>
                             <span className="animate-pulse animation-delay-200">●</span>
                             <span className="animate-pulse animation-delay-400">●</span>
                           </span>
-                        )}
-                      </p>
+                        )
+                      )}
+                    </div>
                     </div>
                     <span className="text-xs text-muted-foreground px-2">
                       {message.timestamp.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' })}
