@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -369,16 +370,19 @@ ${summary.recommendations.map(r => `• ${r}`).join('\n')}
                       : "bg-secondary text-secondary-foreground rounded-bl-md"
                   )}
                 >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {message.content}
-                    {isLoading && index === messages.length - 1 && message.role === "assistant" && !message.content && (
-                      <span className="inline-flex items-center gap-1">
-                        <span className="animate-pulse">●</span>
-                        <span className="animate-pulse animation-delay-200">●</span>
-                        <span className="animate-pulse animation-delay-400">●</span>
-                      </span>
+                  <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                    {message.content ? (
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    ) : (
+                      isLoading && index === messages.length - 1 && message.role === "assistant" && (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="animate-pulse">●</span>
+                          <span className="animate-pulse animation-delay-200">●</span>
+                          <span className="animate-pulse animation-delay-400">●</span>
+                        </span>
+                      )
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
             ))}
