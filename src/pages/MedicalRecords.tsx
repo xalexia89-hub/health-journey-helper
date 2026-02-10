@@ -34,6 +34,7 @@ import { FamilyTreeDialog } from '@/components/medical-records/FamilyTreeDialog'
 import { DocumentUploadDialog } from '@/components/medical-records/DocumentUploadDialog';
 import { SymptomHistorySection } from '@/components/medical-records/SymptomHistorySection';
 import { TestsDiagnosesSection } from '@/components/medical-records/TestsDiagnosesSection';
+import { ExecutiveSummarySection } from '@/components/medical-records/ExecutiveSummarySection';
 import {
   Tooltip,
   TooltipContent,
@@ -472,23 +473,8 @@ const MedicalRecords = () => {
         {/* Symptom History Section */}
         <SymptomHistorySection />
 
-        {/* Notes Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <FileText className="h-5 w-5" />
-              Επιπλέον Σημειώσεις
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              placeholder="Προσθέστε επιπλέον ιατρικές πληροφορίες ή σημειώσεις..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={4}
-            />
-          </CardContent>
-        </Card>
+        {/* Executive Summary Section */}
+        <ExecutiveSummarySection notes={notes} onNotesChange={setNotes} />
       </div>
     </div>
   );
