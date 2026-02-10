@@ -106,6 +106,7 @@ const AppContent = () => {
           <Route path="/pilot/enroll" element={<PilotEnroll />} />
           <Route path="/pilot/waitlist" element={<PilotWaitlist />} />
           <Route path="/doctor-signup" element={<DoctorSignup />} />
+          <Route path="/pilot/doctor-signup" element={<DoctorSignup />} />
           <Route path="/provider-signup" element={<ProviderSignup />} />
           <Route path="/signup/provider" element={<ProviderSignup />} />
           
