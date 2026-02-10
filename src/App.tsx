@@ -123,11 +123,11 @@ const AppContent = () => {
           <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
           <Route path="/analysis" element={<StandaloneAnalysis />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
+          <Route path="/symptoms" element={<SymptomAssistant />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/symptoms" element={<SymptomAssistant />} />
             <Route path="/providers" element={<Providers />} />
             <Route path="/nurses" element={<Nurses />} />
             <Route path="/providers/:id" element={<ProviderDetail />} />
