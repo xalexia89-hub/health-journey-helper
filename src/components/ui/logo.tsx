@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import medithoLogo from "@/assets/medithos-icon.png";
+import medithoLogo from "@/assets/medithos-new-logo.png";
 
 interface LogoProps {
   className?: string;
