@@ -14,6 +14,7 @@ import { ProviderSuggestions } from "./ProviderSuggestions";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import ReactMarkdown from "react-markdown";
 import type { Database } from "@/integrations/supabase/types";
+import medithoAiIcon from "@/assets/medithos-ai-icon.png";
 
 type BodyArea = Database['public']['Enums']['body_area'];
 
@@ -642,16 +643,15 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  "p-2 rounded-xl transition-all duration-300",
-                  avatarState === "processing" && "animate-pulse bg-primary",
-                  avatarState === "responding" && "bg-success",
-                  avatarState === "listening" && "bg-primary/60",
-                  avatarState === "idle" && "bg-primary/20"
+                  "rounded-xl overflow-hidden transition-all duration-300 w-10 h-10 flex items-center justify-center",
+                  avatarState === "processing" && "animate-pulse",
+                  avatarState === "responding" && "ring-2 ring-emerald-400/60",
+                  avatarState === "listening" && "ring-2 ring-cyan-400/40",
                 )}>
-                  <Bot className="h-5 w-5 text-primary-foreground" />
+                  <img src={medithoAiIcon} alt="Medithos" className="w-full h-full object-cover rounded-xl" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Ψηφιακός Βοηθός Υγείας</h3>
+                  <h3 className="font-semibold text-foreground">Medithos</h3>
                   <p className="text-xs text-muted-foreground">
                     {avatarState === "listening" && "Σας ακούω..."}
                     {avatarState === "processing" && "Επεξεργάζομαι..."}
