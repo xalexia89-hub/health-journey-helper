@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Pill, 
   AlertTriangle, 
@@ -19,7 +20,9 @@ import {
   FileText,
   Users,
   User,
+  HeartPulse,
 } from 'lucide-react';
+import { PreventiveHealthTab } from '@/components/preventive/PreventiveHealthTab';
 import {
   Select,
   SelectContent,
@@ -279,9 +282,9 @@ const MedicalRecords = () => {
     <div className="min-h-screen bg-background">
       <Header title="Ιατρικό Ιστορικό" showBack />
       
-      <div className="px-4 py-6 space-y-8 pb-24">
+      <div className="px-4 py-6 pb-24">
         {/* Header Actions */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 mb-4">
           <p className="text-muted-foreground text-sm flex-1 min-w-0">Διαχειριστείτε τις πληροφορίες υγείας σας</p>
           <TooltipProvider>
             <div className="flex gap-1.5 flex-shrink-0">
@@ -309,172 +312,175 @@ const MedicalRecords = () => {
           </TooltipProvider>
         </div>
 
-        {/* Central Hub with Orbiting Categories */}
-        <div className="relative flex items-center justify-center h-[280px]">
-          {/* Background Glow */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
-          </div>
+        <Tabs defaultValue="history" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 mb-6">
+            <TabsTrigger value="history" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Ιστορικό
+            </TabsTrigger>
+            <TabsTrigger value="preventive" className="flex items-center gap-2">
+              <HeartPulse className="h-4 w-4" />
+              Πρόληψη & Lifestyle
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Orbital Rings */}
-          <div className="absolute w-52 h-52 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
-          <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
+          <TabsContent value="history" className="space-y-8">
+            {/* Central Hub with Orbiting Categories */}
+            <div className="relative flex items-center justify-center h-[280px]">
+              {/* Background Glow */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
+              </div>
 
-          {/* Center Avatar */}
-          <Avatar className="relative z-10 w-16 h-16 shadow-lg shadow-primary/30">
-            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70">
-              <User className="h-7 w-7 text-primary-foreground" />
-            </AvatarFallback>
-          </Avatar>
+              {/* Orbital Rings */}
+              <div className="absolute w-52 h-52 rounded-full border border-dashed border-primary/20 animate-[spin_30s_linear_infinite]" />
+              <div className="absolute w-40 h-40 rounded-full border border-primary/10" />
 
-          {/* Category Circles - Radial Layout */}
-          <TooltipProvider>
-            {categories.map((cat, index) => {
-              const Icon = cat.icon;
-              // 5 categories need 72° spacing (360/5), starting at -90° (top)
-              const angle = ((index * 72) - 90) * (Math.PI / 180);
-              const radius = 110;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-              const count = getItemCount(cat.field);
-              const isActive = activeCategory === cat.id;
-              const isFamilyTree = cat.id === 'familyTree';
+              {/* Center Avatar */}
+              <Avatar className="relative z-10 w-16 h-16 shadow-lg shadow-primary/30">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70">
+                  <User className="h-7 w-7 text-primary-foreground" />
+                </AvatarFallback>
+              </Avatar>
 
-              const circleContent = (
-                <div
-                  className="absolute z-20 transition-all duration-300 group"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    marginLeft: '-28px',
-                    marginTop: '-28px',
-                    transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
-                  }}
-                >
-                  {/* Connection Line */}
-                  <div 
-                    className="absolute top-1/2 left-1/2 w-16 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
-                    style={{
-                      transform: `rotate(${((index * 72) - 90) + 180}deg)`,
-                      transformOrigin: '0 50%',
-                    }}
-                  />
-                  
-                  {/* Circle */}
-                  <div 
-                    className={`
-                      w-14 h-14 rounded-full flex items-center justify-center cursor-pointer
-                      bg-gradient-to-br ${cat.gradient}
-                      shadow-lg ${cat.shadow}
-                      transition-all duration-300
-                      ${isActive ? 'ring-4 ring-white/30 scale-110' : 'hover:scale-105'}
-                    `}
-                    style={{ backgroundImage: cat.pattern }}
-                  >
-                    <Icon className="w-6 h-6 text-white drop-shadow-md" />
-                  </div>
+              {/* Category Circles - Radial Layout */}
+              <TooltipProvider>
+                {categories.map((cat, index) => {
+                  const Icon = cat.icon;
+                  const angle = ((index * 72) - 90) * (Math.PI / 180);
+                  const radius = 110;
+                  const x = Math.cos(angle) * radius;
+                  const y = Math.sin(angle) * radius;
+                  const count = getItemCount(cat.field);
+                  const isActive = activeCategory === cat.id;
+                  const isFamilyTree = cat.id === 'familyTree';
 
-                  {/* Count Badge */}
-                  {count > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
-                      {count}
-                    </span>
-                  )}
-                </div>
-              );
-
-              // Family Tree uses a dialog instead of inline content
-              if (isFamilyTree) {
-                return (
-                  <Tooltip key={cat.id}>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <FamilyTreeDialog
-                          familyHistory={record.family_history || defaultFamilyHistory}
-                          onSave={handleFamilyTreeSave}
-                          trigger={circleContent}
-                        />
+                  const circleContent = (
+                    <div
+                      className="absolute z-20 transition-all duration-300 group"
+                      style={{
+                        left: '50%',
+                        top: '50%',
+                        marginLeft: '-28px',
+                        marginTop: '-28px',
+                        transform: `translate(${x}px, ${y}px) scale(${isActive ? 1.15 : 1})`,
+                      }}
+                    >
+                      <div 
+                        className="absolute top-1/2 left-1/2 w-16 h-px bg-gradient-to-r from-primary/40 to-transparent -z-10"
+                        style={{
+                          transform: `rotate(${((index * 72) - 90) + 180}deg)`,
+                          transformOrigin: '0 50%',
+                        }}
+                      />
+                      <div 
+                        className={`
+                          w-14 h-14 rounded-full flex items-center justify-center cursor-pointer
+                          bg-gradient-to-br ${cat.gradient}
+                          shadow-lg ${cat.shadow}
+                          transition-all duration-300
+                          ${isActive ? 'ring-4 ring-white/30 scale-110' : 'hover:scale-105'}
+                        `}
+                        style={{ backgroundImage: cat.pattern }}
+                      >
+                        <Icon className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>{cat.label}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              }
+                      {count > 0 && (
+                        <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-current text-xs font-bold flex items-center justify-center shadow-md">
+                          {count}
+                        </span>
+                      )}
+                    </div>
+                  );
 
-              return (
-                <Tooltip key={cat.id}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => setActiveCategory(isActive ? null : cat.id)}
-                      className="focus:outline-none"
-                    >
-                      {circleContent}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>{cat.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
-          </TooltipProvider>
-        </div>
+                  if (isFamilyTree) {
+                    return (
+                      <Tooltip key={cat.id}>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <FamilyTreeDialog
+                              familyHistory={record.family_history || defaultFamilyHistory}
+                              onSave={handleFamilyTreeSave}
+                              trigger={circleContent}
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom"><p>{cat.label}</p></TooltipContent>
+                      </Tooltip>
+                    );
+                  }
 
-        {/* Active Category Content (not for familyTree) */}
-        {activeConfig && activeConfig.id !== 'familyTree' && inputStates[activeConfig.field] && (
-          <Card className="animate-fade-in overflow-hidden">
-            <div 
-              className="h-2 w-full"
-              style={{ background: `linear-gradient(to right, ${activeConfig.gradient.includes('amber') ? '#f59e0b' : activeConfig.gradient.includes('blue') ? '#3b82f6' : activeConfig.gradient.includes('emerald') ? '#10b981' : activeConfig.gradient.includes('purple') ? '#8b5cf6' : '#f43f5e'}, transparent)` }}
-            />
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <activeConfig.icon className={`h-5 w-5`} />
-                {activeConfig.label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder={activeConfig.placeholder}
-                  value={inputStates[activeConfig.field].value}
-                  onChange={(e) => inputStates[activeConfig.field].setter(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}
+                  return (
+                    <Tooltip key={cat.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setActiveCategory(isActive ? null : cat.id)}
+                          className="focus:outline-none"
+                        >
+                          {circleContent}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom"><p>{cat.label}</p></TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </TooltipProvider>
+            </div>
+
+            {/* Active Category Content */}
+            {activeConfig && activeConfig.id !== 'familyTree' && inputStates[activeConfig.field] && (
+              <Card className="animate-fade-in overflow-hidden">
+                <div 
+                  className="h-2 w-full"
+                  style={{ background: `linear-gradient(to right, ${activeConfig.gradient.includes('amber') ? '#f59e0b' : activeConfig.gradient.includes('blue') ? '#3b82f6' : activeConfig.gradient.includes('emerald') ? '#10b981' : activeConfig.gradient.includes('purple') ? '#8b5cf6' : '#f43f5e'}, transparent)` }}
                 />
-                <Button onClick={() => addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {((record[activeConfig.field] as string[] | null) || []).map((item, i) => (
-                  <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1.5 text-sm">
-                    {item}
-                    <button
-                      onClick={() => removeItem(activeConfig.field, item)}
-                      className="ml-2 hover:bg-destructive/20 rounded-full p-1"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-                {getItemCount(activeConfig.field) === 0 && (
-                  <p className="text-sm text-muted-foreground">{activeConfig.emptyText}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <activeConfig.icon className="h-5 w-5" />
+                    {activeConfig.label}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder={activeConfig.placeholder}
+                      value={inputStates[activeConfig.field].value}
+                      onChange={(e) => inputStates[activeConfig.field].setter(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}
+                    />
+                    <Button onClick={() => addItem(activeConfig.field, inputStates[activeConfig.field].value, inputStates[activeConfig.field].setter)}>
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {((record[activeConfig.field] as string[] | null) || []).map((item, i) => (
+                      <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1.5 text-sm">
+                        {item}
+                        <button
+                          onClick={() => removeItem(activeConfig.field, item)}
+                          className="ml-2 hover:bg-destructive/20 rounded-full p-1"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                    {getItemCount(activeConfig.field) === 0 && (
+                      <p className="text-sm text-muted-foreground">{activeConfig.emptyText}</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-        {/* Tests & Diagnoses Section - NEW */}
-        <TestsDiagnosesSection />
+            <TestsDiagnosesSection />
+            <SymptomHistorySection />
+            <ExecutiveSummarySection notes={notes} onNotesChange={setNotes} />
+          </TabsContent>
 
-        {/* Symptom History Section */}
-        <SymptomHistorySection />
-
-        {/* Executive Summary Section */}
-        <ExecutiveSummarySection notes={notes} onNotesChange={setNotes} />
+          <TabsContent value="preventive">
+            <PreventiveHealthTab />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
