@@ -40,7 +40,7 @@ Always respond in the same language as the user's message. Be concise but thorou
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
-    const response = await fetch("https://api.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +57,18 @@ Always respond in the same language as the user's message. Be concise but thorou
       }),
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
+    console.log("API response status:", response.status);
+    console.log("API response preview:", responseText.substring(0, 200));
+    
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Failed to parse API response:", responseText.substring(0, 500));
+      throw new Error(`Invalid JSON response from API (status ${response.status})`);
+    }
+    
     const aiMessage = data.choices?.[0]?.message?.content || "Δεν μπόρεσα να δημιουργήσω απάντηση. Παρακαλώ δοκιμάστε ξανά.";
 
     return new Response(JSON.stringify({ message: aiMessage }), {
