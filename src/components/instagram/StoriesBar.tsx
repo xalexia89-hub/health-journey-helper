@@ -33,7 +33,7 @@ export function StoriesBar({
           <div className="relative">
             <div className="p-0.5 rounded-full bg-gradient-to-br from-muted to-muted/50">
               <div className="bg-background p-0.5 rounded-full">
-                <Avatar className="h-16 w-16 ring-2 ring-background">
+                <Avatar className="h-[68px] w-[68px] ring-2 ring-background">
                   <AvatarImage src={currentUserAvatar} />
                   <AvatarFallback className="bg-secondary text-secondary-foreground text-sm">
                     You
@@ -67,10 +67,11 @@ export function StoriesBar({
                 group.is_live && "animate-pulse"
               )}>
                 <div className="bg-background p-0.5 rounded-full">
-                  <Avatar className="h-16 w-16 ring-2 ring-background">
+                  <Avatar className="h-[68px] w-[68px] ring-2 ring-background">
                     <AvatarImage 
                       src={group.profile.avatar_url} 
-                      alt={group.profile.name} 
+                      alt={group.profile.name}
+                      className="object-cover"
                     />
                     <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-medium">
                       {group.profile.name.charAt(0)}
