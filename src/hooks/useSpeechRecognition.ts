@@ -79,6 +79,7 @@ export function useSpeechRecognition(
   const [transcript, setTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState("");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const isListeningRef = useRef(false);
 
   // Check if Speech Recognition is supported
   const isSupported = typeof window !== "undefined" && 
@@ -124,13 +125,16 @@ export function useSpeechRecognition(
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error("Speech recognition error:", event.error);
       
+      // Ignore non-critical errors that happen during normal operation
+      if (event.error === "no-speech" || event.error === "aborted") {
+        // These are normal — onend will handle restart if still listening
+        return;
+      }
+      
       let errorMessage = "Σφάλμα αναγνώρισης φωνής";
       switch (event.error) {
         case "not-allowed":
           errorMessage = "Δεν επιτρέπεται η πρόσβαση στο μικρόφωνο";
-          break;
-        case "no-speech":
-          errorMessage = "Δεν εντοπίστηκε ομιλία";
           break;
         case "network":
           errorMessage = "Σφάλμα δικτύου";
@@ -141,12 +145,23 @@ export function useSpeechRecognition(
       }
       
       onError?.(errorMessage);
+      isListeningRef.current = false;
       setIsListening(false);
     };
 
     recognition.onend = () => {
-      setIsListening(false);
       setInterimTranscript("");
+      // Auto-restart if user hasn't explicitly stopped
+      if (isListeningRef.current && recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+          return;
+        } catch (e) {
+          console.error("Failed to restart speech recognition:", e);
+        }
+      }
+      isListeningRef.current = false;
+      setIsListening(false);
       onEnd?.();
     };
 
@@ -162,26 +177,29 @@ export function useSpeechRecognition(
   }, [isSupported, language, continuous, interimResults, onResult, onError, onEnd]);
 
   const startListening = useCallback(() => {
-    if (!recognitionRef.current || isListening) return;
+    if (!recognitionRef.current || isListeningRef.current) return;
     
     try {
       setTranscript("");
       setInterimTranscript("");
+      isListeningRef.current = true;
       recognitionRef.current.start();
     } catch (error) {
       console.error("Failed to start speech recognition:", error);
+      isListeningRef.current = false;
     }
-  }, [isListening]);
+  }, []);
 
   const stopListening = useCallback(() => {
-    if (!recognitionRef.current || !isListening) return;
+    isListeningRef.current = false;
+    if (!recognitionRef.current) return;
     
     try {
       recognitionRef.current.stop();
     } catch (error) {
       console.error("Failed to stop speech recognition:", error);
     }
-  }, [isListening]);
+  }, []);
 
   const toggleListening = useCallback(() => {
     if (isListening) {
