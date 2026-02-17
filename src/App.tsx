@@ -67,6 +67,16 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminInterestExpressions from "./pages/admin/AdminInterestExpressions";
 import AdminContentModeration from "./pages/admin/AdminContentModeration";
 
+// Insurance Pages
+import { InsuranceLayout } from "./components/layout/InsuranceLayout";
+import InsuranceDashboard from "./pages/insurance/InsuranceDashboard";
+import InsuranceMembers from "./pages/insurance/InsuranceMembers";
+import InsuranceRisk from "./pages/insurance/InsuranceRisk";
+import InsuranceClaims from "./pages/insurance/InsuranceClaims";
+import InsuranceBehavioral from "./pages/insurance/InsuranceBehavioral";
+import InsuranceCost from "./pages/insurance/InsuranceCost";
+import InsuranceSettings from "./pages/insurance/InsuranceSettings";
+
 const queryClient = new QueryClient();
 
 const UNLOCK_CODE = "medithos2024";
@@ -149,6 +159,17 @@ const AppContent = () => {
             <Route path="/doctor/patients" element={<DoctorPatients />} />
             <Route path="/doctor/schedule" element={<DoctorSchedule />} />
             <Route path="/doctor/settings" element={<DoctorSettings />} />
+          </Route>
+
+          {/* Insurance Governance routes */}
+          <Route element={<InsuranceLayout />}>
+            <Route path="/insurance" element={<InsuranceDashboard />} />
+            <Route path="/insurance/members" element={<InsuranceMembers />} />
+            <Route path="/insurance/risk" element={<InsuranceRisk />} />
+            <Route path="/insurance/claims" element={<InsuranceClaims />} />
+            <Route path="/insurance/behavioral" element={<InsuranceBehavioral />} />
+            <Route path="/insurance/cost" element={<InsuranceCost />} />
+            <Route path="/insurance/settings" element={<InsuranceSettings />} />
           </Route>
 
           {/* Admin routes */}

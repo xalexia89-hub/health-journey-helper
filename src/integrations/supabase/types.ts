@@ -957,6 +957,362 @@ export type Database = {
         }
         Relationships: []
       }
+      insurance_behavioral_logs: {
+        Row: {
+          compliance_delta: number | null
+          created_at: string | null
+          id: string
+          log_type: string
+          logged_at: string | null
+          member_id: string
+          notes: string | null
+        }
+        Insert: {
+          compliance_delta?: number | null
+          created_at?: string | null
+          id?: string
+          log_type: string
+          logged_at?: string | null
+          member_id: string
+          notes?: string | null
+        }
+        Update: {
+          compliance_delta?: number | null
+          created_at?: string | null
+          id?: string
+          log_type?: string
+          logged_at?: string | null
+          member_id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_behavioral_logs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_claims: {
+        Row: {
+          amount: number
+          claim_code: string
+          claim_type: string
+          created_at: string | null
+          diagnosis_code: string | null
+          diagnosis_description: string | null
+          id: string
+          member_id: string
+          notes: string | null
+          org_id: string
+          resolved_at: string | null
+          status: string | null
+          submitted_at: string | null
+        }
+        Insert: {
+          amount: number
+          claim_code: string
+          claim_type: string
+          created_at?: string | null
+          diagnosis_code?: string | null
+          diagnosis_description?: string | null
+          id?: string
+          member_id: string
+          notes?: string | null
+          org_id: string
+          resolved_at?: string | null
+          status?: string | null
+          submitted_at?: string | null
+        }
+        Update: {
+          amount?: number
+          claim_code?: string
+          claim_type?: string
+          created_at?: string | null
+          diagnosis_code?: string | null
+          diagnosis_description?: string | null
+          id?: string
+          member_id?: string
+          notes?: string | null
+          org_id?: string
+          resolved_at?: string | null
+          status?: string | null
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claims_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_claims_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_cost_metrics: {
+        Row: {
+          chronic_stabilization_rate: number | null
+          claims_reduction_pct: number | null
+          created_at: string | null
+          er_cost_saved: number | null
+          er_visits_avoided: number | null
+          high_risk_count: number | null
+          id: string
+          member_count: number | null
+          org_id: string
+          period_month: string
+          predicted_claims_cost: number | null
+          total_claims_cost: number | null
+        }
+        Insert: {
+          chronic_stabilization_rate?: number | null
+          claims_reduction_pct?: number | null
+          created_at?: string | null
+          er_cost_saved?: number | null
+          er_visits_avoided?: number | null
+          high_risk_count?: number | null
+          id?: string
+          member_count?: number | null
+          org_id: string
+          period_month: string
+          predicted_claims_cost?: number | null
+          total_claims_cost?: number | null
+        }
+        Update: {
+          chronic_stabilization_rate?: number | null
+          claims_reduction_pct?: number | null
+          created_at?: string | null
+          er_cost_saved?: number | null
+          er_visits_avoided?: number | null
+          high_risk_count?: number | null
+          id?: string
+          member_count?: number | null
+          org_id?: string
+          period_month?: string
+          predicted_claims_cost?: number | null
+          total_claims_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_cost_metrics_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_members: {
+        Row: {
+          chronic_conditions: string[] | null
+          compliance_score: number | null
+          created_at: string | null
+          date_of_birth: string | null
+          er_visits_ytd: number | null
+          full_name: string
+          gender: string | null
+          id: string
+          is_active: boolean | null
+          last_claim_date: string | null
+          member_code: string
+          org_id: string
+          policy_end: string | null
+          policy_start: string | null
+          policy_type: string | null
+          risk_category: string | null
+          risk_score: number | null
+          stability_score: number | null
+          total_claims_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          chronic_conditions?: string[] | null
+          compliance_score?: number | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          er_visits_ytd?: number | null
+          full_name: string
+          gender?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_claim_date?: string | null
+          member_code: string
+          org_id: string
+          policy_end?: string | null
+          policy_start?: string | null
+          policy_type?: string | null
+          risk_category?: string | null
+          risk_score?: number | null
+          stability_score?: number | null
+          total_claims_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          chronic_conditions?: string[] | null
+          compliance_score?: number | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          er_visits_ytd?: number | null
+          full_name?: string
+          gender?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_claim_date?: string | null
+          member_code?: string
+          org_id?: string
+          policy_end?: string | null
+          policy_start?: string | null
+          policy_type?: string | null
+          risk_category?: string | null
+          risk_score?: number | null
+          stability_score?: number | null
+          total_claims_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_org_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          org_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          org_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          org_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_org_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_organizations: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      insurance_risk_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_resolved: boolean | null
+          member_id: string
+          org_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string | null
+          title: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          member_id: string
+          org_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          title: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          member_id?: string
+          org_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_risk_alerts_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_risk_alerts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interest_expressions: {
         Row: {
           city: string | null
