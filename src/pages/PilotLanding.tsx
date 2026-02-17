@@ -68,7 +68,7 @@ export default function PilotLanding() {
     {
       icon: Users,
       title: "Περιορισμένη Συμμετοχή",
-      description: `${enrollmentCount}/${maxUsers} θέσεις καλυμμένες`
+      description: `50/${maxUsers} θέσεις καλυμμένες`
     },
     {
       icon: FileText,
