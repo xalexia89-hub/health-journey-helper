@@ -10,6 +10,7 @@ import {
   type MedicalPost,
   type VerifiedProfile
 } from "@/components/instagram";
+import { CommunityChat } from "@/components/community/CommunityChat";
 import { toast } from "sonner";
 
 // Mock Data - Replace with Supabase queries
@@ -407,7 +408,7 @@ const mockPosts: MedicalPost[] = [
 ];
 
 export default function Community() {
-  const [activeTab, setActiveTab] = useState<'home' | 'search' | 'create' | 'reels' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'search' | 'create' | 'messages' | 'profile'>('home');
   const [storyViewerOpen, setStoryViewerOpen] = useState(false);
   const [initialStoryIndex, setInitialStoryIndex] = useState(0);
   const [createSheetOpen, setCreateSheetOpen] = useState(false);
@@ -455,40 +456,57 @@ export default function Community() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <FeedHeader
-        notificationCount={5}
-        onNotificationsClick={() => toast.info("Notifications coming soon")}
-        onMessagesClick={() => toast.info("Messages coming soon")}
-        onCreateClick={() => setCreateSheetOpen(true)}
-        onSearchClick={() => toast.info("Search coming soon")}
-        onExploreClick={() => toast.info("Explore coming soon")}
-      />
-
-      {/* Stories Bar */}
-      <div className="border-b border-border/50">
-        <StoriesBar
-          stories={mockStoryGroups}
-          currentUserAvatar={mockCurrentUser.avatar_url}
-          onStoryClick={handleStoryClick}
-          onAddStory={handleAddStory}
-        />
-      </div>
-
-      {/* Posts Feed */}
-      <div className="divide-y divide-border">
-        {mockPosts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onLike={handlePostLike}
-            onComment={handlePostComment}
-            onShare={handlePostShare}
-            onSave={handlePostSave}
-            onProfileClick={handleProfileClick}
+      {activeTab === 'messages' ? (
+        <>
+          {/* Header */}
+          <FeedHeader
+            notificationCount={5}
+            onNotificationsClick={() => toast.info("Notifications coming soon")}
+            onMessagesClick={() => setActiveTab('messages')}
+            onCreateClick={() => setCreateSheetOpen(true)}
+            onSearchClick={() => toast.info("Search coming soon")}
+            onExploreClick={() => toast.info("Explore coming soon")}
           />
-        ))}
-      </div>
+          <CommunityChat />
+        </>
+      ) : (
+        <>
+          {/* Header */}
+          <FeedHeader
+            notificationCount={5}
+            onNotificationsClick={() => toast.info("Notifications coming soon")}
+            onMessagesClick={() => setActiveTab('messages')}
+            onCreateClick={() => setCreateSheetOpen(true)}
+            onSearchClick={() => toast.info("Search coming soon")}
+            onExploreClick={() => toast.info("Explore coming soon")}
+          />
+
+          {/* Stories Bar */}
+          <div className="border-b border-border/50">
+            <StoriesBar
+              stories={mockStoryGroups}
+              currentUserAvatar={mockCurrentUser.avatar_url}
+              onStoryClick={handleStoryClick}
+              onAddStory={handleAddStory}
+            />
+          </div>
+
+          {/* Posts Feed */}
+          <div className="divide-y divide-border">
+            {mockPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onLike={handlePostLike}
+                onComment={handlePostComment}
+                onShare={handlePostShare}
+                onSave={handlePostSave}
+                onProfileClick={handleProfileClick}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Story Viewer */}
       {storyViewerOpen && (

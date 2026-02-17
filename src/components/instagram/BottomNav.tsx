@@ -1,14 +1,16 @@
 import { cn } from "@/lib/utils";
-import { Home, Search, PlusSquare, Film, User } from "lucide-react";
+import { Home, Search, PlusSquare, MessageCircle, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
-type TabId = 'home' | 'search' | 'create' | 'reels' | 'profile';
+type TabId = 'home' | 'search' | 'create' | 'messages' | 'profile';
 
 interface BottomNavProps {
   activeTab: TabId;
   onTabChange: (tab: TabId) => void;
   userAvatar?: string;
   userName?: string;
+  unreadMessages?: number;
   className?: string;
 }
 
@@ -17,13 +19,23 @@ export function BottomNav({
   onTabChange,
   userAvatar,
   userName,
+  unreadMessages = 3,
   className 
 }: BottomNavProps) {
   const tabs: { id: TabId; icon: React.ReactNode; label: string }[] = [
     { id: 'home', icon: <Home className="h-6 w-6" />, label: 'Home' },
     { id: 'search', icon: <Search className="h-6 w-6" />, label: 'Search' },
     { id: 'create', icon: <PlusSquare className="h-6 w-6" />, label: 'Create' },
-    { id: 'reels', icon: <Film className="h-6 w-6" />, label: 'Reels' },
+    { id: 'messages', icon: (
+      <div className="relative">
+        <MessageCircle className="h-6 w-6" />
+        {unreadMessages > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 h-4 min-w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center px-1 font-bold">
+            {unreadMessages}
+          </span>
+        )}
+      </div>
+    ), label: 'Messages' },
     { id: 'profile', icon: (
       <Avatar className={cn(
         "h-7 w-7",
