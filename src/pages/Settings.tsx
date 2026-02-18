@@ -265,6 +265,19 @@ const Settings = () => {
         </CardContent>
       </Card>
 
+      {/* Insurance Governance */}
+      <Card>
+        <CardContent className="pt-6">
+          <Button variant="ghost" className="w-full justify-between" onClick={() => navigate('/insurance')}>
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-cyan-500" />
+              <span>Insurance Governance</span>
+            </div>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* GDPR Section */}
       <GDPRSection />
 
