@@ -180,6 +180,28 @@ const MedicalRecords = () => {
         family_history: familyHistory || defaultFamilyHistory,
       });
       setNotes(data.notes || '');
+    } else if (user) {
+      // Auto-create a medical record for the user
+      const { data: newRecord, error } = await supabase
+        .from('medical_records')
+        .insert({
+          user_id: user.id,
+          allergies: [],
+          chronic_conditions: [],
+          current_medications: [],
+          past_surgeries: [],
+          family_history: JSON.parse(JSON.stringify(defaultFamilyHistory)),
+          notes: '',
+        })
+        .select()
+        .single();
+
+      if (newRecord && !error) {
+        setRecord({
+          ...newRecord,
+          family_history: defaultFamilyHistory,
+        });
+      }
     }
     setLoading(false);
   };
