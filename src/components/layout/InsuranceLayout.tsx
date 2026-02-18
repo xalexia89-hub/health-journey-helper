@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -17,6 +17,7 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import medithosLogo from '@/assets/medithos-new-logo.png';
 
 const navItems = [
   { path: '/insurance', icon: LayoutDashboard, label: 'Executive Dashboard' },
@@ -59,15 +60,13 @@ export const InsuranceLayout = () => {
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
           <div className="h-16 flex items-center justify-between px-5 border-b border-[#1e2a4a]">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                <Shield className="h-4 w-4 text-white" />
-              </div>
+            <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <img src={medithosLogo} alt="Medithos" className="h-8 w-auto" />
               <div>
                 <span className="font-bold text-sm text-white block leading-tight">MEDITHOS</span>
                 <span className="text-[10px] text-cyan-400 tracking-widest uppercase">Insurance Governance</span>
               </div>
-            </div>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
