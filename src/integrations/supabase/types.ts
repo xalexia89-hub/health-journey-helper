@@ -2650,6 +2650,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wearable_blood_pressure: {
+        Row: {
+          created_at: string
+          diastolic: number
+          id: string
+          measured_at: string
+          notes: string | null
+          pulse: number | null
+          source: string
+          systolic: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          diastolic: number
+          id?: string
+          measured_at?: string
+          notes?: string | null
+          pulse?: number | null
+          source?: string
+          systolic: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          diastolic?: number
+          id?: string
+          measured_at?: string
+          notes?: string | null
+          pulse?: number | null
+          source?: string
+          systolic?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       wearable_connections: {
         Row: {
           access_token: string | null
