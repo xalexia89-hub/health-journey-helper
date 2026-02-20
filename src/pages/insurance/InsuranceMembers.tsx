@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,8 @@ import {
   TrendingDown,
   Calendar,
   FileText,
+  Link,
+  Link2Off,
 } from 'lucide-react';
 
 // Demo members data
@@ -86,17 +89,25 @@ const ScoreBar = ({ label, value, color }: { label: string; value: number; color
   </div>
 );
 
-const MemberDetailDialog = ({ member, open, onClose }: { member: Member | null; open: boolean; onClose: () => void }) => {
+const MemberDetailDialog = ({ member, open, onClose, aggregate }: { member: Member | null; open: boolean; onClose: () => void; aggregate?: any }) => {
   if (!member) return null;
 
   const age = new Date().getFullYear() - new Date(member.date_of_birth).getFullYear();
+  const hasAggregate = aggregate && Object.keys(aggregate).length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-[#0f1629] border-[#1e2a4a] text-white">
+      <DialogContent className="max-w-2xl bg-[#0f1629] border-[#1e2a4a] text-white max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-white flex items-center justify-between">
-            <span>Προφίλ Μέλους — {member.member_code}</span>
+            <div className="flex items-center gap-2">
+              <span>Προφίλ Μέλους — {member.member_code}</span>
+              {(member as any).user_id && (
+                <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 border text-[10px]">
+                  Linked
+                </Badge>
+              )}
+            </div>
             <Badge className={`${riskColors[member.risk_category]} border text-xs`}>
               {riskLabels[member.risk_category]}
             </Badge>
@@ -134,13 +145,76 @@ const MemberDetailDialog = ({ member, open, onClose }: { member: Member | null; 
             <ScoreBar label="Compliance Score" value={member.compliance_score} color={member.compliance_score > 70 ? 'bg-cyan-500' : member.compliance_score > 40 ? 'bg-amber-500' : 'bg-red-500'} />
           </div>
 
+          {/* Consent-based Real Data */}
+          {hasAggregate && (
+            <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 space-y-3">
+              <h4 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Link className="h-3.5 w-3.5" />
+                Live Data (Consent-Based)
+              </h4>
+              
+              {aggregate.wearable_trends && (
+                <div className="grid grid-cols-2 gap-3">
+                  {aggregate.wearable_trends.avg_heart_rate_30d > 0 && (
+                    <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5">
+                      <p className="text-[10px] text-slate-500 uppercase">Μ.Ο. HR (30d)</p>
+                      <p className="text-lg font-bold text-white">{aggregate.wearable_trends.avg_heart_rate_30d} <span className="text-xs text-slate-400">bpm</span></p>
+                    </div>
+                  )}
+                  {aggregate.wearable_trends.avg_daily_steps_30d > 0 && (
+                    <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5">
+                      <p className="text-[10px] text-slate-500 uppercase">Μ.Ο. Βήματα (30d)</p>
+                      <p className="text-lg font-bold text-white">{Number(aggregate.wearable_trends.avg_daily_steps_30d).toLocaleString()}</p>
+                    </div>
+                  )}
+                  {aggregate.wearable_trends.avg_spo2_30d > 0 && (
+                    <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5">
+                      <p className="text-[10px] text-slate-500 uppercase">Μ.Ο. SpO2</p>
+                      <p className="text-lg font-bold text-white">{aggregate.wearable_trends.avg_spo2_30d}%</p>
+                    </div>
+                  )}
+                  {aggregate.wearable_trends.latest_bp?.systolic && (
+                    <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5">
+                      <p className="text-[10px] text-slate-500 uppercase">Τελ. BP</p>
+                      <p className="text-lg font-bold text-white">{aggregate.wearable_trends.latest_bp.systolic}/{aggregate.wearable_trends.latest_bp.diastolic}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {aggregate.risk_data && (
+                <div className="grid grid-cols-3 gap-3 mt-2">
+                  <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5 text-center">
+                    <p className="text-[10px] text-slate-500 uppercase">Medication</p>
+                    <p className="text-sm font-bold text-white">{aggregate.risk_data.medication_adherence}%</p>
+                  </div>
+                  <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5 text-center">
+                    <p className="text-[10px] text-slate-500 uppercase">Activity</p>
+                    <p className="text-sm font-bold text-white">{aggregate.risk_data.activity_score} min</p>
+                  </div>
+                  <div className="bg-[#0a0e1a]/60 rounded-lg p-2.5 text-center">
+                    <p className="text-[10px] text-slate-500 uppercase">Stress</p>
+                    <p className="text-sm font-bold text-white">{aggregate.risk_data.stress_avg}/10</p>
+                  </div>
+                </div>
+              )}
+
+              {aggregate.claims_summary && (
+                <div className="flex items-center justify-between text-xs mt-2">
+                  <span className="text-slate-400">ER-Related Symptoms (YTD)</span>
+                  <span className="font-bold text-white">{aggregate.claims_summary.er_related_symptoms}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Chronic & Claims */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="rounded-xl border border-[#1e2a4a] bg-[#0a0e1a]/50 p-4">
               <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">Χρόνιες Παθήσεις</h4>
-              {member.chronic_conditions.length > 0 ? (
+              {(aggregate?.chronic_conditions?.length > 0 ? aggregate.chronic_conditions : member.chronic_conditions).length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
-                  {member.chronic_conditions.map((c) => (
+                  {(aggregate?.chronic_conditions?.length > 0 ? aggregate.chronic_conditions : member.chronic_conditions).map((c: string) => (
                     <Badge key={c} variant="outline" className="bg-purple-500/10 text-purple-300 border-purple-500/20 text-xs">
                       {c}
                     </Badge>
@@ -180,25 +254,86 @@ const InsuranceMembers = () => {
   const [policyFilter, setPolicyFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [dbMembers, setDbMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [aggregateData, setAggregateData] = useState<Record<string, any>>({});
+
+  // Fetch real members from DB
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('insurance_members')
+          .select('*')
+          .order('risk_score', { ascending: false });
+
+        if (data && data.length > 0) {
+          setDbMembers(data.map(m => ({
+            id: m.id,
+            member_code: m.member_code,
+            full_name: m.full_name,
+            gender: m.gender || 'M',
+            date_of_birth: m.date_of_birth || '1980-01-01',
+            policy_type: m.policy_type || 'Standard',
+            risk_category: m.risk_category || 'low',
+            risk_score: m.risk_score || 0,
+            stability_score: m.stability_score || 50,
+            compliance_score: m.compliance_score || 50,
+            chronic_conditions: m.chronic_conditions || [],
+            er_visits_ytd: m.er_visits_ytd || 0,
+            total_claims_amount: m.total_claims_amount || 0,
+            is_active: m.is_active ?? true,
+            last_claim_date: m.last_claim_date || '',
+            user_id: (m as any).user_id || null,
+          })));
+        }
+      } catch (err) {
+        console.error('Error fetching members:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMembers();
+  }, []);
+
+  // Use DB members if available, fallback to demo
+  const allMembers = dbMembers.length > 0 ? dbMembers : demoMembers;
 
   const filtered = useMemo(() => {
-    return demoMembers.filter((m) => {
+    return allMembers.filter((m) => {
       const matchesSearch = m.full_name.toLowerCase().includes(search.toLowerCase()) || m.member_code.toLowerCase().includes(search.toLowerCase());
       const matchesRisk = riskFilter === 'all' || m.risk_category === riskFilter;
       const matchesPolicy = policyFilter === 'all' || m.policy_type === policyFilter;
       return matchesSearch && matchesRisk && matchesPolicy;
     });
-  }, [search, riskFilter, policyFilter]);
+  }, [search, riskFilter, policyFilter, allMembers]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const stats = useMemo(() => ({
-    total: demoMembers.length,
-    critical: demoMembers.filter(m => m.risk_category === 'critical').length,
-    high: demoMembers.filter(m => m.risk_category === 'high').length,
-    avgCompliance: Math.round(demoMembers.reduce((s, m) => s + m.compliance_score, 0) / demoMembers.length),
-  }), []);
+    total: allMembers.length,
+    critical: allMembers.filter(m => m.risk_category === 'critical').length,
+    high: allMembers.filter(m => m.risk_category === 'high').length,
+    avgCompliance: Math.round(allMembers.reduce((s, m) => s + m.compliance_score, 0) / allMembers.length),
+  }), [allMembers]);
+
+  // Fetch aggregate data for a member (consent-based)
+  const fetchAggregate = useCallback(async (member: Member) => {
+    if (aggregateData[member.id]) return;
+    if (!(member as any).user_id) return;
+
+    try {
+      const { data } = await supabase.functions.invoke('insurance-aggregate', {
+        body: { member_id: member.id },
+      });
+      if (data?.data) {
+        setAggregateData(prev => ({ ...prev, [member.id]: data.data }));
+      }
+    } catch (err) {
+      console.error('Aggregate fetch error:', err);
+    }
+  }, [aggregateData]);
 
   return (
     <div className="space-y-6 max-w-[1400px]">
@@ -297,12 +432,17 @@ const InsuranceMembers = () => {
               <TableRow
                 key={member.id}
                 className="border-[#1e2a4a] hover:bg-[#1e2a4a]/30 cursor-pointer transition-colors"
-                onClick={() => setSelectedMember(member)}
+                onClick={() => { setSelectedMember(member); fetchAggregate(member); }}
               >
                 <TableCell className="text-xs text-slate-400 font-mono">{member.member_code}</TableCell>
                 <TableCell>
                   <div>
-                    <p className="text-sm text-white font-medium">{member.full_name}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm text-white font-medium">{member.full_name}</p>
+                      {(member as any).user_id && (
+                        <Link className="h-3 w-3 text-cyan-400" />
+                      )}
+                    </div>
                     <p className="text-[10px] text-slate-500">
                       {member.chronic_conditions.length > 0 ? member.chronic_conditions.slice(0, 2).join(', ') : 'Χωρίς χρόνιες'}
                       {member.chronic_conditions.length > 2 && ` +${member.chronic_conditions.length - 2}`}
@@ -354,7 +494,7 @@ const InsuranceMembers = () => {
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 text-slate-400 hover:text-cyan-400"
-                    onClick={(e) => { e.stopPropagation(); setSelectedMember(member); }}
+                    onClick={(e) => { e.stopPropagation(); setSelectedMember(member); fetchAggregate(member); }}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -404,6 +544,7 @@ const InsuranceMembers = () => {
         member={selectedMember}
         open={!!selectedMember}
         onClose={() => setSelectedMember(null)}
+        aggregate={selectedMember ? aggregateData[selectedMember.id] : undefined}
       />
     </div>
   );
