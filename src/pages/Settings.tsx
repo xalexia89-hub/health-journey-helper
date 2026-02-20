@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { GDPRSection } from '@/components/settings/GDPRSection';
 import { WearableConnectionsSection } from '@/components/settings/WearableConnectionsSection';
+import { InsuranceConsentSection } from '@/components/settings/InsuranceConsentSection';
 import {
   Bell,
   Shield,
@@ -268,6 +269,9 @@ const Settings = () => {
 
       {/* Wearable Devices */}
       <WearableConnectionsSection />
+
+      {/* Insurance Data Consent */}
+      <InsuranceConsentSection />
 
       {/* Insurance Governance */}
       <Card>

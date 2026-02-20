@@ -1111,6 +1111,59 @@ export type Database = {
           },
         ]
       }
+      insurance_data_consents: {
+        Row: {
+          consent_chronic_conditions: boolean
+          consent_claims_summary: boolean
+          consent_risk_scores: boolean
+          consent_wearable_trends: boolean
+          consented_at: string
+          created_at: string
+          id: string
+          is_active: boolean
+          org_id: string
+          revoked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent_chronic_conditions?: boolean
+          consent_claims_summary?: boolean
+          consent_risk_scores?: boolean
+          consent_wearable_trends?: boolean
+          consented_at?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          org_id: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent_chronic_conditions?: boolean
+          consent_claims_summary?: boolean
+          consent_risk_scores?: boolean
+          consent_wearable_trends?: boolean
+          consented_at?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          org_id?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_data_consents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_members: {
         Row: {
           chronic_conditions: string[] | null
@@ -1133,6 +1186,7 @@ export type Database = {
           stability_score: number | null
           total_claims_amount: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           chronic_conditions?: string[] | null
@@ -1155,6 +1209,7 @@ export type Database = {
           stability_score?: number | null
           total_claims_amount?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           chronic_conditions?: string[] | null
@@ -1177,6 +1232,7 @@ export type Database = {
           stability_score?: number | null
           total_claims_amount?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -2835,6 +2891,10 @@ export type Database = {
       can_access_patient_medical_data: {
         Args: { _accessor_id: string; _patient_id: string }
         Returns: boolean
+      }
+      get_insurance_member_aggregate: {
+        Args: { _member_id: string }
+        Returns: Json
       }
       get_pilot_enrollment_count: { Args: never; Returns: number }
       has_role: {
