@@ -2650,6 +2650,147 @@ export type Database = {
         }
         Relationships: []
       }
+      wearable_connections: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          external_user_id: string | null
+          id: string
+          is_active: boolean
+          last_sync_at: string | null
+          provider: string
+          refresh_token: string | null
+          scopes: string[] | null
+          sync_error: string | null
+          sync_status: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          external_user_id?: string | null
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          provider: string
+          refresh_token?: string | null
+          scopes?: string[] | null
+          sync_error?: string | null
+          sync_status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          external_user_id?: string | null
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          provider?: string
+          refresh_token?: string | null
+          scopes?: string[] | null
+          sync_error?: string | null
+          sync_status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wearable_heart_rate: {
+        Row: {
+          bpm: number
+          created_at: string
+          heart_rate_type: string | null
+          id: string
+          measured_at: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          bpm: number
+          created_at?: string
+          heart_rate_type?: string | null
+          id?: string
+          measured_at: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          bpm?: number
+          created_at?: string
+          heart_rate_type?: string | null
+          id?: string
+          measured_at?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wearable_spo2: {
+        Row: {
+          created_at: string
+          id: string
+          measured_at: string
+          source: string
+          spo2_value: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          measured_at: string
+          source: string
+          spo2_value: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          measured_at?: string
+          source?: string
+          spo2_value?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wearable_steps: {
+        Row: {
+          calories_burned: number | null
+          created_at: string
+          date: string
+          distance_meters: number | null
+          id: string
+          source: string
+          step_count: number
+          user_id: string
+        }
+        Insert: {
+          calories_burned?: number | null
+          created_at?: string
+          date: string
+          distance_meters?: number | null
+          id?: string
+          source: string
+          step_count: number
+          user_id: string
+        }
+        Update: {
+          calories_burned?: number | null
+          created_at?: string
+          date?: string
+          distance_meters?: number | null
+          id?: string
+          source?: string
+          step_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
