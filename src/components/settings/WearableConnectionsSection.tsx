@@ -6,6 +6,12 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { ManualWearableEntryDialog } from './ManualWearableEntryDialog';
+import {
+  isAppleHealthAvailable,
+  requestAppleHealthPermissions,
+  syncAppleHealthData,
+  disconnectAppleHealth,
+} from '@/services/appleHealthService';
 import { 
   Watch, 
   RefreshCw, 
@@ -17,6 +23,7 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  Smartphone,
 } from 'lucide-react';
 
 interface WearableConnection {
@@ -44,6 +51,9 @@ export const WearableConnectionsSection = () => {
   const [connecting, setConnecting] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<SyncResults | null>(null);
+  const [appleConnecting, setAppleConnecting] = useState(false);
+  const [appleSyncing, setAppleSyncing] = useState(false);
+  const appleAvailable = isAppleHealthAvailable();
 
   useEffect(() => {
     if (user) fetchConnections();
@@ -168,8 +178,56 @@ export const WearableConnectionsSection = () => {
     }
   };
 
+  // Apple Health functions
+  const connectAppleHealth = async () => {
+    if (!user) return;
+    setAppleConnecting(true);
+    try {
+      const granted = await requestAppleHealthPermissions();
+      if (granted) {
+        toast({ title: 'Apple Health', description: 'Πρόσβαση εγκρίθηκε! Γίνεται συγχρονισμός...' });
+        const results = await syncAppleHealthData(user.id);
+        toast({ 
+          title: 'Συγχρονισμός Ολοκληρώθηκε', 
+          description: `Δεδομένα: ${Object.keys(results).length} κατηγορίες` 
+        });
+        fetchConnections();
+      } else {
+        toast({ title: 'Σφάλμα', description: 'Δεν δόθηκε πρόσβαση στο Apple Health', variant: 'destructive' });
+      }
+    } catch (error) {
+      console.error('Apple Health error:', error);
+      toast({ title: 'Σφάλμα', description: 'Αποτυχία σύνδεσης Apple Health', variant: 'destructive' });
+    } finally {
+      setAppleConnecting(false);
+    }
+  };
+
+  const syncAppleHealth = async () => {
+    if (!user) return;
+    setAppleSyncing(true);
+    try {
+      await syncAppleHealthData(user.id);
+      toast({ title: 'Ολοκληρώθηκε', description: 'Τα δεδομένα Apple Health ενημερώθηκαν.' });
+      fetchConnections();
+    } catch (error) {
+      toast({ title: 'Σφάλμα Συγχρονισμού', description: 'Αποτυχία ανανέωσης.', variant: 'destructive' });
+    } finally {
+      setAppleSyncing(false);
+    }
+  };
+
+  const handleDisconnectAppleHealth = async () => {
+    if (!user) return;
+    await disconnectAppleHealth(user.id);
+    toast({ title: 'Αποσυνδέθηκε', description: 'Apple Health αποσυνδέθηκε.' });
+    fetchConnections();
+  };
+
   const fitbitConnection = connections.find(c => c.provider === 'fitbit');
   const isConnected = !!fitbitConnection;
+  const appleConnection = connections.find(c => c.provider === 'apple_health');
+  const isAppleConnected = !!appleConnection;
 
   const formatLastSync = (dateStr: string | null) => {
     if (!dateStr) return 'Ποτέ';
@@ -229,7 +287,6 @@ export const WearableConnectionsSection = () => {
             </div>
           )}
 
-          {/* Sync Results */}
           {lastSync && Object.keys(lastSync).length > 0 && (
             <div className="grid grid-cols-2 gap-2">
               {lastSync.heart_rate && (
@@ -271,55 +328,88 @@ export const WearableConnectionsSection = () => {
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex gap-2">
             {isConnected ? (
               <>
-                <Button 
-                  size="sm" 
-                  onClick={syncData} 
-                  disabled={syncing}
-                  className="flex-1"
-                >
-                  {syncing ? (
-                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4 mr-1" />
-                  )}
+                <Button size="sm" onClick={syncData} disabled={syncing} className="flex-1">
+                  {syncing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1" />}
                   {syncing ? 'Συγχρονισμός...' : 'Συγχρονισμός'}
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={disconnectFitbit}
-                >
+                <Button size="sm" variant="outline" onClick={disconnectFitbit}>
                   <Unlink className="h-4 w-4 mr-1" />
                   Αποσύνδεση
                 </Button>
               </>
             ) : (
-              <Button 
-                size="sm" 
-                onClick={connectFitbit} 
-                disabled={connecting}
-                className="w-full"
-              >
-                {connecting ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Activity className="h-4 w-4 mr-1" />
-                )}
+              <Button size="sm" onClick={connectFitbit} disabled={connecting} className="w-full">
+                {connecting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Activity className="h-4 w-4 mr-1" />}
                 {connecting ? 'Σύνδεση...' : 'Σύνδεση Fitbit'}
               </Button>
             )}
           </div>
         </div>
 
+        {/* Apple Health */}
+        <div className={`rounded-xl border p-4 space-y-3 ${!appleAvailable ? 'opacity-60' : ''}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-rose-500/10 flex items-center justify-center">
+                <Heart className="h-5 w-5 text-rose-500" />
+              </div>
+              <div>
+                <p className="font-medium">Apple Health</p>
+                <p className="text-xs text-muted-foreground">
+                  {!appleAvailable 
+                    ? 'Διαθέσιμο μόνο σε iOS native app'
+                    : isAppleConnected
+                      ? `Τελ. συγχρονισμός: ${formatLastSync(appleConnection?.last_sync_at || null)}`
+                      : 'Μη συνδεδεμένο'
+                  }
+                </p>
+              </div>
+            </div>
+            {isAppleConnected ? (
+              <Badge variant="outline" className="border-emerald-500 text-emerald-600">
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Ενεργό
+              </Badge>
+            ) : appleAvailable ? (
+              <Badge variant="secondary">Αποσυνδεδεμένο</Badge>
+            ) : (
+              <Badge variant="outline" className="text-xs">
+                <Smartphone className="h-3 w-3 mr-1" />
+                iOS
+              </Badge>
+            )}
+          </div>
+
+          {appleAvailable && (
+            <div className="flex gap-2">
+              {isAppleConnected ? (
+                <>
+                  <Button size="sm" onClick={syncAppleHealth} disabled={appleSyncing} className="flex-1">
+                    {appleSyncing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1" />}
+                    {appleSyncing ? 'Συγχρονισμός...' : 'Συγχρονισμός'}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleDisconnectAppleHealth}>
+                    <Unlink className="h-4 w-4 mr-1" />
+                    Αποσύνδεση
+                  </Button>
+                </>
+              ) : (
+                <Button size="sm" onClick={connectAppleHealth} disabled={appleConnecting} className="w-full">
+                  {appleConnecting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Heart className="h-4 w-4 mr-1" />}
+                  {appleConnecting ? 'Σύνδεση...' : 'Σύνδεση Apple Health'}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Coming Soon: Other Devices */}
         <div className="space-y-2 opacity-60">
           {[
-            { name: 'Apple Health', desc: 'Απαιτεί native app', icon: '🍎' },
-            { name: 'Google Fit', desc: 'Σύντομα διαθέσιμο', icon: '🏃' },
+            { name: 'Google Health Connect', desc: 'Σύντομα διαθέσιμο (Android)', icon: '🏃' },
             { name: 'Garmin', desc: 'Σύντομα διαθέσιμο', icon: '⌚' },
           ].map(device => (
             <div key={device.name} className="rounded-lg border border-dashed p-3 flex items-center justify-between">
