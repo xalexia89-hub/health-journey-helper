@@ -1,1 +1,7 @@
 project_id = "myfhvdsxwreisodgbfkd"
+
+[functions.fitbit-auth]
+verify_jwt = false
+
+[functions.fitbit-sync]
+verify_jwt = false

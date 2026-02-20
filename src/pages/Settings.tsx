@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { GDPRSection } from '@/components/settings/GDPRSection';
+import { WearableConnectionsSection } from '@/components/settings/WearableConnectionsSection';
 import {
   Bell,
   Shield,
@@ -264,6 +265,9 @@ const Settings = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Wearable Devices */}
+      <WearableConnectionsSection />
 
       {/* Insurance Governance */}
       <Card>
