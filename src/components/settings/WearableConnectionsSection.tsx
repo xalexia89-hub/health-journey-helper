@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { ManualWearableEntryDialog } from './ManualWearableEntryDialog';
 import { 
   Watch, 
   RefreshCw, 
@@ -189,8 +190,9 @@ export const WearableConnectionsSection = () => {
           Συνδεδεμένες Συσκευές
         </CardTitle>
         <CardDescription>
-          Συνδέστε wearables για αυτόματο συγχρονισμό δεδομένων υγείας
+          Συνδέστε wearables ή καταχωρήστε μετρήσεις χειροκίνητα
         </CardDescription>
+        <ManualWearableEntryDialog onDataAdded={fetchConnections} />
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Fitbit */}

@@ -23,6 +23,7 @@ import {
   HeartPulse,
 } from 'lucide-react';
 import { PreventiveHealthTab } from '@/components/preventive/PreventiveHealthTab';
+import { WearableDataWidgets } from '@/components/settings/WearableDataWidgets';
 import {
   Select,
   SelectContent,
@@ -347,6 +348,9 @@ const MedicalRecords = () => {
           </TabsList>
 
           <TabsContent value="history" className="space-y-8">
+            {/* Vital Signs from Wearables */}
+            <WearableDataWidgets />
+
             {/* Central Hub with Orbiting Categories */}
             <div className="relative flex items-center justify-center h-[280px]">
               {/* Background Glow */}
