@@ -565,19 +565,19 @@ export default function GDPRCompliance() {
                     <TableCell className="font-medium">Database</TableCell>
                     <TableCell>Lovable Cloud (managed PostgreSQL)</TableCell>
                     <TableCell>EU (Frankfurt)</TableCell>
-                    <TableCell>SOC 2, ISO 27001 (provider)</TableCell>
+                    <TableCell>ISO 27001:2022 ✅ · SOC 2 Type II ✅</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Edge Functions</TableCell>
                     <TableCell>Lovable Cloud (Deno runtime)</TableCell>
                     <TableCell>EU</TableCell>
-                    <TableCell>SOC 2 (provider)</TableCell>
+                    <TableCell>ISO 27001:2022 ✅ · SOC 2 Type II ✅</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">File Storage</TableCell>
                     <TableCell>Lovable Cloud (S3-compatible)</TableCell>
                     <TableCell>EU</TableCell>
-                    <TableCell>Encrypted at rest</TableCell>
+                    <TableCell>ISO 27001:2022 ✅ · AES-256 at rest</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Frontend CDN</TableCell>

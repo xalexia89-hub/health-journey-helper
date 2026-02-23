@@ -164,6 +164,7 @@ export default function ExecutiveSummary() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
+                { check: true, text: "Πάροχος υποδομής (Lovable Cloud): ISO 27001:2022 ✅ & SOC 2 Type II ✅" },
                 { check: true, text: "Κρυπτογράφηση σε μεταφορά (TLS 1.3) και ηρεμία (AES-256)" },
                 { check: true, text: "Row-Level Security: κάθε χρήστης βλέπει μόνο τα δικά του δεδομένα" },
                 { check: true, text: "Audit logs: κάθε πρόσβαση σε ιατρικά δεδομένα καταγράφεται" },
