@@ -1,4 +1,4 @@
-import { ArrowLeft, Printer, FileText, Shield, Brain, Database, Users, Building2, Heart, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Printer, FileText, Shield, Brain, Database, Users, Building2, Heart, CheckCircle2, AlertTriangle, Lock, Server, Eye, RotateCcw, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -274,6 +274,181 @@ export default function ExecutiveSummary() {
                 γιατρού-ασθενή, και δεν παράγεται κανένα κλινικό αποτέλεσμα. Η θέση αυτή τεκμηριώνεται 
                 σε επίσημη νομική γνωμοδότηση.
               </p>
+            </div>
+          </section>
+
+          <Separator />
+
+          {/* ─── SECTION 4: SECURITY ARCHITECTURE ─── */}
+          <section className="space-y-5 print:break-before-page">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Lock className="h-5 w-5 text-primary" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">4. Αρχιτεκτονική Ασφάλειας — High-Level Overview</h2>
+            </div>
+
+            <div className="bg-muted/30 rounded-xl p-5 space-y-2">
+              <p className="text-sm leading-relaxed text-foreground">
+                Η υποδομή του Medithos φιλοξενείται στο <strong>Lovable Cloud</strong>, πάροχο με πιστοποιήσεις 
+                <strong> ISO 27001:2022</strong> και <strong>SOC 2 Type II</strong>. Παρακάτω περιγράφεται η 
+                αρχιτεκτονική ασφαλείας σε πέντε πυλώνες.
+              </p>
+            </div>
+
+            {/* 4.1 Encryption */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Lock className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">4.1 Κρυπτογράφηση (Encryption)</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="bg-muted/20 rounded-lg p-3">
+                  <p className="text-xs font-semibold text-primary mb-1">At Rest (Ηρεμία)</p>
+                  <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                    <li><strong>AES-256</strong> για όλα τα δεδομένα στη βάση (PostgreSQL)</li>
+                    <li>Κρυπτογραφημένα storage buckets για ιατρικά έγγραφα</li>
+                    <li>Encrypted backups — αδύνατη η ανάγνωση χωρίς κλειδί</li>
+                  </ul>
+                </div>
+                <div className="bg-muted/20 rounded-lg p-3">
+                  <p className="text-xs font-semibold text-primary mb-1">In Transit (Μεταφορά)</p>
+                  <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                    <li><strong>TLS 1.3</strong> σε κάθε σύνδεση (client ↔ server, server ↔ DB)</li>
+                    <li>HTTPS enforced — καμία μη κρυπτογραφημένη σύνδεση</li>
+                    <li>Signed URLs για πρόσβαση σε αρχεία (χρονικά περιορισμένες)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* 4.2 Role-Based Access Control */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">4.2 Έλεγχος Πρόσβασης (Role-Based Access Control)</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Ρόλος</TableHead>
+                      <TableHead className="text-xs">Πρόσβαση</TableHead>
+                      <TableHead className="text-xs">Περιορισμοί</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[
+                      ["Patient", "Δικά του δεδομένα (ιστορικό, συμπτώματα, φάρμακα, wearables)", "RLS: auth.uid() = user_id"],
+                      ["Doctor (Advisor)", "Δεδομένα ασθενών μόνο με ρητή συγκατάθεση ή ενεργό ραντεβού", "Consent-based + time-limited access grants"],
+                      ["Insurance", "Aggregated data μελών — μόνο με granular consent ανά κατηγορία", "DPA required + consent per data category"],
+                      ["Admin", "Διαχείριση πλατφόρμας, audit logs, moderation", "Ξεχωριστός πίνακας ρόλων (user_roles)"],
+                    ].map((row, i) => (
+                      <TableRow key={i}>
+                        {row.map((cell, j) => (
+                          <TableCell key={j} className="text-xs">{cell}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                <strong>Row-Level Security (RLS)</strong> ενεργό σε <strong>30+ πίνακες</strong>. 
+                Κάθε query φιλτράρεται αυτόματα βάσει του JWT token του χρήστη — αδύνατη η πρόσβαση σε δεδομένα τρίτων.
+              </p>
+            </div>
+
+            {/* 4.3 Logging & Audit Trail */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">4.3 Καταγραφή & Audit Trail</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {[
+                  { title: "audit_logs", desc: "Γενικές ενέργειες χρηστών (login, settings changes, CRUD operations)" },
+                  { title: "doctor_access_logs", desc: "Κάθε φορά που γιατρός-σύμβουλος αποκτά πρόσβαση σε δεδομένα ασθενή (resource type, IP, timestamp)" },
+                  { title: "medical_audit_logs", desc: "Κάθε αλλαγή σε ιατρικά δεδομένα (create, view, update, share, delete) με πλήρες metadata" },
+                ].map((item, i) => (
+                  <div key={i} className="bg-muted/20 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-primary mb-1">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                <strong>Retention:</strong> Τα audit logs διατηρούνται για <strong>5 χρόνια</strong> (κανονιστική απαίτηση). 
+                Τα logs είναι immutable — δεν μπορούν να τροποποιηθούν ή να διαγραφούν από κανέναν χρήστη.
+              </p>
+            </div>
+
+            {/* 4.4 Backups & Recovery */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">4.4 Αντίγραφα Ασφαλείας & Ανάκτηση</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {[
+                  { check: true, text: "Αυτόματα daily backups (managed by Lovable Cloud)" },
+                  { check: true, text: "Point-in-Time Recovery (PITR) — ανάκτηση σε οποιοδήποτε χρονικό σημείο" },
+                  { check: true, text: "Κρυπτογραφημένα backups (AES-256 at rest)" },
+                  { check: true, text: "Γεωγραφικά εντός ΕΕ — ίδιο region με την παραγωγική βάση" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 4.5 Incident Management */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">4.5 Διαχείριση Περιστατικών (Incident Management)</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                  <p className="text-xs font-semibold text-foreground mb-2">Διαδικασία Data Breach Notification (GDPR Art. 33 & 34)</p>
+                  <div className="space-y-2">
+                    {[
+                      { time: "0–2h", action: "Ανίχνευση & αξιολόγηση — containment, ταυτοποίηση εύρους παραβίασης" },
+                      { time: "2–24h", action: "Εσωτερική ενημέρωση ομάδας, DPO notification, τεχνική αποκατάσταση" },
+                      { time: "≤72h", action: "Ειδοποίηση Αρχής Προστασίας Δεδομένων (ΑΠΔΠΧ) εάν υπάρχει κίνδυνος" },
+                      { time: "Χωρίς καθυστέρηση", action: "Ενημέρωση υποκειμένων εάν υπάρχει υψηλός κίνδυνος για τα δικαιώματά τους" },
+                    ].map((step, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className="text-xs font-semibold text-destructive whitespace-nowrap min-w-[100px]">{step.time}</span>
+                        <span className="text-xs text-muted-foreground">{step.action}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Στο πλαίσιο B2B (ασφαλιστική ως Controller), το Medithos ως Processor ειδοποιεί τον Controller 
+                  εντός <strong>24 ωρών</strong> σύμφωνα με το DPA (Art. 28), ώστε εκείνος να ενημερώσει την Αρχή.
+                </p>
+              </div>
+            </div>
+
+            {/* Infrastructure Certifications Summary */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+              <p className="text-xs font-semibold text-foreground mb-2">Πιστοποιήσεις Υποδομής (Lovable Cloud)</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {[
+                  "ISO 27001:2022 ✅",
+                  "SOC 2 Type II ✅",
+                  "GDPR Compliant ✅",
+                  "EU Hosting ✅",
+                ].map((cert, i) => (
+                  <div key={i} className="bg-background rounded-lg p-2 text-center">
+                    <span className="text-xs font-semibold text-primary">{cert}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
