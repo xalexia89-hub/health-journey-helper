@@ -42,6 +42,7 @@ import GDPRCompliance from "./pages/GDPRCompliance";
 import ProjectEvaluation from "./pages/ProjectEvaluation";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import StandaloneAnalysis from "./pages/StandaloneAnalysis";
+import ExecutiveSummary from "./pages/ExecutiveSummary";
 import ComingSoon from "./pages/ComingSoon";
 
 // Pilot Pages
@@ -134,6 +135,7 @@ const AppContent = () => {
           <Route path="/evaluation" element={<ProjectEvaluation />} />
           <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
           <Route path="/analysis" element={<StandaloneAnalysis />} />
+          <Route path="/executive-summary" element={<ExecutiveSummary />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
           
