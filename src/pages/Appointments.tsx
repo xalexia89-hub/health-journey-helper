@@ -165,6 +165,12 @@ const Appointments = () => {
                 <Badge className={statusColors[appointment.status]}>
                   {statusLabels[appointment.status]}
                 </Badge>
+                {appointment.visit_type === 'telemedicine' && (
+                  <Badge variant="outline" className="gap-1 text-xs">
+                    <Video className="h-3 w-3" />
+                    Τηλεϊατρική
+                  </Badge>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
