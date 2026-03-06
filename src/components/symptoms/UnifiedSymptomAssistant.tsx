@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Loader2, Bot, User, FileText, CheckCircle, AlertTriangle, MapPin, Mic, MicOff, Stethoscope, Calendar } from "lucide-react";
+import { TriageAlert, parseTriageCode, cleanTriageContent, type TriageInfo } from "./TriageAlert";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -163,6 +164,7 @@ export function UnifiedSymptomAssistant() {
   const [specialtyRecommendation, setSpecialtyRecommendation] = useState<SpecialtyRecommendation | null>(null);
   const [showProviderSuggestions, setShowProviderSuggestions] = useState(false);
   const [userConfirmedBooking, setUserConfirmedBooking] = useState(false);
+  const [triageInfo, setTriageInfo] = useState<TriageInfo | null>(null);
 
   // Voice input
   const {
@@ -365,23 +367,32 @@ export function UnifiedSymptomAssistant() {
         }
       }
       
-      // After streaming complete, check for specialty recommendation
+      // After streaming complete, check for triage code
+      const triage = parseTriageCode(assistantContent);
+      if (triage) {
+        setTriageInfo(triage);
+      }
+
+      // Check for specialty recommendation
       const recommendation = parseSpecialtyRecommendation(assistantContent);
       if (recommendation) {
         setSpecialtyRecommendation(recommendation);
         setShowProviderSuggestions(true);
-        
-        // Log the recommendation to medical record
         logRecommendationToRecord(recommendation);
-        
-        // Update the last message to clean version (without recommendation block)
+      }
+      
+      // Clean the last message (remove triage + specialty blocks)
+      if (triage || recommendation) {
+        let cleaned = assistantContent;
+        cleaned = cleanTriageContent(cleaned);
+        cleaned = cleanMessageContent(cleaned);
         setMessages(prev => {
           const updated = [...prev];
           updated[updated.length - 1] = { 
             role: "assistant", 
-            content: cleanMessageContent(assistantContent),
+            content: cleaned,
             timestamp: new Date(),
-            type: "recommendation",
+            type: recommendation ? "recommendation" : "text",
           };
           return updated;
         });
@@ -718,8 +729,8 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                       )}
                     >
                     <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
-                      {cleanMessageContent(message.content) ? (
-                        <ReactMarkdown>{cleanMessageContent(message.content)}</ReactMarkdown>
+                      {cleanTriageContent(cleanMessageContent(message.content)) ? (
+                        <ReactMarkdown>{cleanTriageContent(cleanMessageContent(message.content))}</ReactMarkdown>
                       ) : (
                         isLoading && index === messages.length - 1 && message.role === "assistant" && (
                           <span className="inline-flex items-center gap-1">
@@ -738,6 +749,11 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                 </div>
               ))}
               
+              {/* Triage Alert */}
+              {triageInfo && (
+                <TriageAlert triage={triageInfo} />
+              )}
+
               {/* Inline Specialty Recommendation Card */}
               {showProviderSuggestions && specialtyRecommendation && !showSummary && (
                 <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5 animate-fade-in">
