@@ -251,7 +251,7 @@ export function InlineBookingDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col p-4 sm:p-6">
+      <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-hidden flex flex-col p-3 sm:p-6 z-[200]">
         <DialogHeader className="pb-2">
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
