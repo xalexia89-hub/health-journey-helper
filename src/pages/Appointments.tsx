@@ -155,22 +155,24 @@ const Appointments = () => {
             </Avatar>
             
             <div className="flex-1 space-y-2">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-2">
                 <div>
                   <h3 className="font-semibold">{appointment.provider.name}</h3>
                   <p className="text-sm text-muted-foreground">
                     {appointment.provider.specialty}
                   </p>
                 </div>
-                <Badge className={statusColors[appointment.status]}>
-                  {statusLabels[appointment.status]}
-                </Badge>
-                {appointment.visit_type === 'telemedicine' && (
-                  <Badge variant="outline" className="gap-1 text-xs">
-                    <Video className="h-3 w-3" />
-                    Τηλεϊατρική
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <Badge className={statusColors[appointment.status]}>
+                    {statusLabels[appointment.status]}
                   </Badge>
-                )}
+                  {appointment.visit_type === 'telemedicine' && (
+                    <Badge variant="outline" className="gap-1 text-xs">
+                      <Video className="h-3 w-3" />
+                      Τηλεϊατρική
+                    </Badge>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
