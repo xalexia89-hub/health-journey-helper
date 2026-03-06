@@ -729,8 +729,8 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                       )}
                     >
                     <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
-                      {cleanMessageContent(message.content) ? (
-                        <ReactMarkdown>{cleanMessageContent(message.content)}</ReactMarkdown>
+                      {cleanTriageContent(cleanMessageContent(message.content)) ? (
+                        <ReactMarkdown>{cleanTriageContent(cleanMessageContent(message.content))}</ReactMarkdown>
                       ) : (
                         isLoading && index === messages.length - 1 && message.role === "assistant" && (
                           <span className="inline-flex items-center gap-1">
@@ -749,6 +749,11 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                 </div>
               ))}
               
+              {/* Triage Alert */}
+              {triageInfo && (
+                <TriageAlert triage={triageInfo} />
+              )}
+
               {/* Inline Specialty Recommendation Card */}
               {showProviderSuggestions && specialtyRecommendation && !showSummary && (
                 <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5 animate-fade-in">
