@@ -123,7 +123,7 @@ export function InlineBookingDialog({
       .neq("status", "cancelled");
 
     if (data) {
-      setBookedTimes(data.map((a) => a.appointment_time));
+      setBookedTimes(data.map((a) => a.appointment_time.slice(0, 5)));
     }
   };
 
@@ -251,7 +251,7 @@ export function InlineBookingDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col p-4 sm:p-6">
         <DialogHeader className="pb-2">
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
@@ -305,7 +305,7 @@ export function InlineBookingDialog({
           })}
         </div>
 
-        <ScrollArea className="flex-1 -mx-6 px-6">
+        <ScrollArea className="flex-1 -mx-4 px-4 sm:-mx-6 sm:px-6">
           {/* Visit Type Selection */}
           {step === "visitType" && (
             <div className="space-y-4 animate-fade-in">
@@ -378,7 +378,7 @@ export function InlineBookingDialog({
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                   {availableDates.map((date) => {
                     const dayOfWeek = date.getDay();
                     const hasSlots = availableSlots.some(
@@ -390,19 +390,19 @@ export function InlineBookingDialog({
                         key={date.toISOString()}
                         variant={hasSlots ? "outline" : "ghost"}
                         className={cn(
-                          "flex-col h-auto py-3 gap-1",
-                          !hasSlots && "opacity-50 cursor-not-allowed"
+                          "flex-col h-auto py-2 px-1 gap-0.5",
+                          !hasSlots && "opacity-40 cursor-not-allowed"
                         )}
                         onClick={() => hasSlots && handleDateSelect(date)}
                         disabled={!hasSlots}
                       >
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[10px] text-muted-foreground">
                           {format(date, "EEE", { locale: el })}
                         </span>
-                        <span className="text-lg font-semibold">
+                        <span className="text-base font-semibold">
                           {format(date, "d")}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[10px] text-muted-foreground">
                           {format(date, "MMM", { locale: el })}
                         </span>
                       </Button>
