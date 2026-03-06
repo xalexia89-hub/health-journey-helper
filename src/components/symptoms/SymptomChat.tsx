@@ -41,6 +41,7 @@ export function SymptomChat() {
   const [savingToRecord, setSavingToRecord] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [executiveSummary, setExecutiveSummary] = useState<ExecutiveSummary | null>(null);
+  const [triageInfo, setTriageInfo] = useState<TriageInfo | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 

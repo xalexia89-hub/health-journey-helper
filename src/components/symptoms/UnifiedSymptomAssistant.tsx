@@ -164,6 +164,7 @@ export function UnifiedSymptomAssistant() {
   const [specialtyRecommendation, setSpecialtyRecommendation] = useState<SpecialtyRecommendation | null>(null);
   const [showProviderSuggestions, setShowProviderSuggestions] = useState(false);
   const [userConfirmedBooking, setUserConfirmedBooking] = useState(false);
+  const [triageInfo, setTriageInfo] = useState<TriageInfo | null>(null);
 
   // Voice input
   const {
