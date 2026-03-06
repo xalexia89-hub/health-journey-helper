@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Loader2, Bot, User, Save, FileText, CheckCircle, AlertTriangle, Clock, MapPin } from "lucide-react";
+import { TriageAlert, parseTriageCode, cleanTriageContent, type TriageInfo } from "./TriageAlert";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
