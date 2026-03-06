@@ -367,23 +367,32 @@ export function UnifiedSymptomAssistant() {
         }
       }
       
-      // After streaming complete, check for specialty recommendation
+      // After streaming complete, check for triage code
+      const triage = parseTriageCode(assistantContent);
+      if (triage) {
+        setTriageInfo(triage);
+      }
+
+      // Check for specialty recommendation
       const recommendation = parseSpecialtyRecommendation(assistantContent);
       if (recommendation) {
         setSpecialtyRecommendation(recommendation);
         setShowProviderSuggestions(true);
-        
-        // Log the recommendation to medical record
         logRecommendationToRecord(recommendation);
-        
-        // Update the last message to clean version (without recommendation block)
+      }
+      
+      // Clean the last message (remove triage + specialty blocks)
+      if (triage || recommendation) {
+        let cleaned = assistantContent;
+        cleaned = cleanTriageContent(cleaned);
+        cleaned = cleanMessageContent(cleaned);
         setMessages(prev => {
           const updated = [...prev];
           updated[updated.length - 1] = { 
             role: "assistant", 
-            content: cleanMessageContent(assistantContent),
+            content: cleaned,
             timestamp: new Date(),
-            type: "recommendation",
+            type: recommendation ? "recommendation" : "text",
           };
           return updated;
         });
