@@ -373,8 +373,8 @@ ${summary.recommendations.map(r => `• ${r}`).join('\n')}
                   )}
                 >
                   <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
-                    {message.content ? (
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    {cleanTriageContent(message.content) ? (
+                      <ReactMarkdown>{cleanTriageContent(message.content)}</ReactMarkdown>
                     ) : (
                       isLoading && index === messages.length - 1 && message.role === "assistant" && (
                         <span className="inline-flex items-center gap-1">
@@ -388,6 +388,11 @@ ${summary.recommendations.map(r => `• ${r}`).join('\n')}
                 </div>
               </div>
             ))}
+            
+            {/* Triage Alert */}
+            {triageInfo && (
+              <TriageAlert triage={triageInfo} />
+            )}
           </div>
         </ScrollArea>
 
