@@ -44,6 +44,7 @@ import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import StandaloneAnalysis from "./pages/StandaloneAnalysis";
 import ExecutiveSummary from "./pages/ExecutiveSummary";
 import TechnicalStudy from "./pages/TechnicalStudy";
+import LegalReport from "./pages/LegalReport";
 import ComingSoon from "./pages/ComingSoon";
 
 // Pilot Pages
