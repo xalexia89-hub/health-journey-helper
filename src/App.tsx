@@ -139,6 +139,7 @@ const AppContent = () => {
           <Route path="/analysis" element={<StandaloneAnalysis />} />
           <Route path="/executive-summary" element={<ExecutiveSummary />} />
           <Route path="/technical-study" element={<TechnicalStudy />} />
+          <Route path="/legal-report" element={<LegalReport />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
           
