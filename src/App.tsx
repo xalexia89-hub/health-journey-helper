@@ -43,6 +43,7 @@ import ProjectEvaluation from "./pages/ProjectEvaluation";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import StandaloneAnalysis from "./pages/StandaloneAnalysis";
 import ExecutiveSummary from "./pages/ExecutiveSummary";
+import TechnicalStudy from "./pages/TechnicalStudy";
 import ComingSoon from "./pages/ComingSoon";
 
 // Pilot Pages
@@ -136,6 +137,7 @@ const AppContent = () => {
           <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
           <Route path="/analysis" element={<StandaloneAnalysis />} />
           <Route path="/executive-summary" element={<ExecutiveSummary />} />
+          <Route path="/technical-study" element={<TechnicalStudy />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
           
