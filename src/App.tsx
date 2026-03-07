@@ -43,6 +43,7 @@ import ProjectEvaluation from "./pages/ProjectEvaluation";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import StandaloneAnalysis from "./pages/StandaloneAnalysis";
 import ExecutiveSummary from "./pages/ExecutiveSummary";
+import TechnicalStudy from "./pages/TechnicalStudy";
 import ComingSoon from "./pages/ComingSoon";
 
 // Pilot Pages
