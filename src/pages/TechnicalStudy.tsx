@@ -689,6 +689,18 @@ export default function TechnicalStudy() {
           <p className="text-xs text-gray-400 mt-1">
             Για περισσότερες πληροφορίες: info@medithos.com
           </p>
+          <Separator className="my-6 bg-cyan-200" />
+          <p className="text-xs text-gray-500 font-semibold">
+            © 2026 Medithos. Με επιφύλαξη παντός δικαιώματος.
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            Όλα τα δικαιώματα πνευματικής ιδιοκτησίας ανήκουν στην εφευρέτρια του Medithos,{" "}
+            <span className="font-bold text-cyan-700">Χαλβατζάκου Αλεξάνδρα (Chalvatzakou Alexandra)</span>.
+          </p>
+          <p className="text-[10px] text-gray-400 mt-2">
+            Απαγορεύεται η αναπαραγωγή, αντιγραφή, τροποποίηση ή διανομή οποιουδήποτε μέρους 
+            του παρόντος εγγράφου χωρίς τη γραπτή συγκατάθεση της δικαιούχου.
+          </p>
         </section>
       </div>
     </div>
