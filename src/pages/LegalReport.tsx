@@ -69,7 +69,7 @@ export default function LegalReport() {
       </div>
 
       {/* Document */}
-      <div className="legal-body max-w-5xl mx-auto px-8 py-12 space-y-14">
+      <div id="legal-report-content" className="legal-body max-w-5xl mx-auto px-8 py-12 space-y-14">
 
         {/* ══════════════ COVER ══════════════ */}
         <section className="text-center py-20 border-b-2 border-emerald-600">
