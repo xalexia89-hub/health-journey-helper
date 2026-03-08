@@ -1,7 +1,8 @@
-import { ArrowLeft, Printer, Shield, Scale, FileText, AlertTriangle, CheckCircle2, Globe, Lock, Users, Brain, Heart, Eye, Building2, Gavel, BookOpen, ShieldCheck, Fingerprint, ScrollText } from "lucide-react";
+import { ArrowLeft, Printer, Download, Shield, Scale, FileText, AlertTriangle, CheckCircle2, Globe, Lock, Users, Brain, Heart, Eye, Building2, Gavel, BookOpen, ShieldCheck, Fingerprint, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 export default function LegalReport() {
   const navigate = useNavigate();
