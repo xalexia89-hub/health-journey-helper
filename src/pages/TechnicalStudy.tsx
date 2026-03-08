@@ -1,10 +1,25 @@
-import { ArrowLeft, Printer, Server, Database, Brain, Shield, Lock, Eye, FileText, Activity, Network, Cpu, Globe, Layers, Users, AlertTriangle, CheckCircle2, Zap, Heart, Building2, Key, RotateCcw, Bell } from "lucide-react";
+import { ArrowLeft, Download, Server, Database, Brain, Shield, Lock, Eye, FileText, Activity, Network, Cpu, Globe, Layers, Users, AlertTriangle, CheckCircle2, Zap, Heart, Building2, Key, RotateCcw, Bell } from "lucide-react";
+import html2pdf from "html2pdf.js";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 export default function TechnicalStudy() {
   const navigate = useNavigate();
+
+  const handleDownloadPDF = () => {
+    const element = document.querySelector('.study-body');
+    if (!element) return;
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: 'Medithos_Technical_Study.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -30,9 +45,9 @@ export default function TechnicalStudy() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Πίσω
           </Button>
-          <Button onClick={() => window.print()} className="bg-primary text-primary-foreground">
-            <Printer className="h-4 w-4 mr-2" />
-            Εξαγωγή PDF
+          <Button onClick={handleDownloadPDF} className="bg-primary text-primary-foreground">
+            <Download className="h-4 w-4 mr-2" />
+            Λήψη PDF
           </Button>
         </div>
       </div>
