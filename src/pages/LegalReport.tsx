@@ -249,14 +249,75 @@ export default function LegalReport() {
           
           <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 text-sm mb-6">
             <p className="font-bold text-emerald-800 mb-2">Συμπέρασμα: Το Medithos ΔΕΝ αποτελεί ιατροτεχνολογικό προϊόν</p>
-            <p className="text-gray-700">
+            <p className="text-gray-700 mb-2">
               Σύμφωνα με το Art. 2(1) του MDR, ιατροτεχνολογικό προϊόν είναι εκείνο που προορίζεται για 
               <em> διάγνωση, πρόληψη, παρακολούθηση, θεραπεία ή ανακούφιση ασθενειών</em>. 
-              Το Medithos δεν εκτελεί καμία από αυτές τις λειτουργίες.
+              Το Medithos δεν εκτελεί καμία από αυτές τις λειτουργίες με κλινική έννοια.
+            </p>
+            <p className="text-gray-700 font-medium">
+              Χαρακτηρίζεται ως <strong>«Εργαλείο Πλοήγησης Υγείας & Προληπτικής Ευαισθητοποίησης»</strong> (Health Navigation & Preventive Awareness Tool).
             </p>
           </div>
 
-          <h3 className="font-semibold text-base text-gray-800 mb-3">4.1 Ανάλυση Rule 11 — Λογισμικό</h3>
+          <h3 className="font-semibold text-base text-gray-800 mb-3">4.1 Διάκριση Λειτουργιών — Γιατί Δεν Εμπίπτει στο MDR</h3>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm mb-6 space-y-3">
+            <p className="text-gray-700">Το Medithos περιλαμβάνει λειτουργίες που <em>φαινομενικά</em> θα μπορούσαν να εμπέσουν στο MDR, 
+            αλλά ο <strong>τρόπος υλοποίησης</strong> τις τοποθετεί σαφώς εκτός πεδίου:</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="bg-blue-100">
+                    <th className="border border-blue-200 px-3 py-2 text-left">Λειτουργία Medithos</th>
+                    <th className="border border-blue-200 px-3 py-2 text-left">Τι Κάνει Πραγματικά</th>
+                    <th className="border border-blue-200 px-3 py-2 text-left">Τι ΔΕΝ Κάνει</th>
+                    <th className="border border-blue-200 px-3 py-2 text-left">MDR Χαρακτηρισμός</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    [
+                      "Πρόταση προληπτικών εξετάσεων",
+                      "Υπενθυμίσεις βάσει ηλικίας/φύλου σύμφωνα με δημόσιες κατευθυντήριες γραμμές (screening guidelines)",
+                      "Δεν αξιολογεί κλινικά, δεν κάνει εξατομικευμένη πρόβλεψη κινδύνου",
+                      "Preventive Awareness (Ευεξία)"
+                    ],
+                    [
+                      "Παρακολούθηση αιματολογικών εξετάσεων",
+                      "Αποθηκεύει & εμφανίζει τιμές εξετάσεων που έγιναν σε πιστοποιημένα εργαστήρια — Data Aggregation",
+                      "Δεν ερμηνεύει κλινικά, δεν συγκρίνει με κλινικά πρωτόκολλα, δεν κάνει διάγνωση",
+                      "Personal Health Record (PHR)"
+                    ],
+                    [
+                      "Διαγράμματα & τάσεις εξετάσεων",
+                      "Οπτικοποιεί ιστορικές τιμές με reference ranges — Data Visualization",
+                      "Δεν δημιουργεί κλινικές ειδοποιήσεις, δεν αλλάζει αγωγή, δεν αντικαθιστά γιατρό",
+                      "Wellness Monitoring"
+                    ],
+                    [
+                      "AI Σύμβουλος Lifestyle",
+                      "Γενικές συμβουλές ύπνου, διατροφής, κίνησης βάσει δημόσιων κατευθύνσεων",
+                      "Δεν δίνει ιατρική συμβουλή, δεν θεραπεύει, δεν συνταγογραφεί",
+                      "General Wellness Application"
+                    ],
+                    [
+                      "Wearable Data (Apple Watch κ.λπ.)",
+                      "Εισαγωγή & εμφάνιση δεδομένων βημάτων, ύπνου, καρδιακού ρυθμού — Fitness Tracking",
+                      "Δεν εντοπίζει παθολογίες, δεν κάνει monitoring για κλινικούς σκοπούς",
+                      "Consumer Wellness Device Data"
+                    ],
+                  ].map((row, i) => (
+                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                      {row.map((cell, j) => (
+                        <td key={j} className={`border border-gray-200 px-3 py-1.5 ${j === 3 ? 'font-semibold text-emerald-700' : ''}`}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-base text-gray-800 mb-3">4.2 Ανάλυση Rule 11 — Λογισμικό</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs border-collapse">
               <thead>
@@ -270,7 +331,8 @@ export default function LegalReport() {
                 {[
                   ["Παρέχει διάγνωση;", "Όχι — Πλοήγηση μόνο", "✓ Εκτός πεδίου"],
                   ["Προτείνει θεραπεία;", "Όχι — Σύνδεση με γιατρό", "✓ Εκτός πεδίου"],
-                  ["Παρακολουθεί παραμέτρους υγείας;", "Μόνο wearable wellness data", "✓ Ευεξία, όχι κλινική"],
+                  ["Παρακολουθεί παραμέτρους υγείας κλινικά;", "Όχι — Aggregation & visualization δεδομένων ευεξίας", "✓ Wellness, όχι κλινική"],
+                  ["Κάνει πρόληψη νόσων;", "Όχι — Υπενθυμίσεις βάσει δημόσιων guidelines, χωρίς κλινική αξιολόγηση", "✓ Awareness, όχι prevention"],
                   ["Λαμβάνει κλινικές αποφάσεις;", "Ποτέ — Ο γιατρός αποφασίζει", "✓ Εκτός πεδίου"],
                   ["Χρησιμοποιεί AI για triage;", "Ναι — Κατεύθυνση, όχι διάγνωση", "✓ Navigation tool"],
                 ].map((row, i) => (
@@ -284,14 +346,25 @@ export default function LegalReport() {
             </table>
           </div>
 
-          <h3 className="font-semibold text-base text-gray-800 mt-6 mb-3">4.2 Safeguards που Διατηρούν την Εξαίρεση</h3>
+          <h3 className="font-semibold text-base text-gray-800 mt-6 mb-3">4.3 Νομική Βάση Εξαίρεσης (Recital 19 MDR)</h3>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm mb-6 space-y-2">
+            <p className="text-gray-700">Σύμφωνα με το <strong>Recital 19</strong> του MDR και τις κατευθυντήριες γραμμές <strong>MDCG 2019-11</strong>:</p>
+            <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
+              <li>Λογισμικό που απλά <strong>αποθηκεύει, αρχειοθετεί ή εμφανίζει</strong> δεδομένα υγείας χωρίς κλινική ερμηνεία δεν αποτελεί ιατροτεχνολογικό προϊόν</li>
+              <li>Εφαρμογές <strong>γενικής ευεξίας</strong> (wellness applications) που παρακολουθούν fitness, διατροφή και ύπνο εξαιρούνται ρητά</li>
+              <li>Υπενθυμίσεις προληπτικών εξετάσεων βάσει <strong>δημόσιων screening protocols</strong> (π.χ. ηλικία, φύλο) δεν αποτελούν κλινική πρόληψη</li>
+              <li>Το Medithos λειτουργεί ως <strong>Personal Health Record (PHR)</strong> — ο χρήστης διαχειρίζεται τα δεδομένα του, δεν λαμβάνει κλινικές αποφάσεις</li>
+            </ul>
+          </div>
+
+          <h3 className="font-semibold text-base text-gray-800 mt-6 mb-3">4.4 Safeguards που Διατηρούν την Εξαίρεση</h3>
           <div className="grid grid-cols-3 gap-3">
             {[
               { title: "Medical Disclaimers", desc: "Σε κάθε οθόνη AI εμφανίζεται ρητή δήλωση: «Δεν αποτελεί ιατρική συμβουλή»" },
               { title: "Navigation-Only Framing", desc: "Όλα τα outputs περιγράφονται ως «πλοήγηση» και όχι ως «διάγνωση» ή «θεραπεία»" },
               { title: "Doctor as Advisor", desc: "Οι γιατροί συμμετέχουν ως σύμβουλοι πλοήγησης — δεν δημιουργείται σχέση γιατρού-ασθενή" },
               { title: "No Prescriptions", desc: "Η πλατφόρμα δεν εκδίδει συνταγές, δεν προτείνει φάρμακα, δεν παρέχει δοσολογίες" },
-              { title: "Consent Per Session", desc: "Κάθε αλληλεπίδραση με το AI απαιτεί επιβεβαίωση ότι ο χρήστης κατανοεί τους περιορισμούς" },
+              { title: "No Clinical Interpretation", desc: "Οι τιμές εξετάσεων εμφανίζονται ως data — η κλινική ερμηνεία αφορά αποκλειστικά τον θεράποντα ιατρό" },
               { title: "Audit Trail", desc: "Κάθε AI output καταγράφεται για regulatory review αν απαιτηθεί" },
             ].map((item, i) => (
               <div key={i} className="border border-gray-200 rounded-lg p-3 text-xs print-avoid-break">
