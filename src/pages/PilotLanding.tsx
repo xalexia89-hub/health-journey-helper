@@ -112,8 +112,8 @@ export default function PilotLanding() {
           {/* Progress Indicator */}
           <div className="max-w-xs mx-auto mb-8">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Εγγεγραμμένοι</span>
-              <span className="font-medium">{enrollmentCount} / {maxUsers}</span>
+              <span className="text-muted-foreground">Εγγεγραμμένοι Χρήστες</span>
+              <span className="font-medium">50</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div 
