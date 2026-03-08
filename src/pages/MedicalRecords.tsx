@@ -501,7 +501,7 @@ const MedicalRecords = () => {
             )}
 
             <TestsDiagnosesSection />
-            <SymptomHistorySection />
+            
             <ExecutiveSummarySection notes={notes} onNotesChange={setNotes} />
           </TabsContent>
 
