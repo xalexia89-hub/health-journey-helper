@@ -81,13 +81,13 @@ export default function TechnicalStudy() {
         <section className="print-break space-y-5">
           <SectionHeader icon={Heart} num="1" title="Executive Overview" />
           <p className="text-sm leading-relaxed">
-            Το <strong>Medithos</strong> είναι μια πλατφόρμα <strong>πλοήγησης υγείας (health navigation)</strong> που 
+            Το <strong>Medithos</strong> είναι μια <strong>πρωτότυπη πλατφόρμα πλοήγησης υγείας (health navigation)</strong> που 
             χρησιμοποιεί τεχνητή νοημοσύνη για να βοηθήσει τους πολίτες να κατανοήσουν τα συμπτώματά τους, να βρουν 
             τον κατάλληλο πάροχο υγείας και να οργανώσουν το ιατρικό τους ιστορικό. <strong>Δεν διαγιγνώσκει</strong> — 
             πλοηγεί. Αυτή η αρχιτεκτονική απόφαση μας τοποθετεί <strong>εκτός MDR</strong> και μας δίνει ρυθμιστικό πλεονέκτημα.
           </p>
           <InfoBox color="cyan">
-            <strong>Αγορά-Στόχος:</strong> Ελλάδα (11M πληθυσμός) → Ευρώπη (450M). B2C χρήστες + B2B ασφαλιστικές εταιρείες.
+            <strong>Αγορά-Στόχος:</strong> Ευρώπη (450M πληθυσμός) — Pilot launch από Ελλάδα (11M). B2C χρήστες + B2B ασφαλιστικές εταιρείες &amp; πάροχοι υγείας.
           </InfoBox>
         </section>
 
