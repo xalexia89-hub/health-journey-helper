@@ -6,6 +6,31 @@ import { useState } from "react";
 
 export default function LegalReport() {
   const navigate = useNavigate();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsGenerating(true);
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      const element = document.getElementById('legal-report-content');
+      if (!element) return;
+      
+      const opt = {
+        margin: [18, 20, 18, 20],
+        filename: 'Medithos_Legal_Report_2026.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('PDF generation error:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -30,10 +55,16 @@ export default function LegalReport() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Πίσω
           </Button>
-          <Button onClick={() => window.print()} className="bg-primary text-primary-foreground">
-            <Printer className="h-4 w-4 mr-2" />
-            Εξαγωγή PDF
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleDownloadPDF} disabled={isGenerating} className="bg-primary text-primary-foreground">
+              <Download className="h-4 w-4 mr-2" />
+              {isGenerating ? 'Δημιουργία PDF...' : 'Λήψη PDF'}
+            </Button>
+            <Button variant="outline" onClick={() => window.print()}>
+              <Printer className="h-4 w-4 mr-2" />
+              Εκτύπωση
+            </Button>
+          </div>
         </div>
       </div>
 
