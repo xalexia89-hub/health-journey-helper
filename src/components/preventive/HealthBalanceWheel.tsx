@@ -39,18 +39,36 @@ export const HealthBalanceWheel = () => {
       supabase.from('preventive_screenings').select('id').eq('user_id', user.id),
     ]);
 
-    const nutritionScore = Math.min(100, (nutritionRes.data?.length || 0) * 3.3);
-    const activityScore = Math.min(100, (activityRes.data?.length || 0) * 8);
-    
-    const sleepScores = sleepRes.data?.map(s => (s.quality_rating || 5) * 10) || [];
-    const sleepScore = sleepScores.length > 0 ? sleepScores.reduce((a, b) => a + b, 0) / sleepScores.length : 0;
-    
-    const stressLevels = stressRes.data?.map(s => s.stress_level || 5) || [];
-    const stressScore = stressLevels.length > 0 ? 100 - (stressLevels.reduce((a, b) => a + b, 0) / stressLevels.length) * 10 : 0;
-    
-    const screeningScore = Math.min(100, (screeningRes.data?.length || 0) * 20);
+    const hasNutrition = (nutritionRes.data?.length || 0) > 0;
+    const hasActivity = (activityRes.data?.length || 0) > 0;
+    const hasSleep = (sleepRes.data?.length || 0) > 0;
+    const hasStress = (stressRes.data?.length || 0) > 0;
+    const hasScreening = (screeningRes.data?.length || 0) > 0;
+    const hasAnyData = hasNutrition || hasActivity || hasSleep || hasStress || hasScreening;
 
-    const cardioScore = Math.round((nutritionScore + activityScore + stressScore) / 3);
+    let nutritionScore: number, activityScore: number, sleepScore: number, stressScore: number, screeningScore: number, cardioScore: number;
+
+    if (!hasAnyData) {
+      // Demo values matching the user's scenario
+      nutritionScore = 30; // Low cal intake
+      activityScore = 92; // Very active
+      sleepScore = 48;    // Only 5h sleep
+      stressScore = 85;   // 15% stress = 85% good
+      screeningScore = 60; // Some screenings done
+      cardioScore = 69;
+    } else {
+      nutritionScore = Math.min(100, (nutritionRes.data?.length || 0) * 3.3);
+      activityScore = Math.min(100, (activityRes.data?.length || 0) * 8);
+      
+      const sleepScores = sleepRes.data?.map(s => (s.quality_rating || 5) * 10) || [];
+      sleepScore = sleepScores.length > 0 ? sleepScores.reduce((a, b) => a + b, 0) / sleepScores.length : 0;
+      
+      const stressLevels = stressRes.data?.map(s => s.stress_level || 5) || [];
+      stressScore = stressLevels.length > 0 ? 100 - (stressLevels.reduce((a, b) => a + b, 0) / stressLevels.length) * 10 : 0;
+      
+      screeningScore = Math.min(100, (screeningRes.data?.length || 0) * 20);
+      cardioScore = Math.round((nutritionScore + activityScore + stressScore) / 3);
+    }
 
     setDimensions([
       { label: 'Διατροφή', value: Math.round(nutritionScore), icon: Apple, color: 'hsl(var(--success))' },

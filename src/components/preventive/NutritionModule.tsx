@@ -49,6 +49,14 @@ export const NutritionModule = () => {
   const [fat, setFat] = useState('');
   const [waterMl, setWaterMl] = useState('');
 
+  const DEMO_MEALS: NutritionLog[] = [
+    { id: 'demo-1', meal_type: 'breakfast', meal_description: 'Βρώμη με γάλα αμυγδάλου, μέλι, καρύδια & μπανάνα', calories: 120, protein_g: 4.2, carbs_g: 22, fat_g: 3.5, water_ml: 250, logged_at: new Date().toISOString() },
+    { id: 'demo-2', meal_type: 'snack', meal_description: 'Γιαούρτι 2% με σπόρους chia & φράουλες', calories: 85, protein_g: 5.1, carbs_g: 12, fat_g: 2.8, water_ml: null, logged_at: new Date().toISOString() },
+    { id: 'demo-3', meal_type: 'lunch', meal_description: 'Σαλάτα με κινόα, αβοκάντο, ντοματίνια & φέτα', calories: 145, protein_g: 6.3, carbs_g: 18, fat_g: 5.2, water_ml: 500, logged_at: new Date().toISOString() },
+    { id: 'demo-4', meal_type: 'snack', meal_description: 'Νερό & πράσινο τσάι', calories: 2, protein_g: 0, carbs_g: 0.5, fat_g: 0, water_ml: 750, logged_at: new Date().toISOString() },
+    { id: 'demo-5', meal_type: 'dinner', meal_description: 'Ψητό στήθος κοτόπουλου με λαχανικά σχάρας & ρύζι μπασμάτι', calories: 115, protein_g: 8.2, carbs_g: 14, fat_g: 2.1, water_ml: 500, logged_at: new Date().toISOString() },
+  ];
+
   useEffect(() => {
     if (user) fetchLogs();
   }, [user]);
@@ -62,7 +70,8 @@ export const NutritionModule = () => {
       .eq('user_id', user.id)
       .gte('logged_at', today)
       .order('logged_at', { ascending: false });
-    setLogs((data as NutritionLog[]) || []);
+    const realLogs = (data as NutritionLog[]) || [];
+    setLogs(realLogs.length > 0 ? realLogs : DEMO_MEALS);
   };
 
   const addLog = async () => {

@@ -36,6 +36,17 @@ export const PreventiveTimeline = () => {
   const [nextDue, setNextDue] = useState('');
   const [result, setResult] = useState('');
 
+  const DEMO_SCREENINGS = [
+    { id: 'demo-1', screening_type: 'Τεστ Παπανικολάου', completed_date: '2025-06-15', next_due: '2026-06-15', result: 'Φυσιολογικό — Κανένα εύρημα' },
+    { id: 'demo-2', screening_type: 'Αιματολογικές Εξετάσεις', completed_date: '2025-12-10', next_due: '2026-06-10', result: 'Εντός φυσιολογικών ορίων' },
+    { id: 'demo-3', screening_type: 'Λιπιδαιμικό Προφίλ', completed_date: '2025-12-10', next_due: '2026-06-10', result: 'LDL: 105 mg/dL — Ικανοποιητικό' },
+    { id: 'demo-4', screening_type: 'Θυρεοειδής', completed_date: null, next_due: '2026-04-15', result: null },
+    { id: 'demo-5', screening_type: 'Δερματολογικός Έλεγχος', completed_date: null, next_due: '2026-05-01', result: null },
+    { id: 'demo-6', screening_type: 'Οφθαλμολογικός Έλεγχος', completed_date: '2025-03-20', next_due: '2026-03-20', result: 'Μυωπία -1.25 — Σταθερή' },
+    { id: 'demo-7', screening_type: 'Οδοντιατρικός Έλεγχος', completed_date: '2025-09-05', next_due: '2026-03-05', result: 'Καθαρισμός ολοκληρώθηκε' },
+    { id: 'demo-8', screening_type: 'Καρδιολογικός Έλεγχος', completed_date: null, next_due: '2026-07-01', result: null },
+  ];
+
   useEffect(() => { if (user) fetchScreenings(); }, [user]);
 
   const fetchScreenings = async () => {
@@ -45,7 +56,8 @@ export const PreventiveTimeline = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('next_due', { ascending: true });
-    setScreenings(data || []);
+    const realData = data || [];
+    setScreenings(realData.length > 0 ? realData : DEMO_SCREENINGS);
   };
 
   const addScreening = async () => {

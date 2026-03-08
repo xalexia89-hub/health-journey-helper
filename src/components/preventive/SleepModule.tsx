@@ -18,6 +18,26 @@ export const SleepModule = () => {
   const [quality, setQuality] = useState([7]);
   const [interruptions, setInterruptions] = useState('0');
 
+  const makeSleepDate = (daysAgo: number, startH: string, endH: string) => {
+    const d = new Date(Date.now() - daysAgo * 86400000);
+    const prev = new Date(d.getTime() - 86400000);
+    return {
+      sleep_start: `${prev.toISOString().split('T')[0]}T${startH}:00`,
+      sleep_end: `${d.toISOString().split('T')[0]}T${endH}:00`,
+      logged_at: d.toISOString(),
+    };
+  };
+
+  const DEMO_SLEEP = [
+    { id: 'demo-1', quality_rating: 5, interruptions: 2, ...makeSleepDate(0, '02:30', '07:30'), notes: '⌚ Apple Watch — 5.0h ύπνου' },
+    { id: 'demo-2', quality_rating: 4, interruptions: 3, ...makeSleepDate(1, '03:00', '07:45'), notes: '⌚ Apple Watch — 4.75h ύπνου' },
+    { id: 'demo-3', quality_rating: 5, interruptions: 1, ...makeSleepDate(2, '02:00', '07:00'), notes: '⌚ Apple Watch — 5.0h ύπνου' },
+    { id: 'demo-4', quality_rating: 6, interruptions: 1, ...makeSleepDate(3, '01:30', '07:00'), notes: '⌚ Apple Watch — 5.5h ύπνου' },
+    { id: 'demo-5', quality_rating: 4, interruptions: 2, ...makeSleepDate(4, '03:15', '07:30'), notes: '⌚ Apple Watch — 4.25h ύπνου' },
+    { id: 'demo-6', quality_rating: 5, interruptions: 2, ...makeSleepDate(5, '02:45', '07:45'), notes: '⌚ Apple Watch — 5.0h ύπνου' },
+    { id: 'demo-7', quality_rating: 5, interruptions: 1, ...makeSleepDate(6, '02:00', '07:15'), notes: '⌚ Apple Watch — 5.25h ύπνου' },
+  ];
+
   useEffect(() => { if (user) fetchLogs(); }, [user]);
 
   const fetchLogs = async () => {
@@ -29,7 +49,8 @@ export const SleepModule = () => {
       .eq('user_id', user.id)
       .gte('logged_at', weekAgo)
       .order('logged_at', { ascending: false });
-    setLogs(data || []);
+    const realLogs = data || [];
+    setLogs(realLogs.length > 0 ? realLogs : DEMO_SLEEP);
   };
 
   const addLog = async () => {
