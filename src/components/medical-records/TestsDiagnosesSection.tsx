@@ -29,6 +29,8 @@ import { MedicalEntryDetailDialog } from './MedicalEntryDetailDialog';
 import { MedicalAccessGrantsDialog } from './MedicalAccessGrantsDialog';
 import { format } from 'date-fns';
 import { el } from 'date-fns/locale';
+import { ALL_DEMO_ENTRIES } from './demoMedicalData';
+import { BloodTestCharts } from './BloodTestCharts';
 
 type EntryType = 'blood_test' | 'imaging' | 'diagnosis';
 
@@ -118,7 +120,13 @@ export function TestsDiagnosesSection() {
         })
       );
 
-      setEntries(entriesWithAttachments as MedicalEntry[]);
+      // If no real entries, use demo data
+      const realEntries = entriesWithAttachments as MedicalEntry[];
+      if (realEntries.length === 0) {
+        setEntries(ALL_DEMO_ENTRIES as unknown as MedicalEntry[]);
+      } else {
+        setEntries(realEntries);
+      }
     } catch (error) {
       console.error('Error fetching medical entries:', error);
       toast({
@@ -315,6 +323,11 @@ export function TestsDiagnosesSection() {
         open={accessDialogOpen}
         onOpenChange={setAccessDialogOpen}
       />
+
+      {/* Charts Section */}
+      <div className="mt-6">
+        <BloodTestCharts />
+      </div>
     </Card>
   );
 }
