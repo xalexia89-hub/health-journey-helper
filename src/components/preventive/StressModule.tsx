@@ -23,6 +23,16 @@ export const StressModule = () => {
   const [selectedCoping, setSelectedCoping] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
 
+  const DEMO_STRESS = [
+    { id: 'demo-1', stress_level: 2, triggers: ['Εργασία'], coping_methods: ['Περπάτημα', 'Μουσική'], notes: 'Ήρεμη μέρα, ελαφρύ άγχος εργασίας', logged_at: new Date().toISOString() },
+    { id: 'demo-2', stress_level: 1, triggers: [], coping_methods: ['Αναπνοές', 'Διαλογισμός'], notes: 'Πολύ χαλαρά', logged_at: new Date(Date.now() - 86400000).toISOString() },
+    { id: 'demo-3', stress_level: 2, triggers: ['Αϋπνία'], coping_methods: ['Γυμναστική'], notes: 'Λίγο κουρασμένος λόγω ύπνου', logged_at: new Date(Date.now() - 2 * 86400000).toISOString() },
+    { id: 'demo-4', stress_level: 1, triggers: [], coping_methods: ['Περπάτημα', 'Φίλοι'], notes: null, logged_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+    { id: 'demo-5', stress_level: 2, triggers: ['Εργασία', 'Αϋπνία'], coping_methods: ['Αναπνοές'], notes: 'Deadline αλλά διαχειρίσιμο', logged_at: new Date(Date.now() - 4 * 86400000).toISOString() },
+    { id: 'demo-6', stress_level: 1, triggers: [], coping_methods: ['Μουσική', 'Διαλογισμός'], notes: null, logged_at: new Date(Date.now() - 5 * 86400000).toISOString() },
+    { id: 'demo-7', stress_level: 2, triggers: ['Κοινωνικά'], coping_methods: ['Φίλοι'], notes: null, logged_at: new Date(Date.now() - 6 * 86400000).toISOString() },
+  ];
+
   useEffect(() => { if (user) fetchLogs(); }, [user]);
 
   const fetchLogs = async () => {
@@ -34,7 +44,8 @@ export const StressModule = () => {
       .eq('user_id', user.id)
       .gte('logged_at', weekAgo)
       .order('logged_at', { ascending: false });
-    setLogs(data || []);
+    const realLogs = data || [];
+    setLogs(realLogs.length > 0 ? realLogs : DEMO_STRESS);
   };
 
   const toggleItem = (item: string, list: string[], setter: (v: string[]) => void) => {
