@@ -59,7 +59,7 @@ const SystemDocumentation = () => {
       </div>
 
       {/* Document Content */}
-      <div className="max-w-4xl mx-auto p-8 space-y-12">
+      <div className="documentation-body max-w-4xl mx-auto p-8 space-y-12">
         
         {/* Cover Page */}
         <section className="text-center py-16 border-b border-border">
