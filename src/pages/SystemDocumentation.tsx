@@ -1,12 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Printer, Database, Users, Shield, Layers, Server, Code, Lock, Eye, FileText, Activity, AlertTriangle, Key, Network } from "lucide-react";
+import { ArrowLeft, Download, Database, Users, Shield, Layers, Server, Code, Lock, Eye, FileText, Activity, AlertTriangle, Key, Network } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import html2pdf from "html2pdf.js";
 
 const SystemDocumentation = () => {
   const navigate = useNavigate();
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPDF = () => {
+    const element = document.querySelector('.documentation-body');
+    if (!element) return;
+    html2pdf().set({
+      margin: [15, 15, 15, 15],
+      filename: 'Medithos_System_Documentation.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    }).from(element).save();
   };
 
   return (
@@ -41,15 +51,15 @@ const SystemDocumentation = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Πίσω
           </Button>
-          <Button onClick={handlePrint} className="bg-primary text-primary-foreground">
-            <Printer className="h-4 w-4 mr-2" />
-            Εκτύπωση PDF
+          <Button onClick={handleDownloadPDF} className="bg-primary text-primary-foreground">
+            <Download className="h-4 w-4 mr-2" />
+            Λήψη PDF
           </Button>
         </div>
       </div>
 
       {/* Document Content */}
-      <div className="max-w-4xl mx-auto p-8 space-y-12">
+      <div className="documentation-body max-w-4xl mx-auto p-8 space-y-12">
         
         {/* Cover Page */}
         <section className="text-center py-16 border-b border-border">
