@@ -51,9 +51,9 @@ const SystemDocumentation = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Πίσω
           </Button>
-          <Button onClick={handlePrint} className="bg-primary text-primary-foreground">
-            <Printer className="h-4 w-4 mr-2" />
-            Εκτύπωση PDF
+          <Button onClick={handleDownloadPDF} className="bg-primary text-primary-foreground">
+            <Download className="h-4 w-4 mr-2" />
+            Λήψη PDF
           </Button>
         </div>
       </div>
