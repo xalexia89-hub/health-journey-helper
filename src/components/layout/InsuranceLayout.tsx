@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
+import html2pdf from 'html2pdf.js';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -15,6 +16,7 @@ import {
   FileBarChart,
   Activity,
   TrendingDown,
+  Download,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import medithosLogo from '@/assets/medithos-new-logo.png';
@@ -33,6 +35,19 @@ export const InsuranceLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleDownloadPDF = useCallback(() => {
+    const element = document.querySelector('.insurance-content');
+    if (!element) return;
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: 'Medithos_Insurance_Report.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+    }).from(element).save();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0a0e1a]">
@@ -143,7 +158,20 @@ export const InsuranceLayout = () => {
       {/* Main Content */}
       <main className="lg:ml-72 pt-16 lg:pt-0 min-h-screen">
         <div className="p-4 lg:p-8">
-          <Outlet />
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="gap-2 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+            >
+              <Download className="h-4 w-4" />
+              Λήψη PDF
+            </Button>
+          </div>
+          <div className="insurance-content">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
