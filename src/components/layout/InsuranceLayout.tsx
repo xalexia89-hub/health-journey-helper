@@ -36,6 +36,19 @@ export const InsuranceLayout = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const handleDownloadPDF = useCallback(() => {
+    const element = document.querySelector('.insurance-content');
+    if (!element) return;
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: 'Medithos_Insurance_Report.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+    }).from(element).save();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a0e1a]">
       {/* Mobile Header */}
