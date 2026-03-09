@@ -158,7 +158,20 @@ export const InsuranceLayout = () => {
       {/* Main Content */}
       <main className="lg:ml-72 pt-16 lg:pt-0 min-h-screen">
         <div className="p-4 lg:p-8">
-          <Outlet />
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="gap-2 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+            >
+              <Download className="h-4 w-4" />
+              Λήψη PDF
+            </Button>
+          </div>
+          <div className="insurance-content">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
