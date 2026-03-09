@@ -16,6 +16,7 @@ import {
   FileBarChart,
   Activity,
   TrendingDown,
+  Download,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import medithosLogo from '@/assets/medithos-new-logo.png';
