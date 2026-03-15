@@ -497,9 +497,9 @@ export default function Dashboard() {
                         {notification.type === 'appointment' ? (
                           <Calendar className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                         ) : notification.type === 'warning' ? (
-                          <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 shrink-0 mt-0.5" />
+                          <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0 mt-0.5" />
                         ) : (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0 mt-0.5" />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium">{notification.title}</p>
