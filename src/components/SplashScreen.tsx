@@ -70,7 +70,6 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
         />
       </div>
 
-      {/* Text */}
       <div
         className="mt-8 text-center transition-all duration-700 ease-out"
         style={{
@@ -78,12 +77,12 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           opacity: phase === "text" || phase === "fadeout" ? 1 : 0,
         }}
       >
-        <h1 className="text-4xl font-bold tracking-widest">
+        <h1 className="text-4xl font-bold tracking-widest font-display">
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent drop-shadow-[0_0_20px_hsl(190_70%_55%/0.5)]">
             MEDITHOS
           </span>
         </h1>
-        <p className="mt-3 text-sm text-muted-foreground tracking-[0.2em] uppercase">
+        <p className="mt-3 text-sm text-muted-foreground tracking-[0.2em] uppercase font-display">
           AI Health Navigator
         </p>
       </div>
