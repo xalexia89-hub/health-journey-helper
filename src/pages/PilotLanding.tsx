@@ -81,8 +81,8 @@ export default function PilotLanding() {
       <div className="min-h-screen bg-background relative overflow-hidden">
         {/* Ambient background */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/3 w-[600px] h-[600px] rounded-full bg-primary/8 blur-[120px]" />
-          <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full bg-accent/6 blur-[100px]" />
+          <div className="absolute top-0 left-1/3 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
+          <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full bg-accent/5 blur-[100px]" />
         </div>
 
         {/* Header */}
