@@ -54,6 +54,7 @@ import PilotWaitlist from "./pages/PilotWaitlist";
 import DoctorSignup from "./pages/DoctorSignup";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
+import Install from "./pages/Install";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
