@@ -54,6 +54,7 @@ import PilotWaitlist from "./pages/PilotWaitlist";
 import DoctorSignup from "./pages/DoctorSignup";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
+import Install from "./pages/Install";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -142,6 +143,7 @@ const AppContent = () => {
           <Route path="/legal-report" element={<LegalReport />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
+          <Route path="/install" element={<Install />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
