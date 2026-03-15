@@ -151,38 +151,38 @@ const InsuranceDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total Members"
-          value="8,000"
+          value="50"
           subtitle="Active policyholders"
           icon={Users}
           trend="up"
-          trendValue="+3.2%"
+          trendValue="+6.4%"
           color="cyan"
         />
         <KPICard
           title="Active Risk Index"
-          value="34.2"
+          value="28.6"
           subtitle="Score 0-100"
           icon={AlertTriangle}
           trend="down"
-          trendValue="-8.5%"
+          trendValue="-14.2%"
           color="amber"
         />
         <KPICard
           title="Stability Score"
-          value="78.4"
+          value="84.7"
           subtitle="Population health"
           icon={Heart}
           trend="up"
-          trendValue="+4.1%"
+          trendValue="+9.3%"
           color="green"
         />
         <KPICard
           title="Compliance Score"
-          value="82.1"
+          value="88.5"
           subtitle="Behavioral adherence"
           icon={Shield}
           trend="up"
-          trendValue="+2.8%"
+          trendValue="+11.2%"
           color="blue"
         />
       </div>
