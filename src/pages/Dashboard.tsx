@@ -432,11 +432,11 @@ export default function Dashboard() {
               </Button>
             </CardContent>
           </Card>
-        </section>
+        </StaggerContainer>
 
         {/* Recent AI Symptom Analyses */}
         {recentSymptoms.length > 0 && (
-          <section className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+          <FadeUp delay={0.6}>
             <Card>
               <CardHeader className="pb-1.5 pt-3 px-3">
                 <CardTitle className="text-xs font-medium flex items-center gap-1.5">
