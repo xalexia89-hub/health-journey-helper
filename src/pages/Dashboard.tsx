@@ -201,58 +201,71 @@ export default function Dashboard() {
 
       <main className="px-3 py-4 space-y-4 pb-24">
         {/* Welcome Section with Health Score */}
-        <section className="animate-slide-up">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold text-foreground truncate">
-                Καλώς ήρθες, <span className="text-primary">{firstName}</span> 
-              </h1>
-              <p className="text-sm text-muted-foreground">Πώς νιώθεις σήμερα;</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative shrink-0"
-              onClick={() => navigate('/settings')}
-            >
-              <Bell className="h-5 w-5" />
-              {unreadNotifications > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center">
-                  {unreadNotifications}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          {/* Health Score Card */}
-          <Card className="mt-3 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="relative shrink-0">
-                    <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Shield className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-                      <Sparkles className="h-2.5 w-2.5 text-primary" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Σκορ Υγείας</p>
-                    <p className="text-xl font-bold text-primary">{healthScore}%</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="flex items-center gap-1 text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    <span className="text-xs font-medium">+5%</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
-                </div>
+        <FadeUp delay={0.1}>
+          <section>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl font-bold text-foreground truncate font-display">
+                  Καλώς ήρθες, <span className="text-primary">{firstName}</span> 
+                </h1>
+                <p className="text-sm text-muted-foreground">Πώς νιώθεις σήμερα;</p>
               </div>
-            </CardContent>
-          </Card>
-        </section>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative shrink-0"
+                onClick={() => navigate('/settings')}
+              >
+                <Bell className="h-5 w-5" />
+                {unreadNotifications > 0 && (
+                  <motion.span
+                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                  >
+                    {unreadNotifications}
+                  </motion.span>
+                )}
+              </Button>
+            </div>
+
+            {/* Health Score Card */}
+            <motion.div whileHover={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 300 }}>
+              <Card className="mt-3 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="relative shrink-0">
+                        <motion.div
+                          className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center"
+                          animate={{ boxShadow: ["0 0 0px hsl(190 70% 55% / 0)", "0 0 15px hsl(190 70% 55% / 0.3)", "0 0 0px hsl(190 70% 55% / 0)"] }}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        >
+                          <Shield className="h-5 w-5 text-primary" />
+                        </motion.div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
+                          <Sparkles className="h-2.5 w-2.5 text-primary" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Σκορ Υγείας</p>
+                        <p className="text-xl font-bold text-primary font-display">{healthScore}%</p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="flex items-center gap-1 text-success">
+                        <TrendingUp className="h-3 w-3" />
+                        <span className="text-xs font-medium">+5%</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </section>
+        </FadeUp>
 
         {/* Hologram Hub with Orbital Actions */}
         <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>
