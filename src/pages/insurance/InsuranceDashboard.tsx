@@ -28,42 +28,42 @@ import {
   Cell,
 } from 'recharts';
 
-// Demo data
+// Demo data — 50 members, realistic Medithos pilot usage
 const costData = [
-  { month: 'Jul', actual: 420000, predicted: 450000 },
-  { month: 'Aug', actual: 395000, predicted: 440000 },
-  { month: 'Sep', actual: 380000, predicted: 430000 },
-  { month: 'Oct', actual: 365000, predicted: 425000 },
-  { month: 'Nov', actual: 340000, predicted: 420000 },
-  { month: 'Dec', actual: 320000, predicted: 415000 },
-  { month: 'Jan', actual: 310000, predicted: 410000 },
-  { month: 'Feb', actual: 295000, predicted: 405000 },
+  { month: 'Jul', actual: 28500, predicted: 32000 },
+  { month: 'Aug', actual: 26200, predicted: 31500 },
+  { month: 'Sep', actual: 24800, predicted: 31000 },
+  { month: 'Oct', actual: 22400, predicted: 30500 },
+  { month: 'Nov', actual: 20100, predicted: 30000 },
+  { month: 'Dec', actual: 18600, predicted: 29500 },
+  { month: 'Jan', actual: 17200, predicted: 29000 },
+  { month: 'Feb', actual: 15800, predicted: 28500 },
 ];
 
 const riskDistribution = [
-  { name: 'Low', value: 4200, color: '#10b981' },
-  { name: 'Medium', value: 2800, color: '#f59e0b' },
-  { name: 'High', value: 850, color: '#f97316' },
-  { name: 'Critical', value: 150, color: '#ef4444' },
+  { name: 'Low', value: 28, color: '#10b981' },
+  { name: 'Medium', value: 14, color: '#f59e0b' },
+  { name: 'High', value: 6, color: '#f97316' },
+  { name: 'Critical', value: 2, color: '#ef4444' },
 ];
 
 const claimsData = [
-  { month: 'Jul', claims: 1240, amount: 320000 },
-  { month: 'Aug', claims: 1180, amount: 295000 },
-  { month: 'Sep', claims: 1100, amount: 280000 },
-  { month: 'Oct', claims: 1050, amount: 265000 },
-  { month: 'Nov', claims: 980, amount: 248000 },
-  { month: 'Dec', claims: 920, amount: 235000 },
-  { month: 'Jan', claims: 870, amount: 220000 },
-  { month: 'Feb', claims: 830, amount: 210000 },
+  { month: 'Jul', claims: 18, amount: 14200 },
+  { month: 'Aug', claims: 16, amount: 12800 },
+  { month: 'Sep', claims: 14, amount: 11500 },
+  { month: 'Oct', claims: 12, amount: 9800 },
+  { month: 'Nov', claims: 10, amount: 8400 },
+  { month: 'Dec', claims: 9, amount: 7600 },
+  { month: 'Jan', claims: 8, amount: 6900 },
+  { month: 'Feb', claims: 7, amount: 5800 },
 ];
 
 const recentAlerts = [
-  { id: 1, title: 'Risk spike detected — Member #4521', severity: 'critical', time: '12 min ago', type: 'risk_spike' },
-  { id: 2, title: 'Behavioral drift — Cluster B-7', severity: 'high', time: '1h ago', type: 'behavioral_drift' },
-  { id: 3, title: 'ER pattern detected — Region North', severity: 'high', time: '2h ago', type: 'er_pattern' },
-  { id: 4, title: 'Compliance drop — Corporate Plan #12', severity: 'medium', time: '4h ago', type: 'compliance_drop' },
-  { id: 5, title: 'Chronic destabilization — 3 members', severity: 'medium', time: '6h ago', type: 'chronic_destabilization' },
+  { id: 1, title: 'Risk spike detected — Member #M-032', severity: 'critical', time: '12 min ago', type: 'risk_spike' },
+  { id: 2, title: 'Behavioral drift — Member #M-017', severity: 'high', time: '1h ago', type: 'behavioral_drift' },
+  { id: 3, title: 'ER pattern detected — Member #M-045', severity: 'high', time: '3h ago', type: 'er_pattern' },
+  { id: 4, title: 'Compliance drop — Member #M-008', severity: 'medium', time: '6h ago', type: 'compliance_drop' },
+  { id: 5, title: 'Chronic destabilization — Member #M-041', severity: 'medium', time: '1d ago', type: 'chronic_destabilization' },
 ];
 
 const severityColors: Record<string, string> = {
@@ -151,38 +151,38 @@ const InsuranceDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total Members"
-          value="8,000"
+          value="50"
           subtitle="Active policyholders"
           icon={Users}
           trend="up"
-          trendValue="+3.2%"
+          trendValue="+6.4%"
           color="cyan"
         />
         <KPICard
           title="Active Risk Index"
-          value="34.2"
+          value="28.6"
           subtitle="Score 0-100"
           icon={AlertTriangle}
           trend="down"
-          trendValue="-8.5%"
+          trendValue="-14.2%"
           color="amber"
         />
         <KPICard
           title="Stability Score"
-          value="78.4"
+          value="84.7"
           subtitle="Population health"
           icon={Heart}
           trend="up"
-          trendValue="+4.1%"
+          trendValue="+9.3%"
           color="green"
         />
         <KPICard
           title="Compliance Score"
-          value="82.1"
+          value="88.5"
           subtitle="Behavioral adherence"
           icon={Shield}
           trend="up"
-          trendValue="+2.8%"
+          trendValue="+11.2%"
           color="blue"
         />
       </div>
@@ -190,38 +190,38 @@ const InsuranceDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Claims Reduction"
-          value="18.4%"
-          subtitle="YoY improvement"
+          value="44.6%"
+          subtitle="8-month improvement"
           icon={TrendingDown}
           trend="down"
-          trendValue="-18.4%"
+          trendValue="-44.6%"
           color="green"
         />
         <KPICard
           title="ER Avoidance"
-          value="342"
+          value="23"
           subtitle="Visits prevented YTD"
           icon={Activity}
           trend="down"
-          trendValue="-22.1%"
+          trendValue="-61.2%"
           color="purple"
         />
         <KPICard
           title="Chronic Stabilization"
-          value="71.3%"
+          value="86.4%"
           subtitle="Condition management"
           icon={Heart}
           trend="up"
-          trendValue="+6.7%"
+          trendValue="+18.3%"
           color="cyan"
         />
         <KPICard
           title="Cost Saved"
-          value="€1.2M"
+          value="€98.4K"
           subtitle="Cumulative savings"
           icon={DollarSign}
           trend="down"
-          trendValue="-€240K/mo"
+          trendValue="-€12.3K/mo"
           color="green"
         />
       </div>
@@ -364,10 +364,10 @@ const InsuranceDashboard = () => {
         <h3 className="text-sm font-semibold text-white mb-4">Behavioral Compliance Breakdown</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Screening Adherence', value: 87, color: 'bg-emerald-500' },
-            { label: 'Medication Compliance', value: 74, color: 'bg-blue-500' },
-            { label: 'Appointment Attendance', value: 91, color: 'bg-cyan-500' },
-            { label: 'Lifestyle Program', value: 62, color: 'bg-amber-500' },
+            { label: 'Screening Adherence', value: 94, color: 'bg-emerald-500' },
+            { label: 'Medication Compliance', value: 89, color: 'bg-blue-500' },
+            { label: 'Appointment Attendance', value: 96, color: 'bg-cyan-500' },
+            { label: 'Lifestyle Program', value: 82, color: 'bg-amber-500' },
           ].map((item) => (
             <div key={item.label} className="space-y-2">
               <div className="flex items-center justify-between">
