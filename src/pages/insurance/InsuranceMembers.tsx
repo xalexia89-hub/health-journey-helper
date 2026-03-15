@@ -455,7 +455,7 @@ const InsuranceMembers = () => {
           <TableHeader>
             <TableRow className="border-[#1e2a4a] hover:bg-transparent">
               <TableHead className="text-slate-400 text-xs">Κωδικός</TableHead>
-              <TableHead className="text-slate-400 text-xs">Μέλος</TableHead>
+              <TableHead className="text-slate-400 text-xs">Προφίλ</TableHead>
               <TableHead className="text-slate-400 text-xs hidden md:table-cell">Πρόγραμμα</TableHead>
               <TableHead className="text-slate-400 text-xs">Risk</TableHead>
               <TableHead className="text-slate-400 text-xs hidden lg:table-cell">Stability</TableHead>
