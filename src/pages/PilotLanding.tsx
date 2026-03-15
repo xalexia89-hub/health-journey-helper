@@ -106,7 +106,7 @@ export default function PilotLanding() {
           <section className="container mx-auto px-4 pt-12 pb-8 text-center">
             <div className="animate-fade-in">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-futuristic mb-6">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
                 <span className="text-xs font-medium text-foreground/80">Πιλοτικό Πρόγραμμα — Live</span>
               </div>
 
