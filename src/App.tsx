@@ -143,6 +143,7 @@ const AppContent = () => {
           <Route path="/legal-report" element={<LegalReport />} />
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
+          <Route path="/install" element={<Install />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
