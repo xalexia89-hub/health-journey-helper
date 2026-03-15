@@ -465,12 +465,12 @@ export default function Dashboard() {
                 </Button>
               </CardContent>
             </Card>
-          </section>
+          </FadeUp>
         )}
 
         {/* Recent Notifications */}
         {notifications.length > 0 && (
-          <section className="animate-slide-up" style={{ animationDelay: '400ms' }}>
+          <FadeUp delay={0.7}>
             <Card>
               <CardHeader className="pb-1.5 pt-3 px-3">
                 <CardTitle className="text-xs font-medium flex items-center gap-1.5">
