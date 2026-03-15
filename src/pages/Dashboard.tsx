@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { StaggerContainer, StaggerItem, FadeUp, ScaleIn, MagneticHover } from "@/components/motion/MotionPrimitives";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -199,63 +201,76 @@ export default function Dashboard() {
 
       <main className="px-3 py-4 space-y-4 pb-24">
         {/* Welcome Section with Health Score */}
-        <section className="animate-slide-up">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold text-foreground truncate">
-                Καλώς ήρθες, <span className="text-primary">{firstName}</span> 
-              </h1>
-              <p className="text-sm text-muted-foreground">Πώς νιώθεις σήμερα;</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative shrink-0"
-              onClick={() => navigate('/settings')}
-            >
-              <Bell className="h-5 w-5" />
-              {unreadNotifications > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center">
-                  {unreadNotifications}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          {/* Health Score Card */}
-          <Card className="mt-3 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="relative shrink-0">
-                    <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Shield className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-                      <Sparkles className="h-2.5 w-2.5 text-primary" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Σκορ Υγείας</p>
-                    <p className="text-xl font-bold text-primary">{healthScore}%</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="flex items-center gap-1 text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    <span className="text-xs font-medium">+5%</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
-                </div>
+        <FadeUp delay={0.1}>
+          <section>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl font-bold text-foreground truncate font-display">
+                  Καλώς ήρθες, <span className="text-primary">{firstName}</span> 
+                </h1>
+                <p className="text-sm text-muted-foreground">Πώς νιώθεις σήμερα;</p>
               </div>
-            </CardContent>
-          </Card>
-        </section>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative shrink-0"
+                onClick={() => navigate('/settings')}
+              >
+                <Bell className="h-5 w-5" />
+                {unreadNotifications > 0 && (
+                  <motion.span
+                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                  >
+                    {unreadNotifications}
+                  </motion.span>
+                )}
+              </Button>
+            </div>
+
+            {/* Health Score Card */}
+            <motion.div whileHover={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 300 }}>
+              <Card className="mt-3 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="relative shrink-0">
+                        <motion.div
+                          className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center"
+                          animate={{ boxShadow: ["0 0 0px hsl(190 70% 55% / 0)", "0 0 15px hsl(190 70% 55% / 0.3)", "0 0 0px hsl(190 70% 55% / 0)"] }}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        >
+                          <Shield className="h-5 w-5 text-primary" />
+                        </motion.div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border-2 border-primary flex items-center justify-center">
+                          <Sparkles className="h-2.5 w-2.5 text-primary" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Σκορ Υγείας</p>
+                        <p className="text-xl font-bold text-primary font-display">{healthScore}%</p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="flex items-center gap-1 text-success">
+                        <TrendingUp className="h-3 w-3" />
+                        <span className="text-xs font-medium">+5%</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </section>
+        </FadeUp>
 
         {/* Hologram Hub with Orbital Actions */}
-        <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>
+        <ScaleIn delay={0.3}>
+        <section className="relative flex items-center justify-center">
           <div className="relative w-full max-w-[300px] aspect-square mx-auto">
-            
             {/* Orbital Rings - smaller for mobile */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-[260px] h-[260px] rounded-full border border-primary/20 animate-[spin_30s_linear_infinite]" />
@@ -349,9 +364,10 @@ export default function Dashboard() {
             </TooltipProvider>
           </div>
         </section>
+        </ScaleIn>
 
         {/* Quick Status Cards */}
-        <section className="grid grid-cols-1 gap-2.5 animate-slide-up" style={{ animationDelay: '200ms' }}>
+        <StaggerContainer className="grid grid-cols-1 gap-2.5" delay={0.5}>
           {/* Upcoming Appointments */}
           <Card>
             <CardHeader className="pb-1.5 pt-3 px-3">
@@ -388,7 +404,7 @@ export default function Dashboard() {
           <Card>
             <CardHeader className="pb-1.5 pt-3 px-3">
               <CardTitle className="text-xs font-medium flex items-center gap-1.5">
-                <Pill className="h-3.5 w-3.5 text-orange-500" />
+                <Pill className="h-3.5 w-3.5 text-warning" />
                 Ενεργά Φάρμακα
               </CardTitle>
             </CardHeader>
@@ -416,11 +432,11 @@ export default function Dashboard() {
               </Button>
             </CardContent>
           </Card>
-        </section>
+        </StaggerContainer>
 
         {/* Recent AI Symptom Analyses */}
         {recentSymptoms.length > 0 && (
-          <section className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+          <FadeUp delay={0.6}>
             <Card>
               <CardHeader className="pb-1.5 pt-3 px-3">
                 <CardTitle className="text-xs font-medium flex items-center gap-1.5">
@@ -449,12 +465,12 @@ export default function Dashboard() {
                 </Button>
               </CardContent>
             </Card>
-          </section>
+          </FadeUp>
         )}
 
         {/* Recent Notifications */}
         {notifications.length > 0 && (
-          <section className="animate-slide-up" style={{ animationDelay: '400ms' }}>
+          <FadeUp delay={0.7}>
             <Card>
               <CardHeader className="pb-1.5 pt-3 px-3">
                 <CardTitle className="text-xs font-medium flex items-center gap-1.5">
@@ -481,9 +497,9 @@ export default function Dashboard() {
                         {notification.type === 'appointment' ? (
                           <Calendar className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                         ) : notification.type === 'warning' ? (
-                          <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 shrink-0 mt-0.5" />
+                          <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0 mt-0.5" />
                         ) : (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0 mt-0.5" />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium">{notification.title}</p>
@@ -498,7 +514,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-          </section>
+          </FadeUp>
         )}
       </main>
     </div>

@@ -1,38 +1,27 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import { SplashScreen } from "@/components/SplashScreen";
+import { StaggerContainer, StaggerItem, FadeUp, ScaleIn, MagneticHover } from "@/components/motion/MotionPrimitives";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  ArrowRight,
-  CheckCircle,
-  Shield,
-  Stethoscope,
-  Users,
-  FileText,
-  Activity,
-  Heart,
-  Sparkles,
-  Building2,
-  ChevronDown
+  ArrowRight, CheckCircle, Shield, Stethoscope, Users,
+  Activity, Heart, Sparkles, ChevronDown, Brain, FileHeart, Zap
 } from "lucide-react";
 
 export default function PilotLanding() {
   const navigate = useNavigate();
   const [showSplash, setShowSplash] = useState(false);
-  const [enrollmentCount, setEnrollmentCount] = useState<number>(0);
   const [maxUsers, setMaxUsers] = useState<number>(100);
   const [isPilotFull, setIsPilotFull] = useState(false);
 
   useEffect(() => {
-    // Show splash only once per session
     const seen = sessionStorage.getItem("medithos_splash_seen");
-    if (!seen) {
-      setShowSplash(true);
-    }
+    if (!seen) setShowSplash(true);
     fetchPilotStatus();
   }, []);
 
@@ -45,33 +34,20 @@ export default function PilotLanding() {
     try {
       const { data: countData } = await supabase.rpc('get_pilot_enrollment_count');
       const { data: settingsData } = await supabase
-        .from('pilot_settings')
-        .select('setting_value')
-        .eq('setting_key', 'max_pilot_users')
-        .single();
-
-      const count = countData || 0;
+        .from('pilot_settings').select('setting_value').eq('setting_key', 'max_pilot_users').single();
       const max = settingsData?.setting_value ? parseInt(settingsData.setting_value) : 100;
-      setEnrollmentCount(count);
       setMaxUsers(max);
-      setIsPilotFull(count >= max);
+      setIsPilotFull((countData || 0) >= max);
     } catch (error) {
       console.error('Error fetching pilot status:', error);
     }
   };
 
   const highlights = [
-    { icon: Activity, label: "AI Symptom Analysis", desc: "Έξυπνη ανάλυση συμπτωμάτων" },
-    { icon: Stethoscope, label: "Doctor Network", desc: "Δίκτυο πιστοποιημένων γιατρών" },
-    { icon: Shield, label: "GDPR Compliant", desc: "Πλήρης προστασία δεδομένων" },
-    { icon: Heart, label: "Health Records", desc: "Ψηφιακός φάκελος υγείας" },
-  ];
-
-  const trustBadges = [
-    "50 Πραγματικοί Χρήστες",
-    "4 Αδειοδοτημένοι Γιατροί",
-    "Νομική Γνωμοδότηση",
-    "GDPR Συμμόρφωση",
+    { icon: Brain, label: "AI Ανάλυση", desc: "Έξυπνη αξιολόγηση συμπτωμάτων με τεχνητή νοημοσύνη", gradient: "from-primary/20 to-accent/10" },
+    { icon: Stethoscope, label: "Δίκτυο Γιατρών", desc: "Σύνδεση με πιστοποιημένους ειδικούς", gradient: "from-accent/20 to-primary/10" },
+    { icon: Shield, label: "GDPR Ready", desc: "Πλήρης προστασία ιατρικών δεδομένων", gradient: "from-neon-green/15 to-primary/10" },
+    { icon: FileHeart, label: "Ψηφιακός Φάκελος", desc: "Ολοκληρωμένο ιατρικό ιστορικό", gradient: "from-health-blue/15 to-accent/10" },
   ];
 
   return (
@@ -79,161 +55,241 @@ export default function PilotLanding() {
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
 
       <div className="min-h-screen bg-background relative overflow-hidden">
-        {/* Ambient background */}
-        <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/3 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
-          <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] rounded-full bg-accent/5 blur-[100px]" />
+        {/* Premium ambient background */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          <motion.div
+            className="absolute -top-1/4 -left-1/4 w-[800px] h-[800px] rounded-full bg-primary/10 blur-[150px]"
+            animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute -bottom-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]"
+            animate={{ x: [0, -25, 0], y: [0, 30, 0] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Subtle grid */}
+          <div className="absolute inset-0 bg-grid-futuristic opacity-20" />
         </div>
 
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
+        <motion.header
+          className="sticky top-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border/30"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <Logo size="md" linkTo={undefined} />
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 gap-1 text-[10px] px-2 py-0.5">
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1 text-[10px] px-2.5 py-1 font-display">
                 <Sparkles className="h-2.5 w-2.5" />
                 PILOT
               </Badge>
-              <Button size="sm" variant="ghost" onClick={() => navigate('/auth')} className="text-sm">
+              <Button size="sm" variant="ghost" onClick={() => navigate('/auth')} className="text-sm font-medium">
                 Σύνδεση
               </Button>
             </div>
           </div>
-        </header>
+        </motion.header>
 
         <main className="relative z-10">
-          {/* Hero Section */}
-          <section className="container mx-auto px-4 pt-12 pb-8 text-center">
-            <div className="animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-futuristic mb-6">
-                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                <span className="text-xs font-medium text-foreground/80">Πιλοτικό Πρόγραμμα — Live</span>
+          {/* Hero */}
+          <section className="container mx-auto px-4 pt-16 pb-10 text-center">
+            <FadeUp delay={0.1}>
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-futuristic mb-8">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-success"
+                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className="text-xs font-medium text-foreground/80 font-display tracking-wide">
+                  Πιλοτικό Πρόγραμμα — Live
+                </span>
               </div>
+            </FadeUp>
 
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            <FadeUp delay={0.2}>
+              <h1 className="text-4xl md:text-6xl font-bold leading-[1.1] mb-5 font-display">
                 Η Υγεία σας,{" "}
-                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Απλοποιημένη
+                <span className="relative">
+                  <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                    Απλοποιημένη
+                  </span>
+                  <motion.span
+                    className="absolute -bottom-1 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-full"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  />
                 </span>
               </h1>
+            </FadeUp>
 
-              <p className="text-muted-foreground text-base md:text-lg max-w-md mx-auto mb-8 leading-relaxed">
+            <FadeUp delay={0.3}>
+              <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto mb-10 leading-relaxed">
                 Το πρώτο AI σύστημα πλοήγησης υγείας στην Ελλάδα. 
                 Βρείτε τον σωστό γιατρό, αναλύστε τα συμπτώματά σας, 
                 διαχειριστείτε το ιατρικό σας ιστορικό.
               </p>
-            </div>
+            </FadeUp>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col gap-3 max-w-sm mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-              <Button 
-                size="lg" 
-                onClick={() => navigate(isPilotFull ? '/pilot/waitlist' : '/pilot/enroll')}
-                className="h-14 text-base font-semibold rounded-xl gradient-futuristic hover:shadow-neon border-0 transition-all duration-300"
-              >
-                {isPilotFull ? "Εγγραφή σε Λίστα Αναμονής" : "Δωρεάν Συμμετοχή"}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => navigate('/auth')}
-                className="h-12 rounded-xl border-border/60 hover:border-primary/40 transition-all"
-              >
-                Έχω ήδη λογαριασμό
-              </Button>
-            </div>
-
-            {/* Progress bar */}
-            <div className="max-w-xs mx-auto mt-8 animate-fade-in" style={{ animationDelay: '400ms' }}>
-              <div className="flex justify-between text-xs mb-1.5 text-muted-foreground">
-                <span>Εγγεγραμμένοι</span>
-                <span className="font-medium text-foreground">50/{maxUsers}</span>
-              </div>
-              <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 rounded-full"
-                  style={{ width: `${Math.min((50 / maxUsers) * 100, 100)}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-10 animate-bounce">
-              <ChevronDown className="h-5 w-5 text-muted-foreground mx-auto" />
-            </div>
-          </section>
-
-          {/* Features Grid */}
-          <section className="container mx-auto px-4 py-10">
-            <div className="grid grid-cols-2 gap-3">
-              {highlights.map((item, index) => (
-                <Card
-                  key={item.label}
-                  className="glass border-border/40 hover:border-primary/30 transition-all duration-300 animate-fade-in"
-                  style={{ animationDelay: `${300 + index * 100}ms` }}
+            {/* CTA */}
+            <FadeUp delay={0.4}>
+              <div className="flex flex-col gap-3 max-w-sm mx-auto">
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button 
+                    size="lg" 
+                    onClick={() => navigate(isPilotFull ? '/pilot/waitlist' : '/pilot/enroll')}
+                    className="w-full h-14 text-base font-semibold rounded-2xl gradient-futuristic hover:shadow-neon border-0 transition-shadow duration-500 font-display"
+                  >
+                    {isPilotFull ? "Λίστα Αναμονής" : "Δωρεάν Συμμετοχή"}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </motion.div>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={() => navigate('/auth')}
+                  className="h-12 rounded-2xl border-border/50 hover:border-primary/40 transition-all font-display"
                 >
-                  <CardContent className="p-4">
-                    <div className="p-2.5 rounded-xl bg-primary/10 w-fit mb-3">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-sm text-foreground mb-1">{item.label}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  Έχω ήδη λογαριασμό
+                </Button>
+              </div>
+            </FadeUp>
+
+            {/* Enrollment progress */}
+            <FadeUp delay={0.5}>
+              <div className="max-w-xs mx-auto mt-10">
+                <div className="flex justify-between text-xs mb-2 text-muted-foreground">
+                  <span>Εγγεγραμμένοι</span>
+                  <span className="font-semibold text-foreground font-display">50/{maxUsers}</span>
+                </div>
+                <div className="h-1 bg-muted/40 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min((50 / maxUsers) * 100, 100)}%` }}
+                    transition={{ delay: 1, duration: 1.2, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
+            </FadeUp>
+
+            <motion.div
+              className="mt-12"
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ChevronDown className="h-5 w-5 text-muted-foreground/50 mx-auto" />
+            </motion.div>
           </section>
+
+          {/* Features */}
+          <section className="container mx-auto px-4 py-12">
+            <StaggerContainer className="grid grid-cols-2 gap-3" delay={0.6}>
+              {highlights.map((item) => (
+                <StaggerItem key={item.label}>
+                  <MagneticHover>
+                    <Card className={`bg-gradient-to-br ${item.gradient} border-border/30 backdrop-blur-sm hover:border-primary/30 transition-colors duration-500 h-full`}>
+                      <CardContent className="p-4">
+                        <div className="p-2 rounded-xl bg-background/40 w-fit mb-3 backdrop-blur-sm">
+                          <item.icon className="h-5 w-5 text-primary" />
+                        </div>
+                        <h3 className="font-semibold text-sm text-foreground mb-1 font-display">{item.label}</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                      </CardContent>
+                    </Card>
+                  </MagneticHover>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </section>
+
+          {/* Stats banner */}
+          <FadeUp delay={0.2}>
+            <section className="container mx-auto px-4 py-6">
+              <div className="flex justify-around py-5 px-4 rounded-2xl glass-futuristic">
+                {[
+                  { value: "50+", label: "Χρήστες" },
+                  { value: "4", label: "Γιατροί" },
+                  { value: "24/7", label: "AI Πρόσβαση" },
+                ].map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <p className="text-2xl font-bold text-primary font-display">{stat.value}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </FadeUp>
 
           {/* Doctor CTA */}
-          <section className="container mx-auto px-4 py-6">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/8 to-transparent overflow-hidden">
-              <CardContent className="p-5">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl gradient-primary shadow-glow shrink-0">
-                    <Stethoscope className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Είστε Γιατρός;</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Γίνετε σύμβουλος πλοήγησης υγείας — χωρίς σχέση γιατρού-ασθενή.
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate('/pilot/doctor-signup')}
-                      className="border-primary/30 hover:bg-primary/10"
+          <FadeUp delay={0.1}>
+            <section className="container mx-auto px-4 py-6">
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-4">
+                    <motion.div
+                      className="p-3 rounded-2xl gradient-primary shrink-0"
+                      whileHover={{ rotate: [0, -5, 5, 0] }}
+                      transition={{ duration: 0.5 }}
                     >
-                      Εγγραφή Συμβούλου
-                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                    </Button>
+                      <Stethoscope className="h-6 w-6 text-primary-foreground" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base mb-1 font-display">Είστε Γιατρός;</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Γίνετε σύμβουλος πλοήγησης — χωρίς σχέση γιατρού-ασθενή.
+                      </p>
+                      <motion.div whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 300 }}>
+                        <Button 
+                          variant="outline" size="sm"
+                          onClick={() => navigate('/pilot/doctor-signup')}
+                          className="border-primary/30 hover:bg-primary/10 font-display"
+                        >
+                          Εγγραφή Συμβούλου
+                          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                        </Button>
+                      </motion.div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
+                </CardContent>
+              </Card>
+            </section>
+          </FadeUp>
 
-          {/* Trust Section */}
-          <section className="container mx-auto px-4 py-10">
-            <p className="text-center text-xs text-muted-foreground mb-4 uppercase tracking-wider">Εγγυήσεις Pilot</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {trustBadges.map((badge) => (
-                <Badge key={badge} variant="secondary" className="gap-1.5 px-3 py-1 text-xs bg-secondary/60">
-                  <CheckCircle className="h-3 w-3 text-primary" />
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-          </section>
+          {/* Trust */}
+          <FadeUp delay={0.1}>
+            <section className="container mx-auto px-4 py-10">
+              <p className="text-center text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.2em] font-display">
+                Εγγυήσεις & Πιστοποιήσεις
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {["50 Πραγματικοί Χρήστες", "4 Αδειοδοτημένοι Γιατροί", "Νομική Γνωμοδότηση", "GDPR Συμμόρφωση"].map((badge) => (
+                  <Badge key={badge} variant="secondary" className="gap-1.5 px-3 py-1.5 text-[11px] bg-secondary/50 border-border/30">
+                    <CheckCircle className="h-3 w-3 text-primary" />
+                    {badge}
+                  </Badge>
+                ))}
+              </div>
+            </section>
+          </FadeUp>
 
           {/* Footer */}
-          <footer className="container mx-auto px-4 py-8 border-t border-border/30">
-            <div className="flex justify-center gap-4 text-xs text-muted-foreground mb-4">
-              <Link to="/terms" className="hover:text-primary transition-colors">Όροι Χρήσης</Link>
-              <Link to="/privacy" className="hover:text-primary transition-colors">Απόρρητο</Link>
-              <Link to="/evaluation" className="hover:text-primary transition-colors">Αξιολόγηση</Link>
-              <Link to="/install" className="hover:text-primary transition-colors">Εγκατάσταση</Link>
+          <footer className="container mx-auto px-4 py-8 border-t border-border/20">
+            <div className="flex justify-center gap-5 text-xs text-muted-foreground mb-4">
+              {[
+                { to: "/terms", label: "Όροι" },
+                { to: "/privacy", label: "Απόρρητο" },
+                { to: "/evaluation", label: "Αξιολόγηση" },
+                { to: "/install", label: "Εγκατάσταση" },
+              ].map((link) => (
+                <Link key={link.to} to={link.to} className="hover:text-primary transition-colors">
+                  {link.label}
+                </Link>
+              ))}
             </div>
-            <p className="text-[10px] text-center text-muted-foreground/60 max-w-sm mx-auto">
+            <p className="text-[10px] text-center text-muted-foreground/50 max-w-sm mx-auto">
               Ιατρική Αποποίηση: Αυτή η εφαρμογή δεν παρέχει ιατρικές συμβουλές, διάγνωση ή θεραπεία.
             </p>
           </footer>

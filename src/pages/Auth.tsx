@@ -121,7 +121,7 @@ export default function Auth() {
       <div className="relative z-10 flex-1 flex flex-col justify-center px-6 pb-8">
         <div className="mb-8 text-center animate-fade-in">
           <Logo size="lg" className="justify-center mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground font-display">
             {isSignUp ? "Δημιουργία λογαριασμού" : "Καλώς ήρθατε"}
           </h1>
           <p className="text-muted-foreground mt-1">
