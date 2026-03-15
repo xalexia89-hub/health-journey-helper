@@ -156,8 +156,8 @@ const MemberDetailDialog = ({ member, open, onClose, aggregate }: { member: Memb
           {/* Basic info */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Ονοματεπώνυμο</p>
-              <p className="text-sm text-white font-medium mt-0.5">{member.full_name}</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Κωδικός Μέλους</p>
+              <p className="text-sm text-white font-medium mt-0.5">{member.member_code}</p>
             </div>
             <div>
               <p className="text-[10px] text-slate-500 uppercase tracking-wider">Ηλικία / Φύλο</p>
