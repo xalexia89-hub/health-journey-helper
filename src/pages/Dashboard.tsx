@@ -404,7 +404,7 @@ export default function Dashboard() {
           <Card>
             <CardHeader className="pb-1.5 pt-3 px-3">
               <CardTitle className="text-xs font-medium flex items-center gap-1.5">
-                <Pill className="h-3.5 w-3.5 text-orange-500" />
+                <Pill className="h-3.5 w-3.5 text-warning" />
                 Ενεργά Φάρμακα
               </CardTitle>
             </CardHeader>
