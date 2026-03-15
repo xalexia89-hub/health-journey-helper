@@ -268,9 +268,9 @@ export default function Dashboard() {
         </FadeUp>
 
         {/* Hologram Hub with Orbital Actions */}
-        <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>
+        <ScaleIn delay={0.3}>
+        <section className="relative flex items-center justify-center">
           <div className="relative w-full max-w-[300px] aspect-square mx-auto">
-            
             {/* Orbital Rings - smaller for mobile */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-[260px] h-[260px] rounded-full border border-primary/20 animate-[spin_30s_linear_infinite]" />
