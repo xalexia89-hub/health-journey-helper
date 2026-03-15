@@ -364,10 +364,10 @@ const InsuranceDashboard = () => {
         <h3 className="text-sm font-semibold text-white mb-4">Behavioral Compliance Breakdown</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Screening Adherence', value: 87, color: 'bg-emerald-500' },
-            { label: 'Medication Compliance', value: 74, color: 'bg-blue-500' },
-            { label: 'Appointment Attendance', value: 91, color: 'bg-cyan-500' },
-            { label: 'Lifestyle Program', value: 62, color: 'bg-amber-500' },
+            { label: 'Screening Adherence', value: 94, color: 'bg-emerald-500' },
+            { label: 'Medication Compliance', value: 89, color: 'bg-blue-500' },
+            { label: 'Appointment Attendance', value: 96, color: 'bg-cyan-500' },
+            { label: 'Lifestyle Program', value: 82, color: 'bg-amber-500' },
           ].map((item) => (
             <div key={item.label} className="space-y-2">
               <div className="flex items-center justify-between">
