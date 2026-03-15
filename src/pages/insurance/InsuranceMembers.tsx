@@ -476,7 +476,7 @@ const InsuranceMembers = () => {
                 <TableCell>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <p className="text-sm text-white font-medium">{member.full_name}</p>
+                      <p className="text-sm text-white font-medium">{member.gender === 'M' ? 'Α' : 'Γ'} — {new Date().getFullYear() - new Date(member.date_of_birth).getFullYear()} ετών</p>
                       {(member as any).user_id && (
                         <Link className="h-3 w-3 text-cyan-400" />
                       )}
