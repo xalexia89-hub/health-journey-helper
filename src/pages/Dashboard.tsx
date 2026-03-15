@@ -364,9 +364,10 @@ export default function Dashboard() {
             </TooltipProvider>
           </div>
         </section>
+        </ScaleIn>
 
         {/* Quick Status Cards */}
-        <section className="grid grid-cols-1 gap-2.5 animate-slide-up" style={{ animationDelay: '200ms' }}>
+        <StaggerContainer className="grid grid-cols-1 gap-2.5" delay={0.5}>
           {/* Upcoming Appointments */}
           <Card>
             <CardHeader className="pb-1.5 pt-3 px-3">
