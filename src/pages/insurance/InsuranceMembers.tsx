@@ -418,7 +418,7 @@ const InsuranceMembers = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
           <Input
-            placeholder="Αναζήτηση ονόματος ή κωδικού..."
+            placeholder="Αναζήτηση κωδικού μέλους..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="pl-10 bg-[#0f1629] border-[#1e2a4a] text-white placeholder:text-slate-600"
