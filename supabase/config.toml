@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.insurance-aggregate]
 verify_jwt = false
+
+[functions.preventive-advisor]
+verify_jwt = false
