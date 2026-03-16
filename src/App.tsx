@@ -88,22 +88,23 @@ const UNLOCK_CODE = "medithos2024";
 
 const AppContent = () => {
   const [searchParams] = useSearchParams();
-  // DEVELOPMENT MODE: Coming Soon gate disabled
-  // To re-enable, uncomment the unlock logic below
-  const [isUnlocked] = useState(true);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
-  // useEffect(() => {
-  //   const unlockParam = searchParams.get("unlock");
-  //   if (unlockParam === UNLOCK_CODE) {
-  //     localStorage.setItem("medithos_unlocked", "true");
-  //     setIsUnlocked(true);
-  //   } else {
-  //     const stored = localStorage.getItem("medithos_unlocked");
-  //     setIsUnlocked(stored === "true");
-  //   }
-  // }, [searchParams]);
+  useEffect(() => {
+    const unlockParam = searchParams.get("unlock");
+    if (unlockParam === UNLOCK_CODE) {
+      localStorage.setItem("medithos_unlocked", "true");
+      setIsUnlocked(true);
+    } else {
+      const stored = localStorage.getItem("medithos_unlocked");
+      setIsUnlocked(stored === "true");
+    }
+  }, [searchParams]);
 
-  // Full app when unlocked
+  if (!isUnlocked) {
+    return <ComingSoon />;
+  }
+
   return (
     <LanguageProvider>
       <AuthProvider>
