@@ -92,12 +92,15 @@ const AppContent = () => {
 
   useEffect(() => {
     const unlockParam = searchParams.get("unlock");
+    const storedUnlockCode = localStorage.getItem("medithos_unlock_code");
+
     if (unlockParam === UNLOCK_CODE) {
-      localStorage.setItem("medithos_unlocked", "true");
+      localStorage.setItem("medithos_unlock_code", UNLOCK_CODE);
+      localStorage.removeItem("medithos_unlocked");
       setIsUnlocked(true);
     } else {
-      const stored = localStorage.getItem("medithos_unlocked");
-      setIsUnlocked(stored === "true");
+      localStorage.removeItem("medithos_unlocked");
+      setIsUnlocked(storedUnlockCode === UNLOCK_CODE);
     }
   }, [searchParams]);
 
