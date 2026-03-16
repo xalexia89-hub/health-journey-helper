@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,30 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    // === AUTH VALIDATION ===
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: "Απαιτείται σύνδεση" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Μη έγκυρη σύνδεση" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { message, context, conversationHistory } = await req.json();
 
     if (!message || typeof message !== "string" || message.length > 5000) {
@@ -77,11 +52,7 @@ ${context ? JSON.stringify(context, null, 2) : 'Δεν υπάρχουν διαθ
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
-      return new Response(JSON.stringify({ error: "Σφάλμα διαμόρφωσης" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     // Build messages array with conversation history
@@ -131,10 +102,7 @@ ${context ? JSON.stringify(context, null, 2) : 'Δεν υπάρχουν διαθ
       }
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "Σφάλμα επικοινωνίας με AI" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      throw new Error(`AI gateway error (${response.status})`);
     }
 
     const data = await response.json();
@@ -145,7 +113,7 @@ ${context ? JSON.stringify(context, null, 2) : 'Δεν υπάρχουν διαθ
     });
   } catch (error) {
     console.error("Preventive advisor error:", error);
-    return new Response(JSON.stringify({ error: "Προέκυψε σφάλμα. Παρακαλώ δοκιμάστε ξανά." }), {
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
