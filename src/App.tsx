@@ -84,7 +84,7 @@ import InsuranceSettings from "./pages/insurance/InsuranceSettings";
 
 const queryClient = new QueryClient();
 
-const UNLOCK_CODE = "medithos2024";
+const UNLOCK_CODE = "medithos2026pilot";
 
 const AppContent = () => {
   const [searchParams] = useSearchParams();
