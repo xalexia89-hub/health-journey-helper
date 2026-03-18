@@ -55,6 +55,7 @@ import DoctorSignup from "./pages/DoctorSignup";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
 import Install from "./pages/Install";
+import SystemGovernance from "./pages/SystemGovernance";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
