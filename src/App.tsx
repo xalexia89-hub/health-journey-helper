@@ -145,6 +145,7 @@ const AppContent = () => {
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/system" element={<SystemGovernance />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
