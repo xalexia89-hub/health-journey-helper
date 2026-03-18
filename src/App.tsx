@@ -55,6 +55,7 @@ import DoctorSignup from "./pages/DoctorSignup";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
 import Install from "./pages/Install";
+import SystemGovernance from "./pages/SystemGovernance";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -144,6 +145,7 @@ const AppContent = () => {
           <Route path="/advisor" element={<AdvisorProfile />} />
           <Route path="/symptoms" element={<SymptomAssistant />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/system" element={<SystemGovernance />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
