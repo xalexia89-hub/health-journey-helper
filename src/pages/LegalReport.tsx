@@ -11,22 +11,42 @@ export default function LegalReport() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
-      const html2pdf = (await import('html2pdf.js')).default;
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
       const element = document.getElementById('legal-report-content');
-      if (!element) return;
+      if (!element) {
+        console.error('Element not found');
+        setIsGenerating(false);
+        return;
+      }
+
+      const cloned = element.cloneNode(true) as HTMLElement;
+      cloned.style.width = '210mm';
+      cloned.style.background = 'white';
+      cloned.style.color = '#1a1a1a';
+      document.body.appendChild(cloned);
       
       const opt = {
-        margin: [18, 20, 18, 20],
+        margin: [15, 15, 15, 15],
         filename: 'Medithos_Legal_Report_2026.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { 
+          scale: 1.5, 
+          useCORS: true, 
+          letterRendering: true,
+          scrollY: 0,
+          windowWidth: 800,
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        pagebreak: { mode: ['css', 'legacy'] }
       };
       
-      await html2pdf().set(opt).from(element).save();
+      await html2pdf().set(opt).from(cloned).save();
+      document.body.removeChild(cloned);
     } catch (error) {
       console.error('PDF generation error:', error);
+      // Fallback to browser print
+      window.print();
     } finally {
       setIsGenerating(false);
     }
