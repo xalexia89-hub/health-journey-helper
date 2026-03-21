@@ -749,10 +749,6 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                 </div>
               ))}
               
-              {/* Triage Alert */}
-              {triageInfo && (
-                <TriageAlert triage={triageInfo} />
-              )}
 
               {/* Inline Specialty Recommendation Card */}
               {showProviderSuggestions && specialtyRecommendation && !showSummary && (
