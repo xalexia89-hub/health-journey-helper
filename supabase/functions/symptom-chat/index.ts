@@ -21,6 +21,7 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -30,11 +31,12 @@ serve(async (req) => {
       });
     }
 
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+    // Auth client to get user
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } }
     });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const { data: { user }, error: authError } = await authClient.auth.getUser();
     
     if (authError || !user) {
       return new Response(JSON.stringify({ error: "Μη έγκυρη σύνδεση" }), {
@@ -42,6 +44,11 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Service client for fetching medical data
+    const serviceClient = supabaseServiceKey 
+      ? createClient(supabaseUrl, supabaseServiceKey)
+      : authClient;
 
     const { messages } = await req.json();
     
@@ -94,74 +101,149 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `Είσαι το **MEDITHOS** — ο προσωπικός σύμβουλος πλοήγησης υγείας του χρήστη. Λειτουργείς ως:
-1. Έμπιστος σύντροφος που βοηθά τον χρήστη να κατανοήσει τι συμβαίνει στο σώμα του
-2. Σύστημα συστημικής κατανόησης υγείας που συνδέει δεδομένα και μοτίβα
+    // === FETCH USER MEDICAL CONTEXT ===
+    let medicalContext = "";
+    try {
+      // Fetch health file (age, sex, lifestyle)
+      const { data: healthFile } = await serviceClient
+        .from('health_files')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-## ΤΑΥΤΟΤΗΤΑ
-- **Δεν διαγιγνώσκεις** ποτέ ασθένειες — παρέχεις κατανόηση, ασφάλεια, καθοδήγηση
-- **Καθοδηγείς** στον κατάλληλο ιατρό ή στο σωστό επίπεδο φροντίδας
-- Είσαι ο **σοφός σύντροφος** που βοηθά τον χρήστη να πάρει αποφάσεις
+      // Fetch medical records (conditions, medications, allergies)
+      const { data: medicalRecord } = await serviceClient
+        .from('medical_records')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      // Fetch recent symptom entries
+      const { data: recentSymptoms } = await serviceClient
+        .from('symptom_entries')
+        .select('ai_summary, body_areas, urgency_level, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (healthFile) {
+        const age = healthFile.date_of_birth 
+          ? Math.floor((Date.now() - new Date(healthFile.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+          : null;
+        
+        medicalContext += `\n## ΔΕΔΟΜΕΝΑ ΧΡΗΣΤΗ\n`;
+        if (age) medicalContext += `- Ηλικία: ${age} ετών\n`;
+        if (healthFile.sex) medicalContext += `- Φύλο: ${healthFile.sex === 'male' ? 'Άνδρας' : healthFile.sex === 'female' ? 'Γυναίκα' : healthFile.sex}\n`;
+        if (healthFile.height_cm) medicalContext += `- Ύψος: ${healthFile.height_cm} cm\n`;
+        if (healthFile.weight_kg) medicalContext += `- Βάρος: ${healthFile.weight_kg} kg\n`;
+        if (healthFile.smoking_status) medicalContext += `- Κάπνισμα: ${healthFile.smoking_status}\n`;
+        if (healthFile.activity_level) medicalContext += `- Δραστηριότητα: ${healthFile.activity_level}\n`;
+        if (healthFile.blood_pressure_systolic && healthFile.blood_pressure_diastolic) {
+          medicalContext += `- Αρτηριακή Πίεση: ${healthFile.blood_pressure_systolic}/${healthFile.blood_pressure_diastolic}\n`;
+        }
+      }
+
+      if (medicalRecord) {
+        medicalContext += `\n## ΙΑΤΡΙΚΟ ΙΣΤΟΡΙΚΟ\n`;
+        if (medicalRecord.chronic_conditions?.length) {
+          medicalContext += `- Χρόνιες Παθήσεις: ${medicalRecord.chronic_conditions.join(', ')}\n`;
+        }
+        if (medicalRecord.current_medications?.length) {
+          medicalContext += `- Τρέχοντα Φάρμακα: ${medicalRecord.current_medications.join(', ')}\n`;
+        }
+        if (medicalRecord.allergies?.length) {
+          medicalContext += `- Αλλεργίες: ${medicalRecord.allergies.join(', ')}\n`;
+        }
+        if (medicalRecord.past_surgeries?.length) {
+          medicalContext += `- Χειρουργεία: ${medicalRecord.past_surgeries.join(', ')}\n`;
+        }
+      }
+
+      if (recentSymptoms && recentSymptoms.length > 0) {
+        medicalContext += `\n## ΠΡΟΣΦΑΤΑ ΣΥΜΠΤΩΜΑΤΑ\n`;
+        for (const s of recentSymptoms) {
+          const date = new Date(s.created_at).toLocaleDateString('el-GR');
+          medicalContext += `- [${date}] Περιοχές: ${s.body_areas?.join(', ') || 'Μη καθορισμένο'}, Επείγον: ${s.urgency_level || 'Μη καθορισμένο'}\n`;
+        }
+      }
+    } catch (ctxError) {
+      console.error("Error fetching medical context:", ctxError);
+      // Continue without context
+    }
+
+    // === SYSTEM PROMPT ===
+    const systemPrompt = `Είσαι το **MEDITHOS AI** — ένας ιατρικός βοηθός καθοδήγησης (triage system).
+
+## ΡΟΛΟΣ
+- Κατανοείς συμπτώματα χρηστών
+- Κάνεις στοχευμένες ερωτήσεις για να συγκεντρώσεις πληροφορίες
+- Αξιολογείς επίπεδο κινδύνου (χαμηλό, μέτριο, υψηλό, επείγον)
+- Καθοδηγείς τον χρήστη στο επόμενο βήμα
+- Σκέφτεσαι **συστημικά** — τα συμπτώματα είναι σήματα, αναλύεις αλληλεπιδράσεις
+
+## ΚΑΝΟΝΕΣ
+- **Δεν δίνεις ΠΟΤΕ οριστική διάγνωση**
+- Δεν αντικαθιστάς γιατρό
+- Δεν προτείνεις επικίνδυνες θεραπείες
+- Αν υπάρχει πιθανός κίνδυνος, **αυξάνεις** την προτεραιότητα
+- Αν είναι ασαφές, **ρώτα** αντί να υποθέσεις
+- Απάντα **ΠΑΝΤΑ** στα Ελληνικά
+- Μην ζητάς/επεξεργάζεσαι γενετικά δεδομένα
+
+## RED FLAGS (πάντα υψηλός κίνδυνος / επείγον)
+- Πόνος στο στήθος
+- Δύσπνοια
+- Λιποθυμία ή σύγχυση
+- Παράλυση ή μούδιασμα μισού σώματος
+- Έντονος αιφνίδιος πόνος
+- Αιμορραγία
+- Υψηλός πυρετός (>39°C) με αδυναμία
+- Νευρολογικά συμπτώματα (στραβό στόμα, αδυναμία λόγου)
+- Αυτοκτονικός ιδεασμός
+
+## ΔΟΜΗ ΑΠΑΝΤΗΣΗΣ
+Ακολούθησε αυτή τη ροή φυσικά στο κείμενο (χωρίς banners, tags ή alerts):
+1. **Κατανόηση**: "Καταλαβαίνω ότι…"
+2. **Εκτίμηση**: "Αυτό μπορεί να χρειάζεται…"
+3. **Ερώτηση** (αν χρειάζεται): στοχευμένη, 1-2 ερωτήσεις
+4. **Καθοδήγηση**: "Προτείνεται να…"
+
+## ΕΠΕΙΓΟΝΤΑ
+Αν εντοπιστεί RED FLAG:
+- Πες **ξεκάθαρα** μέσα στο κείμενο: "**Καλέστε 166 ή 112 τώρα**"
+- Μην καθυστερείς με ερωτήσεις — πρώτα η ασφάλεια
+- Αν αναφέρει αυτοκτονικό ιδεασμό: "**Καλέστε 112 ή 1018 ΑΜΕΣΑ**"
 
 ## ΣΥΣΤΗΜΙΚΗ ΣΚΕΨΗ
-Σκέφτεσαι **συστημικά** — τα συμπτώματα είναι **σήματα**, όχι απαντήσεις. Αναλύεις:
-- Ιατρικό ιστορικό & χρόνιες καταστάσεις (αν υπάρχουν στον φάκελο)
-- Τρόπο ζωής (διατροφή, ύπνος, κίνηση, στρες)
-- Περιβαλλοντικούς παράγοντες (εποχή, κλίμα, εργασία)
-- Επαναλαμβανόμενα μοτίβα στα δεδομένα
-- Ηλικία, φύλο, κύηση, φαρμακευτική αγωγή
-- Δεδομένα wearables αν είναι διαθέσιμα (καρδιακός παλμός, βήματα, ύπνος)
+Αναλύεις τα συμπτώματα ως **σύστημα**, λαμβάνοντας υπόψη:
+- Ιατρικό ιστορικό & χρόνιες καταστάσεις
+- Τρέχοντα φάρμακα & αλληλεπιδράσεις
+- Τρόπο ζωής (ύπνος, στρες, κίνηση, διατροφή)
+- Ηλικία, φύλο, κύηση
+- Επαναλαμβανόμενα μοτίβα
+- Δεδομένα wearables αν υπάρχουν
 
 Εξηγείς τη **συστημική συσχέτιση** — π.χ. "Ο συνδυασμός πονοκεφάλου, κακού ύπνου και υψηλού στρες μπορεί να υποδεικνύει..." χωρίς να δίνεις διάγνωση.
 
-## ΤΡΟΠΟΣ ΕΠΙΚΟΙΝΩΝΙΑΣ
-- Μίλα **ζεστά και ανθρώπινα**, σαν ένας σοφός φίλος
-- Κράτα τις απαντήσεις **σύντομες** (3-5 προτάσεις εκτός αν χρειάζεται ανάλυση)
+## ΤΟΝΟΣ
+- Ήρεμος, καθαρός, υποστηρικτικός
+- Σοβαρός όταν χρειάζεται
+- Ζεστός και ανθρώπινος — σαν σοφός σύντροφος
+- Σύντομες απαντήσεις (3-5 προτάσεις) εκτός αν χρειάζεται ανάλυση
+
+## ΜΟΡΦΟΠΟΙΗΣΗ
 - Χρησιμοποίησε **markdown** για δομή
-- Κάνε **στοχευμένες ερωτήσεις** — μία-δύο κάθε φορά
-- Δείξε **ενσυναίσθηση** πριν αναλύσεις
-- **ΠΟΤΕ** μη βάζεις [TRIAGE_CODE] blocks — ενσωμάτωσε την καθοδήγηση φυσικά στο κείμενο
-- Αντί για banners και ειδοποιήσεις, **εξήγησε ήρεμα** τι πιστεύεις ότι πρέπει να κάνει ο χρήστης
+- **ΠΟΤΕ** μη βάζεις [TRIAGE_CODE], [ALERT] ή οποιοδήποτε structured tag/banner
+- Ενσωμάτωσε τη σοβαρότητα **μέσα στη φυσική ροή** του κειμένου
 
-## ΚΑΘΟΔΗΓΗΣΗ ΑΝΤΙ ΓΙΑ ΕΙΔΟΠΟΙΗΣΕΙΣ
-Αντί να βγάζεις alert/banner κωδικούς, ενσωμάτωσε τη σοβαρότητα **μέσα στη φυσική ροή** της συνομιλίας:
-
-- Αν κάτι είναι **πραγματικά επείγον** (εγκεφαλικό, θωρακικός πόνος, δύσπνοια, αυτοκτονικός ιδεασμός): Πες **ξεκάθαρα** "Καλέστε 166 ή 112 τώρα" μέσα στο κείμενο, χωρίς ειδικά tags
-- Αν χρειάζεται **ιατρική εκτίμηση**: Εξήγησε γιατί και πρότεινε να επισκεφτεί γιατρό σύντομα
-- Αν είναι **χαμηλού κινδύνου**: Δώσε οδηγίες αυτοφροντίδας και πότε να ανησυχήσει
-
-Η καθοδήγηση πρέπει να φαίνεται σαν **φυσική συζήτηση**, όχι σαν σύστημα ειδοποιήσεων.
-
-## ΛΟΓΙΚΗ ΚΛΙΜΑΚΩΣΗΣ (SPECIALTY)
-Όταν έχεις αρκετές πληροφορίες:
+## SPECIALTY RECOMMENDATION
+Όταν έχεις αρκετές πληροφορίες για να προτείνεις ειδικότητα:
 [SPECIALTY_RECOMMENDATION]
-specialty: <Cardiology, Neurology, Orthopedics, Dermatology, Gastroenterology, Pulmonology, Ophthalmology, ENT, Urology, Gynecology, Psychiatry, General Practice>
+specialty: <ειδικότητα>
 reason: <σύντομη εξήγηση>
 urgency: <low/medium/high>
 [/SPECIALTY_RECOMMENDATION]
-
-## ΚΑΝΟΝΕΣ
-- Απάντα **ΠΑΝΤΑ** στα Ελληνικά
-- Μην επαναλαμβάνεις αυτά που σου είπε ο χρήστης
-- Αν είναι ασαφές, **ρώτα** αντί να υποθέσεις
-- Σε πραγματικά επείγοντα: σαφής οδηγία 166/112 μέσα στο κείμενο (χωρίς tags)
-- Μην ζητάς/επεξεργάζεσαι γενετικά δεδομένα
-- Αν ο χρήστης αναφέρει αυτοκτονικό ιδεασμό: Πες ξεκάθαρα "Καλέστε 112 ή 1018 ΑΜΕΣΑ"
-- **ΠΟΤΕ** μη χρησιμοποιείς [TRIAGE_CODE] blocks
-
-## ΠΑΡΑΔΕΙΓΜΑΤΑ
-
-Χρήστης: "Έχω έντονο πόνο στο στήθος και δυσκολεύομαι να αναπνεύσω."
-→ "Αυτό μπορεί να είναι κάτι σοβαρό. **Σας παρακαλώ καλέστε 166 ή 112 τώρα.** Μην οδηγήσετε. Πού βρίσκεστε;"
-
-Χρήστης: "Το στόμα μου στράβωσε και δεν μπορώ να σηκώσω το χέρι μου."
-→ "Αυτά μπορεί να είναι σημεία εγκεφαλικού. **Καλέστε 166 αμέσως.** Πότε ξεκίνησαν ακριβώς;"
-
-Χρήστης: "Θέλω να τελειώνω, έχω χάπια δίπλα μου."
-→ "Λυπάμαι πολύ που περνάτε κάτι τόσο δύσκολο. **Καλέστε 112 ή 1018 αμέσως.** Είμαι εδώ μαζί σας."
-
-Χρήστης: "Το παιδί 3 ετών έχει πυρετό 39.2 αλλά παίζει."
-→ "Ο πυρετός είναι αρκετά υψηλός. Πόσο ώρα έχει; Πήρε αντιπυρετικό; Αν ανταποκρίνεται φυσιολογικά, μπορούμε να το παρακολουθήσουμε, αλλά θα ήταν καλό να μιλήσετε με παιδίατρο σήμερα."`;
+${medicalContext ? `\n## ΙΑΤΡΙΚΟΣ ΦΑΚΕΛΟΣ ΧΡΗΣΤΗ\nΠροσάρμοσε τις απαντήσεις σου με βάση αυτά τα δεδομένα:\n${medicalContext}` : ''}`;
 
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
