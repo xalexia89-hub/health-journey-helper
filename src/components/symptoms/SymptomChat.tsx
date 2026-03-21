@@ -389,10 +389,6 @@ ${summary.recommendations.map(r => `• ${r}`).join('\n')}
               </div>
             ))}
             
-            {/* Triage Alert */}
-            {triageInfo && (
-              <TriageAlert triage={triageInfo} />
-            )}
           </div>
         </ScrollArea>
 
