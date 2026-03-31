@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
 
     if (error) {
       console.error("Aggregation error:", error);
-      return new Response(JSON.stringify({ error: error.message }), {
+      return new Response(JSON.stringify({ error: "Failed to retrieve data" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
