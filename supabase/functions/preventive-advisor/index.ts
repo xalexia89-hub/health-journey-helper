@@ -136,7 +136,7 @@ ${context ? JSON.stringify(context, null, 2) : 'Δεν υπάρχουν διαθ
     });
   } catch (error) {
     console.error("Preventive advisor error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Παρουσιάστηκε σφάλμα. Παρακαλώ δοκιμάστε ξανά." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
