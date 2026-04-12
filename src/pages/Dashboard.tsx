@@ -214,6 +214,19 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {isDemo && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2 flex items-center justify-between">
+          <p className="text-xs text-primary font-medium">🎬 Demo Mode — Δεδομένα επίδειξης</p>
+          <button 
+            onClick={() => { 
+              const { disableDemo } = require('@/contexts/DemoContext');
+            }}
+            className="text-[10px] text-primary/60 underline"
+          >
+          </button>
+        </div>
+      )}
+
       <main className="px-3 py-4 space-y-4 pb-24">
         {/* Welcome Section with Health Score */}
         <section className="animate-slide-up">
