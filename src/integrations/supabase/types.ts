@@ -2745,6 +2745,7 @@ export type Database = {
       wearable_connections: {
         Row: {
           access_token: string | null
+          access_token_encrypted: string | null
           created_at: string
           external_user_id: string | null
           id: string
@@ -2752,6 +2753,7 @@ export type Database = {
           last_sync_at: string | null
           provider: string
           refresh_token: string | null
+          refresh_token_encrypted: string | null
           scopes: string[] | null
           sync_error: string | null
           sync_status: string | null
@@ -2761,6 +2763,7 @@ export type Database = {
         }
         Insert: {
           access_token?: string | null
+          access_token_encrypted?: string | null
           created_at?: string
           external_user_id?: string | null
           id?: string
@@ -2768,6 +2771,7 @@ export type Database = {
           last_sync_at?: string | null
           provider: string
           refresh_token?: string | null
+          refresh_token_encrypted?: string | null
           scopes?: string[] | null
           sync_error?: string | null
           sync_status?: string | null
@@ -2777,6 +2781,7 @@ export type Database = {
         }
         Update: {
           access_token?: string | null
+          access_token_encrypted?: string | null
           created_at?: string
           external_user_id?: string | null
           id?: string
@@ -2784,6 +2789,7 @@ export type Database = {
           last_sync_at?: string | null
           provider?: string
           refresh_token?: string | null
+          refresh_token_encrypted?: string | null
           scopes?: string[] | null
           sync_error?: string | null
           sync_status?: string | null
@@ -2897,6 +2903,13 @@ export type Database = {
         Returns: Json
       }
       get_pilot_enrollment_count: { Args: never; Returns: number }
+      get_wearable_tokens: {
+        Args: { p_connection_id: string }
+        Returns: {
+          access_token: string
+          refresh_token: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2907,6 +2920,14 @@ export type Database = {
       is_pilot_full: { Args: never; Returns: boolean }
       patient_cancel_appointment: {
         Args: { p_appointment_id: string }
+        Returns: undefined
+      }
+      store_wearable_tokens: {
+        Args: {
+          p_access_token: string
+          p_connection_id: string
+          p_refresh_token: string
+        }
         Returns: undefined
       }
     }
