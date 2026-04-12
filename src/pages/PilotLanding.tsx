@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useDemo } from "@/contexts/DemoContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ import {
 
 export default function PilotLanding() {
   const navigate = useNavigate();
+  const { enableDemo } = useDemo();
   const [enrollmentCount, setEnrollmentCount] = useState<number>(0);
   const [maxUsers, setMaxUsers] = useState<number>(100);
   const [isPilotFull, setIsPilotFull] = useState(false);
@@ -157,6 +159,18 @@ export default function PilotLanding() {
               onClick={() => navigate('/auth')}
             >
               Έχω ήδη λογαριασμό
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="lg"
+              onClick={() => {
+                enableDemo();
+                navigate('/dashboard');
+              }}
+              className="text-primary border-primary/20 border"
+            >
+              🎬 Live Demo
             </Button>
           </div>
         </div>
