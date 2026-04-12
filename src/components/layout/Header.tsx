@@ -2,6 +2,7 @@ import { Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemo } from "@/contexts/DemoContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNavigate, Link } from "react-router-dom";
 import medithoLogo from "@/assets/medithos-logo-new.png";
@@ -14,7 +15,9 @@ interface HeaderProps {
 
 export function Header({ title, showBack, onMenuClick }: HeaderProps) {
   const { user } = useAuth();
+  const { isDemo } = useDemo();
   const navigate = useNavigate();
+  const displayInitial = isDemo ? 'Μ' : (user?.email?.charAt(0).toUpperCase() || 'U');
 
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
@@ -49,9 +52,9 @@ export function Header({ title, showBack, onMenuClick }: HeaderProps) {
           <NotificationBell />
           <button onClick={() => navigate('/profile')} className="focus:outline-none">
             <Avatar className="h-9 w-9 border-2 border-primary/20 cursor-pointer hover:border-primary/40 transition-colors">
-              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarImage src={isDemo ? undefined : user?.user_metadata?.avatar_url} />
               <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                {user?.email?.charAt(0).toUpperCase() || 'U'}
+                {displayInitial}
               </AvatarFallback>
             </Avatar>
           </button>

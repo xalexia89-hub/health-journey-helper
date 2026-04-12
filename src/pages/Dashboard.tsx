@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemo } from "@/contexts/DemoContext";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_PROFILE, DEMO_HEALTH_FILE, DEMO_APPOINTMENTS, DEMO_NOTIFICATIONS, DEMO_MEDICATIONS, DEMO_SYMPTOMS } from "@/data/demoData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +64,7 @@ interface SymptomEntry {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { isDemo } = useDemo();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [healthFile, setHealthFile] = useState<HealthFile | null>(null);
@@ -72,11 +75,21 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isDemo) {
+      setProfile(DEMO_PROFILE);
+      setHealthFile(DEMO_HEALTH_FILE as HealthFile);
+      setAppointments(DEMO_APPOINTMENTS as unknown as Appointment[]);
+      setNotifications(DEMO_NOTIFICATIONS as unknown as Notification[]);
+      setMedications(DEMO_MEDICATIONS as unknown as MedicationReminder[]);
+      setRecentSymptoms(DEMO_SYMPTOMS as unknown as SymptomEntry[]);
+      setLoading(false);
+      return;
+    }
     if (user) {
       fetchAllData();
       setupRealtimeNotifications();
     }
-  }, [user]);
+  }, [user, isDemo]);
 
   const fetchAllData = async () => {
     if (!user) return;
@@ -134,6 +147,10 @@ export default function Dashboard() {
   };
 
   const markNotificationRead = async (id: string) => {
+    if (isDemo) {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+      return;
+    }
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
@@ -196,6 +213,12 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+
+      {isDemo && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2">
+          <p className="text-xs text-primary font-medium text-center">🎬 Demo Mode — Δεδομένα επίδειξης</p>
+        </div>
+      )}
 
       <main className="px-3 py-4 space-y-4 pb-24">
         {/* Welcome Section with Health Score */}
