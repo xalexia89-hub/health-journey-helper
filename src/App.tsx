@@ -57,6 +57,7 @@ import AdvisorProfile from "./pages/AdvisorProfile";
 import ProviderSignup from "./pages/ProviderSignup";
 import Install from "./pages/Install";
 import SystemGovernance from "./pages/SystemGovernance";
+import ResetPassword from "./pages/ResetPassword";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -148,6 +149,7 @@ const AppContent = () => {
           <Route path="/symptoms" element={<SymptomAssistant />} />
           <Route path="/install" element={<Install />} />
           <Route path="/system" element={<SystemGovernance />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -259,6 +260,30 @@ export default function Auth() {
                   {signInForm.formState.errors.password && (
                     <p className="text-sm text-destructive">{signInForm.formState.errors.password.message}</p>
                   )}
+                </div>
+
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const email = signInForm.getValues('email');
+                      if (!email) {
+                        toast({ title: "Εισάγετε το email σας", description: "Συμπληρώστε το email και πατήστε ξανά.", variant: "destructive" });
+                        return;
+                      }
+                      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
+                      if (error) {
+                        toast({ title: "Σφάλμα", description: error.message, variant: "destructive" });
+                      } else {
+                        toast({ title: "Email στάλθηκε ✉️", description: "Ελέγξτε τα εισερχόμενά σας για τον σύνδεσμο επαναφοράς κωδικού." });
+                      }
+                    }}
+                    className="text-xs text-accent hover:underline"
+                  >
+                    Ξεχάσατε τον κωδικό;
+                  </button>
                 </div>
 
                 <Button 
