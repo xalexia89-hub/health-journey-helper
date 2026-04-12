@@ -1,11 +1,13 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemo } from "@/contexts/DemoContext";
 import { MobileNav } from "./MobileNav";
 import { Loader2 } from "lucide-react";
 import { PilotSafetyWrapper } from "@/components/pilot/PilotSafetyWrapper";
 
 export function PatientLayout() {
   const { user, loading } = useAuth();
+  const { isDemo } = useDemo();
 
   if (loading) {
     return (
@@ -15,7 +17,7 @@ export function PatientLayout() {
     );
   }
 
-  if (!user) {
+  if (!user && !isDemo) {
     return <Navigate to="/auth" replace />;
   }
 

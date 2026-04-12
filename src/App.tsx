@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useSearchParams } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { DemoProvider } from "@/contexts/DemoContext";
 import { PatientLayout } from "@/components/layout/PatientLayout";
 import { DoctorLayout } from "@/components/layout/DoctorLayout";
 import { AdminLayout } from "@/components/layout/AdminLayout";
@@ -107,6 +108,7 @@ const AppContent = () => {
   // Full app when unlocked
   return (
     <LanguageProvider>
+      <DemoProvider>
       <AuthProvider>
         <Routes>
           {/* Public routes - PilotLanding is the main entry point */}
@@ -198,6 +200,7 @@ const AppContent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
+      </DemoProvider>
     </LanguageProvider>
   );
 };
