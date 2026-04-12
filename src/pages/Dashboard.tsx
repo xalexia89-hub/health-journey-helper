@@ -147,6 +147,10 @@ export default function Dashboard() {
   };
 
   const markNotificationRead = async (id: string) => {
+    if (isDemo) {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+      return;
+    }
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
