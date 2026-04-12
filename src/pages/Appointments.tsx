@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
+import { DEMO_APPOINTMENTS } from '@/data/demoData';
 import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -66,14 +68,28 @@ const statusLabels = {
 
 const Appointments = () => {
   const { user } = useAuth();
+  const { isDemo } = useDemo();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isDemo) {
+      const demoAppts: Appointment[] = DEMO_APPOINTMENTS.map(a => ({
+        ...a,
+        status: a.status as Appointment['status'],
+        notes: null,
+        visit_type: 'medical',
+        symptom_intake: null,
+        provider: { ...a.provider, id: 'demo', avatar_url: null, address: 'Λ. Κηφισίας 120', city: 'Αθήνα' },
+      }));
+      setAppointments(demoAppts);
+      setLoading(false);
+      return;
+    }
     if (user) fetchAppointments();
-  }, [user]);
+  }, [user, isDemo]);
 
   const fetchAppointments = async () => {
     const { data } = await supabase
@@ -110,10 +126,13 @@ const Appointments = () => {
   };
 
   const handleCancel = async (appointmentId: string) => {
+    if (isDemo) {
+      setAppointments(prev => prev.map(a => a.id === appointmentId ? { ...a, status: 'cancelled' } : a));
+      toast({ title: 'Ραντεβού Ακυρώθηκε', description: 'Demo: Ακύρωση επιτυχής.' });
+      return;
+    }
     const { error } = await supabase
-      .from('appointments')
-      .update({ status: 'cancelled' })
-      .eq('id', appointmentId);
+      .rpc('patient_cancel_appointment', { p_appointment_id: appointmentId });
 
     if (error) {
       toast({

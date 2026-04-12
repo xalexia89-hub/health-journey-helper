@@ -2905,6 +2905,10 @@ export type Database = {
         Returns: boolean
       }
       is_pilot_full: { Args: never; Returns: boolean }
+      patient_cancel_appointment: {
+        Args: { p_appointment_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       academy_category:
