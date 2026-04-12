@@ -87,10 +87,10 @@ export default function Auth() {
       });
     } else {
       toast({
-        title: "Επιτυχής εγγραφή!",
-        description: "Καλώς ήρθατε στο Medithos!",
+        title: "Επιτυχής εγγραφή! ✉️",
+        description: "Σας στείλαμε email επιβεβαίωσης. Παρακαλώ ελέγξτε τα εισερχόμενά σας για να ενεργοποιήσετε τον λογαριασμό σας.",
       });
-      navigate('/intro');
+      // Don't navigate — user must verify email first
     }
   };
 
