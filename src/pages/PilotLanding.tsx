@@ -172,6 +172,14 @@ export default function PilotLanding() {
             >
               🎬 Live Demo
             </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => navigate('/metrics')}
+              className="text-primary border-primary/20 border"
+            >
+              📊 Traction Metrics
+            </Button>
           </div>
         </div>
 
