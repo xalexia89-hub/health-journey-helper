@@ -132,9 +132,7 @@ const Appointments = () => {
       return;
     }
     const { error } = await supabase
-      .from('appointments')
-      .update({ status: 'cancelled' })
-      .eq('id', appointmentId);
+      .rpc('patient_cancel_appointment', { p_appointment_id: appointmentId });
 
     if (error) {
       toast({
