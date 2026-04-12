@@ -215,15 +215,8 @@ export default function Dashboard() {
       <Header />
 
       {isDemo && (
-        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2 flex items-center justify-between">
-          <p className="text-xs text-primary font-medium">🎬 Demo Mode — Δεδομένα επίδειξης</p>
-          <button 
-            onClick={() => { 
-              const { disableDemo } = require('@/contexts/DemoContext');
-            }}
-            className="text-[10px] text-primary/60 underline"
-          >
-          </button>
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2">
+          <p className="text-xs text-primary font-medium text-center">🎬 Demo Mode — Δεδομένα επίδειξης</p>
         </div>
       )}
 
