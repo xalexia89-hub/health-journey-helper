@@ -16,6 +16,7 @@ import {
   Bell, AlertTriangle, CheckCircle2, Clock, TrendingUp, Shield,
   ChevronRight, Sparkles, Zap
 } from "lucide-react";
+import { PatternInsightWidget } from "@/components/symptoms/PatternInsightWidget";
 
 
 interface Profile {
