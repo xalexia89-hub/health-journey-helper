@@ -29,6 +29,7 @@ import { RegistrationStepIndicator } from "./RegistrationStepIndicator";
 import { DocumentUploadSection, UploadedDocument } from "./DocumentUploadSection";
 import { ServicesSection, ServiceItem } from "./ServicesSection";
 import { AvailabilitySection, DayAvailability, defaultAvailability } from "./AvailabilitySection";
+import { uploadProviderDocuments } from "./uploadDocuments";
 
 interface DoctorRegistrationFormProps {
   onBack: () => void;
