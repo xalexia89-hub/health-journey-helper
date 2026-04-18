@@ -8,3 +8,5 @@ export { MedicalEntryDetailDialog } from './MedicalEntryDetailDialog';
 export { ShareRecordDialog } from './ShareRecordDialog';
 export { SymptomHistorySection } from './SymptomHistorySection';
 export { TestsDiagnosesSection } from './TestsDiagnosesSection';
+export { DoctorMedicationDialog } from './DoctorMedicationDialog';
+export { PrescribedMedicationsSection } from './PrescribedMedicationsSection';

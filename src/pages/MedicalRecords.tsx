@@ -41,6 +41,7 @@ import { SymptomHistorySection } from '@/components/medical-records/SymptomHisto
 import { TestsDiagnosesSection } from '@/components/medical-records/TestsDiagnosesSection';
 import { ExecutiveSummarySection } from '@/components/medical-records/ExecutiveSummarySection';
 import { AIInsightsTab } from '@/components/medical-records/AIInsightsTab';
+import { PrescribedMedicationsSection } from '@/components/medical-records/PrescribedMedicationsSection';
 import { Sparkles } from 'lucide-react';
 import {
   Tooltip,
@@ -505,6 +506,8 @@ const MedicalRecords = () => {
                 </CardContent>
               </Card>
             )}
+
+            <PrescribedMedicationsSection />
 
             <TestsDiagnosesSection />
             

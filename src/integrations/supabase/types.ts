@@ -1800,6 +1800,75 @@ export type Database = {
           },
         ]
       }
+      medication_prescriptions: {
+        Row: {
+          ai_model: string | null
+          ai_summary: string | null
+          allergy_warnings: Json | null
+          contraindications: string[] | null
+          created_at: string
+          doctor_notes: string | null
+          dosage: string | null
+          drug_interactions: Json | null
+          duration: string | null
+          frequency: string | null
+          id: string
+          indication: string | null
+          medication_name: string
+          patient_user_id: string
+          prescribed_by_user_id: string
+          safety_checked_at: string | null
+          severity: string | null
+          side_effects: string[] | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ai_model?: string | null
+          ai_summary?: string | null
+          allergy_warnings?: Json | null
+          contraindications?: string[] | null
+          created_at?: string
+          doctor_notes?: string | null
+          dosage?: string | null
+          drug_interactions?: Json | null
+          duration?: string | null
+          frequency?: string | null
+          id?: string
+          indication?: string | null
+          medication_name: string
+          patient_user_id: string
+          prescribed_by_user_id: string
+          safety_checked_at?: string | null
+          severity?: string | null
+          side_effects?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_model?: string | null
+          ai_summary?: string | null
+          allergy_warnings?: Json | null
+          contraindications?: string[] | null
+          created_at?: string
+          doctor_notes?: string | null
+          dosage?: string | null
+          drug_interactions?: Json | null
+          duration?: string | null
+          frequency?: string | null
+          id?: string
+          indication?: string | null
+          medication_name?: string
+          patient_user_id?: string
+          prescribed_by_user_id?: string
+          safety_checked_at?: string | null
+          severity?: string | null
+          side_effects?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       medication_reminders: {
         Row: {
           created_at: string | null
