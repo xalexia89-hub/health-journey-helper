@@ -26,6 +26,7 @@ import { RegistrationStepIndicator } from "./RegistrationStepIndicator";
 import { DocumentUploadSection, UploadedDocument } from "./DocumentUploadSection";
 import { ServicesSection, ServiceItem } from "./ServicesSection";
 import { AvailabilitySection, DayAvailability, defaultAvailability } from "./AvailabilitySection";
+import { uploadProviderDocuments } from "./uploadDocuments";
 
 interface NurseRegistrationFormProps {
   onBack: () => void;
@@ -121,9 +122,18 @@ export default function NurseRegistrationForm({ onBack }: NurseRegistrationFormP
           });
         }
 
+        // Upload verification documents
+        const uploadResult = await uploadProviderDocuments(
+          providerData.id,
+          authData.user.id,
+          documents
+        );
+
         toast({
           title: "Επιτυχής Εγγραφή! 💉",
-          description: "Τα στοιχεία σας θα επαληθευτούν εντός 24-48 ωρών.",
+          description: uploadResult.failed > 0
+            ? `${uploadResult.uploaded} έγγραφα ανέβηκαν. ${uploadResult.failed} απέτυχαν — μπορείτε να τα ανεβάσετε ξανά από τις ρυθμίσεις.`
+            : "Τα στοιχεία σας θα επαληθευτούν εντός 24-48 ωρών.",
         });
 
         navigate('/nurses');
