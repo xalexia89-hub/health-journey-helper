@@ -1489,6 +1489,68 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_document_analyses: {
+        Row: {
+          ai_model: string | null
+          created_at: string
+          disclaimer: string | null
+          document_id: string
+          document_kind: string | null
+          error_message: string | null
+          extracted_values: Json | null
+          flags: Json | null
+          id: string
+          plain_explanation: string | null
+          recommendations: string[] | null
+          status: string
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_model?: string | null
+          created_at?: string
+          disclaimer?: string | null
+          document_id: string
+          document_kind?: string | null
+          error_message?: string | null
+          extracted_values?: Json | null
+          flags?: Json | null
+          id?: string
+          plain_explanation?: string | null
+          recommendations?: string[] | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_model?: string | null
+          created_at?: string
+          disclaimer?: string | null
+          document_id?: string
+          document_kind?: string | null
+          error_message?: string | null
+          extracted_values?: Json | null
+          flags?: Json | null
+          id?: string
+          plain_explanation?: string | null
+          recommendations?: string[] | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_document_analyses_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: true
+            referencedRelation: "medical_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_documents: {
         Row: {
           description: string | null

@@ -40,6 +40,8 @@ import { DocumentUploadDialog } from '@/components/medical-records/DocumentUploa
 import { SymptomHistorySection } from '@/components/medical-records/SymptomHistorySection';
 import { TestsDiagnosesSection } from '@/components/medical-records/TestsDiagnosesSection';
 import { ExecutiveSummarySection } from '@/components/medical-records/ExecutiveSummarySection';
+import { AIInsightsTab } from '@/components/medical-records/AIInsightsTab';
+import { Sparkles } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -337,14 +339,18 @@ const MedicalRecords = () => {
         </div>
 
         <Tabs defaultValue="history" className="w-full">
-          <TabsList className="w-full grid grid-cols-2 mb-6">
-            <TabsTrigger value="history" className="flex items-center gap-2">
+          <TabsList className="w-full grid grid-cols-3 mb-6">
+            <TabsTrigger value="history" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <FileText className="h-4 w-4" />
               Ιστορικό
             </TabsTrigger>
-            <TabsTrigger value="preventive" className="flex items-center gap-2">
+            <TabsTrigger value="ai" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Sparkles className="h-4 w-4" />
+              AI Insights
+            </TabsTrigger>
+            <TabsTrigger value="preventive" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <HeartPulse className="h-4 w-4" />
-              Πρόληψη & Lifestyle
+              Πρόληψη
             </TabsTrigger>
           </TabsList>
 
@@ -503,6 +509,10 @@ const MedicalRecords = () => {
             <TestsDiagnosesSection />
             
             <ExecutiveSummarySection notes={notes} onNotesChange={setNotes} />
+          </TabsContent>
+
+          <TabsContent value="ai">
+            <AIInsightsTab />
           </TabsContent>
 
           <TabsContent value="preventive">
