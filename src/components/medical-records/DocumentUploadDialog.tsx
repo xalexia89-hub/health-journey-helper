@@ -136,7 +136,7 @@ export function DocumentUploadDialog() {
       if (uploadError) throw uploadError;
 
       // Save file path to database (not public URL for security)
-      const { error: dbError } = await supabase
+      const { data: insertedDoc, error: dbError } = await supabase
         .from('medical_documents')
         .insert({
           user_id: user.id,
@@ -145,14 +145,27 @@ export function DocumentUploadDialog() {
           file_type: selectedFile.type,
           document_category: category,
           description: description || null
-        });
+        })
+        .select('id')
+        .single();
 
       if (dbError) throw dbError;
 
       toast({
         title: 'Επιτυχία',
-        description: 'Το αρχείο ανέβηκε επιτυχώς'
+        description: 'Το αρχείο ανέβηκε. Ξεκινά αυτόματη AI ανάλυση...'
       });
+
+      // Fire-and-forget AI analysis (runs in background; user sees progress in AI Insights tab)
+      if (insertedDoc?.id) {
+        supabase.functions
+          .invoke('analyze-medical-document', {
+            body: { document_id: insertedDoc.id },
+          })
+          .catch((err) => {
+            console.error('AI analysis trigger failed:', err);
+          });
+      }
 
       // Reset form
       setSelectedFile(null);
