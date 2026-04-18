@@ -16,6 +16,7 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import ReactMarkdown from "react-markdown";
 import type { Database } from "@/integrations/supabase/types";
 import medithoAiIcon from "@/assets/medithos-ai-icon.png";
+import { PatternInsightWidget } from "./PatternInsightWidget";
 
 type BodyArea = Database['public']['Enums']['body_area'];
 
@@ -690,6 +691,12 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
               )}
             </div>
           </CardHeader>
+
+          {user && (
+            <div className="px-4 pt-3">
+              <PatternInsightWidget compact autoAnalyze />
+            </div>
+          )}
 
           <ScrollArea ref={scrollRef} className="flex-1 p-4">
             <div className="space-y-4">
