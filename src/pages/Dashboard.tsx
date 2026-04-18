@@ -16,6 +16,7 @@ import {
   Bell, AlertTriangle, CheckCircle2, Clock, TrendingUp, Shield,
   ChevronRight, Sparkles, Zap
 } from "lucide-react";
+import { PatternInsightWidget } from "@/components/symptoms/PatternInsightWidget";
 
 
 interface Profile {
@@ -271,9 +272,16 @@ export default function Dashboard() {
                   <p className="text-[10px] text-muted-foreground">από προηγ. μήνα</p>
                 </div>
               </div>
-            </CardContent>
+          </CardContent>
           </Card>
         </section>
+
+        {/* AI Pattern Insight */}
+        {!isDemo && (
+          <section className="animate-slide-up" style={{ animationDelay: '80ms' }}>
+            <PatternInsightWidget />
+          </section>
+        )}
 
         {/* Hologram Hub with Orbital Actions */}
         <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>

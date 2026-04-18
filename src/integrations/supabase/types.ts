@@ -2816,6 +2816,60 @@ export type Database = {
         }
         Relationships: []
       }
+      symptom_pattern_insights: {
+        Row: {
+          ai_model: string | null
+          ai_recommendation: string | null
+          ai_summary: string | null
+          confidence: number
+          created_at: string
+          empathetic_message: string | null
+          generated_at: string
+          id: string
+          pattern_type: string
+          recurring_symptoms: string[] | null
+          search_count_30d: number
+          search_count_7d: number
+          signals: Json | null
+          unique_symptoms_7d: number
+          user_id: string
+        }
+        Insert: {
+          ai_model?: string | null
+          ai_recommendation?: string | null
+          ai_summary?: string | null
+          confidence?: number
+          created_at?: string
+          empathetic_message?: string | null
+          generated_at?: string
+          id?: string
+          pattern_type: string
+          recurring_symptoms?: string[] | null
+          search_count_30d?: number
+          search_count_7d?: number
+          signals?: Json | null
+          unique_symptoms_7d?: number
+          user_id: string
+        }
+        Update: {
+          ai_model?: string | null
+          ai_recommendation?: string | null
+          ai_summary?: string | null
+          confidence?: number
+          created_at?: string
+          empathetic_message?: string | null
+          generated_at?: string
+          id?: string
+          pattern_type?: string
+          recurring_symptoms?: string[] | null
+          search_count_30d?: number
+          search_count_7d?: number
+          signals?: Json | null
+          unique_symptoms_7d?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
