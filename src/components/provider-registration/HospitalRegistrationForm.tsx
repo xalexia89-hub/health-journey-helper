@@ -101,7 +101,7 @@ export default function HospitalRegistrationForm({ onBack }: HospitalRegistratio
 
         const providerType = data.organizationType === 'hospital' ? 'hospital' : 'clinic';
         
-        const { error: providerError } = await supabase
+        const { data: providerData, error: providerError } = await supabase
           .from('providers')
           .insert({
             user_id: authData.user.id,
@@ -117,13 +117,35 @@ export default function HospitalRegistrationForm({ onBack }: HospitalRegistratio
             is_active: true,
             is_verified: false,
             registration_status: 'pending',
-          });
+          })
+          .select()
+          .single();
 
         if (providerError) throw providerError;
 
+        // Create availability slots
+        for (const slot of availability.filter(a => a.isActive)) {
+          await supabase.from('availability_slots').insert({
+            provider_id: providerData.id,
+            day_of_week: slot.dayOfWeek,
+            start_time: slot.startTime,
+            end_time: slot.endTime,
+            is_active: true,
+          });
+        }
+
+        // Upload verification documents
+        const uploadResult = await uploadProviderDocuments(
+          providerData.id,
+          authData.user.id,
+          documents
+        );
+
         toast({
           title: "Επιτυχής Εγγραφή! 🏥",
-          description: "Τα στοιχεία σας θα επαληθευτούν εντός 24-48 ωρών.",
+          description: uploadResult.failed > 0
+            ? `${uploadResult.uploaded} έγγραφα ανέβηκαν. ${uploadResult.failed} απέτυχαν — μπορείτε να τα ανεβάσετε ξανά από τις ρυθμίσεις.`
+            : "Τα στοιχεία σας θα επαληθευτούν εντός 24-48 ωρών.",
         });
 
         navigate('/dashboard');
