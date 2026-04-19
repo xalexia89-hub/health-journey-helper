@@ -60,6 +60,7 @@ import SystemGovernance from "./pages/SystemGovernance";
 import ResetPassword from "./pages/ResetPassword";
 import MetricsDashboard from "./pages/MetricsDashboard";
 import About from "./pages/About";
+import Unsubscribe from "./pages/Unsubscribe";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -118,6 +119,7 @@ const AppContent = () => {
           <Route path="/" element={<PilotLanding />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/intro" element={<Intro />} />
           
           {/* Pilot routes */}
