@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -76,6 +76,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     });
+
+    // Fire-and-forget admin notification on successful signup
+    if (!error && data?.user) {
+      const userId = data.user.id;
+      supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'new-user-signup',
+          idempotencyKey: `new-user-signup-${userId}`,
+          templateData: {
+            userEmail: email,
+            userName: fullName,
+            signupDate: new Date().toLocaleString('el-GR'),
+            userId,
+          },
+        },
+      }).catch((e) => console.warn('Admin signup notification failed', e));
+    }
     
     return { error: error as Error | null };
   };
