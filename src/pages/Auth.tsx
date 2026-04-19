@@ -329,9 +329,12 @@ export default function Auth() {
 
       {/* Medical Disclaimer */}
       <div className="relative z-10 px-6 py-4 glass border-t border-primary/20">
-        <p className="text-xs text-center text-muted-foreground">
+        <p className="text-xs text-center text-muted-foreground mb-3">
           <strong>Ιατρική Αποποίηση:</strong> Αυτή η εφαρμογή δεν αντικαθιστά επαγγελματικές ιατρικές συμβουλές.
         </p>
+        <div className="flex justify-center">
+          <GenesisCredit variant="compact" />
+        </div>
       </div>
     </div>
   );
