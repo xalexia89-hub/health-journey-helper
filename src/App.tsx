@@ -59,6 +59,7 @@ import Install from "./pages/Install";
 import SystemGovernance from "./pages/SystemGovernance";
 import ResetPassword from "./pages/ResetPassword";
 import MetricsDashboard from "./pages/MetricsDashboard";
+import About from "./pages/About";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -152,6 +153,7 @@ const AppContent = () => {
           <Route path="/system" element={<SystemGovernance />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/metrics" element={<MetricsDashboard />} />
+          <Route path="/about" element={<About />} />
           
           {/* Protected patient routes */}
           <Route element={<PatientLayout />}>
