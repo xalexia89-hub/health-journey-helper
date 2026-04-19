@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, Eye, EyeOff, Stethoscope } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { GenesisCredit } from "@/components/GenesisCredit";
 
 const signInSchema = z.object({
   email: z.string().trim().email("Παρακαλώ εισάγετε ένα έγκυρο email"),
