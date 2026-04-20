@@ -31,6 +31,8 @@ import { DocumentUploadSection, UploadedDocument } from "./DocumentUploadSection
 import { ServicesSection, ServiceItem } from "./ServicesSection";
 import { AvailabilitySection, DayAvailability, defaultAvailability } from "./AvailabilitySection";
 import { uploadProviderDocuments } from "./uploadDocuments";
+import { GalleryUploadSection, GalleryImage } from "./GalleryUploadSection";
+import { uploadProviderGallery } from "./uploadGallery";
 
 interface DoctorRegistrationFormProps {
   onBack: () => void;
@@ -45,6 +47,7 @@ export default function DoctorRegistrationForm({ onBack }: DoctorRegistrationFor
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [availability, setAvailability] = useState<DayAvailability[]>(defaultAvailability);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
 
   const form = useForm<DoctorFormData>({
     resolver: zodResolver(doctorSchema),
@@ -152,6 +155,11 @@ export default function DoctorRegistrationForm({ onBack }: DoctorRegistrationFor
           authData.user.id,
           documents
         );
+
+        // Upload gallery images (optional)
+        if (galleryImages.length > 0) {
+          await uploadProviderGallery(providerData.id, authData.user.id, galleryImages);
+        }
 
         toast({
           title: "Επιτυχής Εγγραφή! 🩺",
@@ -430,6 +438,14 @@ export default function DoctorRegistrationForm({ onBack }: DoctorRegistrationFor
                         "Follow-up επίσκεψη",
                         "Τηλεϊατρική συνεδρία"
                       ]}
+                    />
+
+                    <div className="border-t border-border my-6" />
+
+                    <GalleryUploadSection
+                      images={galleryImages}
+                      onImagesChange={setGalleryImages}
+                      maxImages={5}
                     />
 
                     <div className="flex gap-3 mt-6">
