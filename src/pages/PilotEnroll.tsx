@@ -130,6 +130,20 @@ export default function PilotEnroll() {
             status: 'active',
           });
 
+        // Fire-and-forget admin notification
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'new-user-signup',
+            idempotencyKey: `new-user-signup-${authData.user.id}`,
+            templateData: {
+              userEmail: data.email,
+              userName: data.fullName,
+              signupDate: new Date().toLocaleString('el-GR'),
+              userId: authData.user.id,
+            },
+          },
+        }).catch((e) => console.warn('Admin signup notification failed', e));
+
         toast({
           title: "Επιτυχής Εγγραφή! 🎉",
           description: "Καλώς ήρθατε στο Medithos Pilot. Ας ξεκινήσουμε!",

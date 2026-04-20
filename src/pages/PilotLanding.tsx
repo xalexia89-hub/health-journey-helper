@@ -70,7 +70,7 @@ export default function PilotLanding() {
     {
       icon: Users,
       title: "Περιορισμένη Συμμετοχή",
-      description: `50/${maxUsers} θέσεις καλυμμένες`
+      description: `${enrollmentCount}/${maxUsers} θέσεις καλυμμένες`
     },
     {
       icon: FileText,
@@ -115,7 +115,7 @@ export default function PilotLanding() {
           <div className="max-w-xs mx-auto mb-8">
             <div className="flex justify-between text-sm mb-2">
               <span className="text-muted-foreground">Εγγεγραμμένοι Χρήστες</span>
-              <span className="font-medium">50</span>
+              <span className="font-medium">{loading ? '…' : `${enrollmentCount}/${maxUsers}`}</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div 
