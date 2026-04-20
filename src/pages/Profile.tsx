@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Mail, Phone, MapPin, Calendar, Droplet, Save, Camera, Loader2, Settings, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { DateOfBirthInput } from '@/components/ui/date-of-birth-input';
 
 interface ProfileData {
   id: string;
