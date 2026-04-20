@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { translateAuthError } from "@/lib/authErrors";
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -154,7 +155,7 @@ export default function HospitalRegistrationForm({ onBack }: HospitalRegistratio
       console.error('Hospital signup error:', error);
       toast({
         title: "Σφάλμα Εγγραφής",
-        description: error.message || "Κάτι πήγε στραβά.",
+        description: translateAuthError(error.message),
         variant: "destructive",
       });
     } finally {
