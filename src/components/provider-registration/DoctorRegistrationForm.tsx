@@ -213,7 +213,7 @@ export default function DoctorRegistrationForm({ onBack }: DoctorRegistrationFor
             <CardDescription>
               {step === 1 && "Δημιουργήστε τον λογαριασμό σας"}
               {step === 2 && "Ειδικότητα και στοιχεία επαφής"}
-              {step === 3 && "Ανεβάστε έγγραφα και προσθέστε υπηρεσίες"}
+              {step === 3 && "Έγγραφα, υπηρεσίες και φωτογραφίες προφίλ"}
               {step === 4 && "Ορίστε τη διαθεσιμότητά σας"}
               {step === 5 && "Αποδοχή όρων για Σύμβουλο Πλοήγησης"}
             </CardDescription>

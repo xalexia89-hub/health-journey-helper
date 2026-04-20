@@ -68,6 +68,7 @@ const ProviderDetail = () => {
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [existingAppointments, setExistingAppointments] = useState<ExistingAppointment[]>([]);
   const [symptomIntake, setSymptomIntake] = useState<any>(null);
+  const [gallery, setGallery] = useState<{ id: string; image_url: string; caption: string | null }[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,11 +80,21 @@ const ProviderDetail = () => {
       fetchProvider();
       fetchAvailability();
       fetchExistingAppointments();
+      fetchGallery();
       if (intakeId) {
         fetchSymptomIntake();
       }
     }
   }, [id, intakeId]);
+
+  const fetchGallery = async () => {
+    const { data } = await supabase
+      .from('provider_gallery')
+      .select('id, image_url, caption')
+      .eq('provider_id', id)
+      .order('display_order', { ascending: true });
+    if (data) setGallery(data);
+  };
 
   const fetchSymptomIntake = async () => {
     const { data } = await supabase
@@ -370,6 +381,35 @@ const ProviderDetail = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{provider.description}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Gallery */}
+      {gallery.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Φωτογραφίες</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-2">
+              {gallery.map((img) => (
+                <a
+                  key={img.id}
+                  href={img.image_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="aspect-square rounded-lg overflow-hidden border border-border hover:opacity-90 transition-opacity"
+                >
+                  <img
+                    src={img.image_url}
+                    alt={img.caption || 'Provider gallery'}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </a>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
