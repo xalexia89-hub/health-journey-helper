@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Mail, Phone, MapPin, Calendar, Droplet, Save, Camera, Loader2, Settings, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { DateOfBirthInput } from '@/components/ui/date-of-birth-input';
 
 interface ProfileData {
   id: string;
@@ -327,16 +328,14 @@ const Profile = () => {
             
             <div className="space-y-2">
               <Label htmlFor="dob">Ημερομηνία Γέννησης</Label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="dob"
-                  type="date"
-                  value={profile.date_of_birth || ''}
-                  onChange={(e) => updateField('date_of_birth', e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+              <DateOfBirthInput
+                id="dob"
+                value={profile.date_of_birth}
+                onChange={(v) => updateField('date_of_birth', v)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Συμπληρώστε χειροκίνητα ημέρα, μήνα και έτος γέννησης.
+              </p>
             </div>
           </div>
         </CardContent>
