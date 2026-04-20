@@ -182,20 +182,28 @@ export default function PilotLanding() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <Stethoscope className="h-5 w-5 text-primary" />
-              Είστε Επαγγελματίας Υγείας;
+              Γιατροί, Κλινικές, Ιατρικά Κέντρα & Νοσοκομεία
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Γίνετε μέρος της ομάδας συμβούλων πλοήγησης υγείας. 
-              Χωρίς σχέση γιατρού-ασθενή, χωρίς διάγνωση - μόνο καθοδήγηση.
+            <p className="text-sm text-muted-foreground mb-2">
+              Καταχωρήστε τον επαγγελματικό σας λογαριασμό στο Medithos και αποκτήστε:
+            </p>
+            <ul className="text-sm text-muted-foreground mb-4 space-y-1.5 pl-1">
+              <li>✓ Επίσημο, πιστοποιημένο προφίλ με badge επαλήθευσης</li>
+              <li>✓ Προβολή σε ασθενείς που αναζητούν εξειδίκευση</li>
+              <li>✓ Διαχείριση ραντεβού & υπηρεσιών online</li>
+              <li>✓ Συμμετοχή στο επαγγελματικό δίκτυο πλοήγησης υγείας</li>
+            </ul>
+            <p className="text-xs text-muted-foreground/80 mb-4 italic">
+              Σημείωση: Η πλατφόρμα λειτουργεί ως εργαλείο πλοήγησης — δεν υποκαθιστά την ιατρική σχέση γιατρού-ασθενή.
             </p>
             <Button 
               variant="outline" 
               className="w-full"
               onClick={() => navigate('/pilot/doctor-signup')}
             >
-              Εγγραφή ως Σύμβουλος
+              Εγγραφή Επαγγελματία
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>
