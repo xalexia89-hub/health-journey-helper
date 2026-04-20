@@ -161,25 +161,6 @@ export default function PilotLanding() {
               Έχω ήδη λογαριασμό
             </Button>
 
-            <Button 
-              variant="ghost" 
-              size="lg"
-              onClick={() => {
-                enableDemo();
-                navigate('/dashboard');
-              }}
-              className="text-primary border-primary/20 border"
-            >
-              🎬 Live Demo
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => navigate('/metrics')}
-              className="text-primary border-primary/20 border"
-            >
-              📊 Traction Metrics
-            </Button>
           </div>
         </div>
 
