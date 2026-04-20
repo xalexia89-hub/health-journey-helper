@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { translateAuthError } from "@/lib/authErrors";
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -142,7 +143,7 @@ export default function NurseRegistrationForm({ onBack }: NurseRegistrationFormP
       console.error('Nurse signup error:', error);
       toast({
         title: "Σφάλμα Εγγραφής",
-        description: error.message || "Κάτι πήγε στραβά.",
+        description: translateAuthError(error.message),
         variant: "destructive",
       });
     } finally {
