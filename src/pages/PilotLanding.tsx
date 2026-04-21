@@ -90,8 +90,8 @@ export default function PilotLanding() {
     },
     {
       icon: Users,
-      title: "Περιορισμένη Συμμετοχή",
-      description: `${enrollmentCount}/${maxUsers} θέσεις καλυμμένες`
+      title: "Επιλεγμένη Ομάδα",
+      description: "Πιλοτικό πρόγραμμα με προσεκτική επιλογή χρηστών"
     },
     {
       icon: FileText,
