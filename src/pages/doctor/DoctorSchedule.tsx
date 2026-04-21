@@ -356,6 +356,88 @@ const DoctorSchedule = () => {
         </CardContent>
       </Card>
 
+      {/* Blocked Dates */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarOff className="h-5 w-5" />
+            Μπλοκαρισμένες Ημερομηνίες (Άδειες/Αργίες)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Ημερομηνία</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !newBlockedDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarOff className="mr-2 h-4 w-4" />
+                    {newBlockedDate ? format(newBlockedDate, 'PPP', { locale: el }) : 'Επιλέξτε ημερομηνία'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={newBlockedDate}
+                    onSelect={setNewBlockedDate}
+                    fromDate={new Date()}
+                    locale={el}
+                    className={cn('p-3 pointer-events-auto')}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Label>Λόγος (προαιρετικό)</Label>
+              <Input
+                value={newBlockedReason}
+                onChange={(e) => setNewBlockedReason(e.target.value)}
+                placeholder="π.χ. Άδεια, Συνέδριο"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button onClick={handleAddBlockedDate} disabled={!newBlockedDate} className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Προσθήκη
+              </Button>
+            </div>
+          </div>
+
+          {blockedDates.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Δεν υπάρχουν μπλοκαρισμένες ημερομηνίες.</p>
+          ) : (
+            <div className="space-y-2">
+              {blockedDates.map((b) => (
+                <div key={b.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                  <div>
+                    <p className="font-medium">
+                      {format(new Date(b.blocked_date + 'T00:00:00'), 'PPP', { locale: el })}
+                    </p>
+                    {b.reason && (
+                      <p className="text-sm text-muted-foreground">{b.reason}</p>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-health-danger hover:text-health-danger hover:bg-health-danger/10"
+                    onClick={() => handleDeleteBlockedDate(b.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Summary */}
       <Card>
         <CardContent className="pt-6">
