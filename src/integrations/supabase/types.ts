@@ -312,53 +312,107 @@ export type Database = {
         }
         Relationships: []
       }
+      appointment_slot_locks: {
+        Row: {
+          created_at: string
+          id: string
+          locked_by: string
+          locked_until: string
+          provider_id: string
+          slot_end: string
+          slot_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          locked_by: string
+          locked_until: string
+          provider_id: string
+          slot_end: string
+          slot_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          locked_by?: string
+          locked_until?: string
+          provider_id?: string
+          slot_end?: string
+          slot_start?: string
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           appointment_date: string
           appointment_time: string
+          cancellation_reason: string | null
+          cancelled_by: string | null
           created_at: string | null
           doctor_notes_internal: string | null
           id: string
           lab_results_url: string | null
+          meeting_type: string | null
           notes: string | null
           outcome_summary: string | null
           patient_id: string
           provider_id: string
+          reason_for_visit: string | null
+          reminder_sent: boolean | null
+          slot_end: string | null
+          slot_start: string | null
           status: Database["public"]["Enums"]["appointment_status"] | null
           symptom_intake_id: string | null
           updated_at: string | null
+          video_link: string | null
           visit_type: string | null
         }
         Insert: {
           appointment_date: string
           appointment_time: string
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
           created_at?: string | null
           doctor_notes_internal?: string | null
           id?: string
           lab_results_url?: string | null
+          meeting_type?: string | null
           notes?: string | null
           outcome_summary?: string | null
           patient_id: string
           provider_id: string
+          reason_for_visit?: string | null
+          reminder_sent?: boolean | null
+          slot_end?: string | null
+          slot_start?: string | null
           status?: Database["public"]["Enums"]["appointment_status"] | null
           symptom_intake_id?: string | null
           updated_at?: string | null
+          video_link?: string | null
           visit_type?: string | null
         }
         Update: {
           appointment_date?: string
           appointment_time?: string
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
           created_at?: string | null
           doctor_notes_internal?: string | null
           id?: string
           lab_results_url?: string | null
+          meeting_type?: string | null
           notes?: string | null
           outcome_summary?: string | null
           patient_id?: string
           provider_id?: string
+          reason_for_visit?: string | null
+          reminder_sent?: boolean | null
+          slot_end?: string | null
+          slot_start?: string | null
           status?: Database["public"]["Enums"]["appointment_status"] | null
           symptom_intake_id?: string | null
           updated_at?: string | null
+          video_link?: string | null
           visit_type?: string | null
         }
         Relationships: [
@@ -2644,6 +2698,30 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_blocked_dates: {
+        Row: {
+          blocked_date: string
+          created_at: string
+          id: string
+          provider_id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_date: string
+          created_at?: string
+          id?: string
+          provider_id: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          created_at?: string
+          id?: string
+          provider_id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       provider_documents: {
         Row: {
           document_type: string
@@ -3317,6 +3395,15 @@ export type Database = {
         Args: { _accessor_id: string; _patient_id: string }
         Returns: boolean
       }
+      cancel_appointment_v2: {
+        Args: {
+          p_appointment_id: string
+          p_cancelled_by: string
+          p_reason?: string
+        }
+        Returns: Json
+      }
+      cleanup_expired_slot_locks: { Args: never; Returns: undefined }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
