@@ -187,6 +187,36 @@ async function fetchFullContext(client: any, userId: string): Promise<string> {
       for (const m of meds) {
         ctx += `- ${m.medication_name} ${m.dosage || ''} (${m.frequency})\n`;
       }
+      ctx += `\n⚠ Πριν προτείνεις ΟΤΙΔΗΠΟΤΕ νέο, σκέψου πιθανές αλληλεπιδράσεις με τα παραπάνω φάρμακα.\n`;
+    }
+
+    // 11. Lifestyle profile (Holistic Patient Intelligence)
+    const { data: ls } = await client
+      .from('patient_health_profiles').select('*').eq('user_id', userId).maybeSingle();
+    if (ls) {
+      ctx += `\n## LIFESTYLE PROFILE (αυτο-αναφερόμενο)\n`;
+      if (ls.smoking) ctx += `- Κάπνισμα: ${ls.smoking}\n`;
+      if (ls.alcohol) ctx += `- Αλκοόλ: ${ls.alcohol}\n`;
+      if (ls.exercise_frequency) ctx += `- Άσκηση: ${ls.exercise_frequency}\n`;
+      if (ls.sleep_hours) ctx += `- Ώρες ύπνου (μ.ό.): ${ls.sleep_hours}\n`;
+      if (ls.stress_level) ctx += `- Επίπεδο στρες: ${ls.stress_level}\n`;
+      if (ls.work_type) ctx += `- Τύπος εργασίας: ${ls.work_type}\n`;
+      if (ls.diet_notes) ctx += `- Διατροφή: ${ls.diet_notes}\n`;
+    }
+
+    // 12. Hereditary risk flags from family_history
+    if (mr?.family_history && Array.isArray(mr.family_history) && mr.family_history.length) {
+      const counts: Record<string, number> = {};
+      for (const f of mr.family_history) {
+        for (const c of (f.conditions || [])) counts[c] = (counts[c] || 0) + 1;
+      }
+      const flags = Object.entries(counts)
+        .filter(([, n]) => n >= 1)
+        .map(([cond, n]) => `${cond} (${n} συγγενής, κίνδυνος: ${n >= 2 ? 'υψηλός' : 'μέτριος'})`);
+      if (flags.length) {
+        ctx += `\n## ΚΛΗΡΟΝΟΜΙΚΟΙ ΠΑΡΑΓΟΝΤΕΣ ΚΙΝΔΥΝΟΥ\n${flags.map((f) => `- ${f}`).join('\n')}\n`;
+        ctx += `→ Σταθμίστε αυτούς τους κινδύνους όταν ερμηνεύετε νέα συμπτώματα.\n`;
+      }
     }
 
   } catch (err) {
