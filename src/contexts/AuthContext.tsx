@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    // Fire-and-forget admin notification on successful signup
+    // Fire-and-forget admin notification + welcome email on successful signup
     if (!error && data?.user) {
       const userId = data.user.id;
       supabase.functions.invoke('send-transactional-email', {
@@ -92,6 +92,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           },
         },
       }).catch((e) => console.warn('Admin signup notification failed', e));
+
+      // Welcome email to the new pilot user
+      (async () => {
+        try {
+          const { count } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
+          await supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'pilot-welcome',
+              recipientEmail: email,
+              idempotencyKey: `pilot-welcome-${userId}`,
+              templateData: {
+                fullName,
+                userNumber: count ?? undefined,
+              },
+            },
+          });
+        } catch (e) {
+          console.warn('Welcome email failed', e);
+        }
+      })();
     }
     
     return { error: error as Error | null };
