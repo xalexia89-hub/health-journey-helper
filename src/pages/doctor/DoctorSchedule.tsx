@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Plus, Trash2 } from 'lucide-react';
+import { Clock, Plus, Trash2, CalendarOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -16,7 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { el } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
+
+interface BlockedDate {
+  id: string;
+  blocked_date: string;
+  reason: string | null;
+}
 
 interface AvailabilitySlot {
   id: string;
@@ -42,6 +53,9 @@ const DoctorSchedule = () => {
   const { toast } = useToast();
   const [providerId, setProviderId] = useState<string | null>(null);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [newBlockedDate, setNewBlockedDate] = useState<Date | undefined>(undefined);
+  const [newBlockedReason, setNewBlockedReason] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -66,7 +80,7 @@ const DoctorSchedule = () => {
 
     if (provider) {
       setProviderId(provider.id);
-      await fetchSlots(provider.id);
+      await Promise.all([fetchSlots(provider.id), fetchBlocked(provider.id)]);
     }
     setLoading(false);
   };
@@ -80,6 +94,43 @@ const DoctorSchedule = () => {
       .order('start_time', { ascending: true });
 
     if (data) setSlots(data);
+  };
+
+  const fetchBlocked = async (provId: string) => {
+    const { data } = await supabase
+      .from('provider_blocked_dates')
+      .select('id, blocked_date, reason')
+      .eq('provider_id', provId)
+      .gte('blocked_date', format(new Date(), 'yyyy-MM-dd'))
+      .order('blocked_date', { ascending: true });
+    if (data) setBlockedDates(data);
+  };
+
+  const handleAddBlockedDate = async () => {
+    if (!providerId || !newBlockedDate) return;
+    const dateStr = format(newBlockedDate, 'yyyy-MM-dd');
+    const { error } = await supabase.from('provider_blocked_dates').insert({
+      provider_id: providerId,
+      blocked_date: dateStr,
+      reason: newBlockedReason.trim() || null,
+    });
+    if (error) {
+      toast({ title: 'Σφάλμα', description: 'Αποτυχία προσθήκης ημερομηνίας', variant: 'destructive' });
+    } else {
+      toast({ title: 'Ημερομηνία Μπλοκαρίστηκε', description: format(newBlockedDate, 'PPP', { locale: el }) });
+      setNewBlockedDate(undefined);
+      setNewBlockedReason('');
+      fetchBlocked(providerId);
+    }
+  };
+
+  const handleDeleteBlockedDate = async (blockedId: string) => {
+    const { error } = await supabase.from('provider_blocked_dates').delete().eq('id', blockedId);
+    if (error) {
+      toast({ title: 'Σφάλμα', description: 'Αποτυχία διαγραφής', variant: 'destructive' });
+    } else if (providerId) {
+      fetchBlocked(providerId);
+    }
   };
 
   const handleAddSlot = async () => {
@@ -302,6 +353,88 @@ const DoctorSchedule = () => {
               )}
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      {/* Blocked Dates */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarOff className="h-5 w-5" />
+            Μπλοκαρισμένες Ημερομηνίες (Άδειες/Αργίες)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Ημερομηνία</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !newBlockedDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarOff className="mr-2 h-4 w-4" />
+                    {newBlockedDate ? format(newBlockedDate, 'PPP', { locale: el }) : 'Επιλέξτε ημερομηνία'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={newBlockedDate}
+                    onSelect={setNewBlockedDate}
+                    fromDate={new Date()}
+                    locale={el}
+                    className={cn('p-3 pointer-events-auto')}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Label>Λόγος (προαιρετικό)</Label>
+              <Input
+                value={newBlockedReason}
+                onChange={(e) => setNewBlockedReason(e.target.value)}
+                placeholder="π.χ. Άδεια, Συνέδριο"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button onClick={handleAddBlockedDate} disabled={!newBlockedDate} className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Προσθήκη
+              </Button>
+            </div>
+          </div>
+
+          {blockedDates.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Δεν υπάρχουν μπλοκαρισμένες ημερομηνίες.</p>
+          ) : (
+            <div className="space-y-2">
+              {blockedDates.map((b) => (
+                <div key={b.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                  <div>
+                    <p className="font-medium">
+                      {format(new Date(b.blocked_date + 'T00:00:00'), 'PPP', { locale: el })}
+                    </p>
+                    {b.reason && (
+                      <p className="text-sm text-muted-foreground">{b.reason}</p>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-health-danger hover:text-health-danger hover:bg-health-danger/10"
+                    onClick={() => handleDeleteBlockedDate(b.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 

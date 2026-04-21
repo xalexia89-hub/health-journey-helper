@@ -91,6 +91,20 @@ const Appointments = () => {
     if (user) fetchAppointments();
   }, [user, isDemo]);
 
+  // Realtime: refresh when this patient's appointments change (e.g., physician cancels)
+  useEffect(() => {
+    if (!user || isDemo) return;
+    const channel = supabase
+      .channel(`patient-appointments-${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'appointments', filter: `patient_id=eq.${user.id}` },
+        () => { fetchAppointments(); }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, isDemo]);
+
   const fetchAppointments = async () => {
     const { data } = await supabase
       .from('appointments')
@@ -131,13 +145,14 @@ const Appointments = () => {
       toast({ title: 'Ραντεβού Ακυρώθηκε', description: 'Demo: Ακύρωση επιτυχής.' });
       return;
     }
-    const { error } = await supabase
-      .rpc('patient_cancel_appointment', { p_appointment_id: appointmentId });
+    const { data, error } = await supabase.functions.invoke('cancel-appointment', {
+      body: { appointment_id: appointmentId, cancelled_by: 'patient' },
+    });
 
-    if (error) {
+    if (error || (data as any)?.error) {
       toast({
         title: 'Σφάλμα',
-        description: 'Αποτυχία ακύρωσης ραντεβού',
+        description: (data as any)?.error ?? 'Αποτυχία ακύρωσης ραντεβού',
         variant: 'destructive'
       });
     } else {

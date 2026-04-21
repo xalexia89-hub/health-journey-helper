@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MapPin, Clock, CheckCircle, Phone, Mail, AlertCircle, CalendarCheck, Video } from 'lucide-react';
-import { format, addDays, setHours, setMinutes, parseISO } from 'date-fns';
+import { Star, MapPin, Clock, CheckCircle, Phone, Mail, AlertCircle, CalendarCheck, Video, User as UserIcon, Timer } from 'lucide-react';
+import { format, addDays } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { BookingConfirmationDialog } from '@/components/appointments/BookingConfirmationDialog';
 import { CallButtons } from '@/components/communication';
+import { cn } from '@/lib/utils';
 
 interface Provider {
   id: string;
@@ -43,9 +44,15 @@ interface AvailabilitySlot {
   slot_duration_minutes: number | null;
 }
 
-interface ExistingAppointment {
-  appointment_date: string;
-  appointment_time: string;
+interface BlockedDate {
+  blocked_date: string;
+}
+
+interface RemoteSlot {
+  start: string;
+  end: string;
+  label: string;
+  available: boolean;
 }
 
 const typeLabels: Record<string, string> = {
@@ -61,31 +68,75 @@ const ProviderDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  
-  const intakeId = searchParams.get('intake'); // Symptom intake ID from flow
-  
+
+  const intakeId = searchParams.get('intake');
+
   const [provider, setProvider] = useState<Provider | null>(null);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
-  const [existingAppointments, setExistingAppointments] = useState<ExistingAppointment[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
   const [symptomIntake, setSymptomIntake] = useState<any>(null);
   const [gallery, setGallery] = useState<{ id: string; image_url: string; caption: string | null }[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [remoteSlots, setRemoteSlots] = useState<RemoteSlot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<RemoteSlot | null>(null);
+  const [meetingType, setMeetingType] = useState<'in_person' | 'video'>('in_person');
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [lockId, setLockId] = useState<string | null>(null);
+  const [lockExpiresAt, setLockExpiresAt] = useState<number | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState<number>(0);
+  const countdownRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (id) {
       fetchProvider();
       fetchAvailability();
-      fetchExistingAppointments();
+      fetchBlocked();
       fetchGallery();
-      if (intakeId) {
-        fetchSymptomIntake();
-      }
+      if (intakeId) fetchSymptomIntake();
     }
   }, [id, intakeId]);
+
+  // Realtime: refresh remote slots when appointments or locks change for this provider
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase
+      .channel(`provider-slots-${id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'appointments', filter: `provider_id=eq.${id}` }, () => {
+        if (selectedDate) loadRemoteSlots(selectedDate);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'appointment_slot_locks', filter: `provider_id=eq.${id}` }, () => {
+        if (selectedDate) loadRemoteSlots(selectedDate);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [id, selectedDate]);
+
+  // Countdown for slot lock
+  useEffect(() => {
+    if (!lockExpiresAt) return;
+    const tick = () => {
+      const left = Math.max(0, Math.floor((lockExpiresAt - Date.now()) / 1000));
+      setSecondsLeft(left);
+      if (left <= 0) {
+        setLockId(null);
+        setLockExpiresAt(null);
+        setSelectedSlot(null);
+        setShowConfirmation(false);
+        toast({
+          title: 'Η κράτηση έληξε',
+          description: 'Παρακαλώ επιλέξτε ξανά διαθέσιμη ώρα.',
+          variant: 'destructive',
+        });
+        if (selectedDate) loadRemoteSlots(selectedDate);
+      }
+    };
+    tick();
+    countdownRef.current = window.setInterval(tick, 1000);
+    return () => { if (countdownRef.current) window.clearInterval(countdownRef.current); };
+  }, [lockExpiresAt]);
 
   const fetchGallery = async () => {
     const { data } = await supabase
@@ -102,7 +153,6 @@ const ProviderDetail = () => {
       .select('*')
       .eq('id', intakeId)
       .maybeSingle();
-    
     if (data) setSymptomIntake(data);
   };
 
@@ -112,7 +162,6 @@ const ProviderDetail = () => {
       .select('*')
       .eq('id', id)
       .maybeSingle();
-    
     if (data) setProvider(data as Provider);
     setLoading(false);
   };
@@ -123,128 +172,142 @@ const ProviderDetail = () => {
       .select('*')
       .eq('provider_id', id)
       .eq('is_active', true);
-    
     if (data) setSlots(data);
   };
 
-  const fetchExistingAppointments = async () => {
-    // Fetch existing appointments to avoid double bookings
+  const fetchBlocked = async () => {
     const { data } = await supabase
-      .from('appointments')
-      .select('appointment_date, appointment_time')
+      .from('provider_blocked_dates')
+      .select('blocked_date')
       .eq('provider_id', id)
-      .in('status', ['pending', 'confirmed'])
-      .gte('appointment_date', format(new Date(), 'yyyy-MM-dd'));
-    
-    if (data) setExistingAppointments(data);
+      .gte('blocked_date', format(new Date(), 'yyyy-MM-dd'));
+    if (data) setBlockedDates(data);
   };
 
-  const getAvailableTimesForDate = (date: Date) => {
-    const dayOfWeek = date.getDay();
-    const daySlots = slots.filter(s => s.day_of_week === dayOfWeek);
-    const dateStr = format(date, 'yyyy-MM-dd');
-    
-    // Get already booked times for this date
-    const bookedTimes = existingAppointments
-      .filter(a => a.appointment_date === dateStr)
-      .map(a => a.appointment_time.slice(0, 5));
-    
-    const times: string[] = [];
-    daySlots.forEach(slot => {
-      const [startHour, startMin] = slot.start_time.split(':').map(Number);
-      const [endHour, endMin] = slot.end_time.split(':').map(Number);
-      const duration = slot.slot_duration_minutes || 30;
-      
-      let current = setMinutes(setHours(date, startHour), startMin);
-      const end = setMinutes(setHours(date, endHour), endMin);
-      
-      while (current < end) {
-        const timeStr = format(current, 'HH:mm');
-        // Only add if not already booked
-        if (!bookedTimes.includes(timeStr)) {
-          times.push(timeStr);
-        }
-        current = new Date(current.getTime() + duration * 60000);
-      }
-    });
-    
-    return times;
+  const loadRemoteSlots = async (date: Date) => {
+    if (!id) return;
+    setSlotsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('get-available-slots', {
+        body: { provider_id: id, date: format(date, 'yyyy-MM-dd') },
+      });
+      if (error) throw error;
+      setRemoteSlots((data as any)?.slots ?? []);
+    } catch (e) {
+      console.error(e);
+      setRemoteSlots([]);
+    } finally {
+      setSlotsLoading(false);
+    }
   };
 
-  const handleBookingClick = () => {
+  const handleSelectDate = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setSelectedSlot(null);
+    setRemoteSlots([]);
+    if (date) loadRemoteSlots(date);
+  };
+
+  const handleSelectSlot = async (slot: RemoteSlot) => {
+    if (!slot.available) return;
     if (!user) {
       toast({
         title: 'Απαιτείται Σύνδεση',
-        description: 'Παρακαλώ συνδεθείτε για να κλείσετε ραντεβού.',
-        variant: 'destructive'
+        description: 'Παρακαλώ συνδεθείτε για να κρατήσετε ραντεβού.',
+        variant: 'destructive',
       });
       navigate('/auth');
       return;
     }
-    setShowConfirmation(true);
+    // Lock the slot
+    try {
+      const { data, error } = await supabase.functions.invoke('lock-slot', {
+        body: { provider_id: id, slot_start: slot.start, slot_end: slot.end },
+      });
+      if (error) throw error;
+      const resp = data as any;
+      if (resp?.error) {
+        toast({
+          title: 'Ώρα μη διαθέσιμη',
+          description: 'Κάποιος άλλος μόλις την κράτησε. Επιλέξτε άλλη.',
+          variant: 'destructive',
+        });
+        if (selectedDate) loadRemoteSlots(selectedDate);
+        return;
+      }
+      setLockId(resp.lock_id);
+      setLockExpiresAt(new Date(resp.locked_until).getTime());
+      setSelectedSlot(slot);
+      setShowConfirmation(true);
+    } catch (e: any) {
+      toast({ title: 'Σφάλμα', description: e?.message ?? 'Αποτυχία κράτησης ώρας', variant: 'destructive' });
+    }
   };
 
   const handleConfirmBooking = async () => {
-    if (!user || !selectedDate || !selectedTime || !provider) return;
-    
+    if (!user || !selectedSlot || !provider) return;
     setBooking(true);
     try {
-      // Double-check availability before booking
-      const { data: existingBooking } = await supabase
-        .from('appointments')
-        .select('id')
-        .eq('provider_id', provider.id)
-        .eq('appointment_date', format(selectedDate, 'yyyy-MM-dd'))
-        .eq('appointment_time', selectedTime)
-        .in('status', ['pending', 'confirmed'])
-        .maybeSingle();
-
-      if (existingBooking) {
-        toast({
-          title: 'Ώρα μη Διαθέσιμη',
-          description: 'Αυτή η ώρα έχει ήδη κρατηθεί. Παρακαλώ επιλέξτε άλλη.',
-          variant: 'destructive'
-        });
-        setShowConfirmation(false);
-        setSelectedTime(null);
-        fetchExistingAppointments();
-        return;
-      }
-
+      const slotStart = new Date(selectedSlot.start);
+      const slotEnd = new Date(selectedSlot.end);
       const { error } = await supabase.from('appointments').insert({
         patient_id: user.id,
         provider_id: provider.id,
-        appointment_date: format(selectedDate, 'yyyy-MM-dd'),
-        appointment_time: selectedTime,
+        appointment_date: format(slotStart, 'yyyy-MM-dd'),
+        appointment_time: format(slotStart, 'HH:mm:ss'),
+        slot_start: slotStart.toISOString(),
+        slot_end: slotEnd.toISOString(),
+        meeting_type: meetingType,
         status: 'pending',
         symptom_intake_id: intakeId || null,
         visit_type: symptomIntake?.visit_type || 'consultation',
-        notes: 'Πιλοτική Έκδοση - Ραντεβού Συμβουλευτικής'
+        notes: 'Πιλοτική Έκδοση - Ραντεβού Συμβουλευτικής',
       });
 
       if (error) throw error;
 
+      // Release the lock
+      if (lockId) {
+        await supabase.from('appointment_slot_locks').delete().eq('id', lockId);
+      }
+
       toast({
         title: 'Ραντεβού Καταγράφηκε!',
-        description: `Το ραντεβού σας με ${provider.name} στις ${format(selectedDate, 'd MMMM', { locale: el })} στις ${selectedTime} καταγράφηκε. Θα λάβετε επιβεβαίωση σύντομα.`
+        description: `Το ραντεβού σας με ${provider.name} στις ${format(slotStart, 'd MMMM', { locale: el })} στις ${format(slotStart, 'HH:mm')} καταγράφηκε.`,
       });
-      
+
       setShowConfirmation(false);
+      setLockId(null);
+      setLockExpiresAt(null);
       navigate('/appointments');
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Αποτυχία Κράτησης',
-        description: 'Δεν ήταν δυνατή η κράτηση ραντεβού. Παρακαλώ δοκιμάστε ξανά.',
-        variant: 'destructive'
+        description: error?.message ?? 'Δοκιμάστε ξανά.',
+        variant: 'destructive',
       });
     } finally {
       setBooking(false);
     }
   };
 
+  const handleDialogChange = async (open: boolean) => {
+    setShowConfirmation(open);
+    if (!open && lockId) {
+      // User backed out — release the lock
+      await supabase.from('appointment_slot_locks').delete().eq('id', lockId);
+      setLockId(null);
+      setLockExpiresAt(null);
+      setSelectedSlot(null);
+      if (selectedDate) loadRemoteSlots(selectedDate);
+    }
+  };
+
   const isDateAvailable = (date: Date) => {
     const dayOfWeek = date.getDay();
-    return slots.some(s => s.day_of_week === dayOfWeek) && date >= new Date();
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const isBlocked = blockedDates.some(b => b.blocked_date === dateStr);
+    return slots.some(s => s.day_of_week === dayOfWeek) && date >= new Date(new Date().setHours(0, 0, 0, 0)) && !isBlocked;
   };
 
   if (loading) {
@@ -266,8 +329,6 @@ const ProviderDetail = () => {
     );
   }
 
-  const availableTimes = selectedDate ? getAvailableTimesForDate(selectedDate) : [];
-
   return (
     <div className="min-h-screen bg-background">
       <Header title={provider.name} showBack />
@@ -283,7 +344,7 @@ const ProviderDetail = () => {
                 {provider.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold">{provider.name}</h1>
@@ -291,9 +352,9 @@ const ProviderDetail = () => {
                   <CheckCircle className="h-5 w-5 text-health-success" />
                 )}
               </div>
-              
+
               <p className="text-muted-foreground">{provider.specialty}</p>
-              
+
               <div className="flex items-center gap-4 mt-2">
                 {provider.rating && (
                   <div className="flex items-center gap-1">
@@ -304,12 +365,12 @@ const ProviderDetail = () => {
                     </span>
                   </div>
                 )}
-                
+
                 <Badge variant="outline" className="capitalize">
                   {typeLabels[provider.type]}
                 </Badge>
               </div>
-              
+
               {(provider.price_min || provider.price_max) && (
                 <p className="text-primary font-semibold mt-2">
                   €{provider.price_min} - €{provider.price_max}
@@ -487,65 +548,88 @@ const ProviderDetail = () => {
             </div>
           ) : (
             <>
+              {/* Meeting type toggle */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Τρόπος συνάντησης</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant={meetingType === 'in_person' ? 'default' : 'outline'}
+                    onClick={() => setMeetingType('in_person')}
+                    className="justify-center"
+                  >
+                    <UserIcon className="h-4 w-4 mr-2" />
+                    Δια ζώσης
+                  </Button>
+                  <Button
+                    variant={meetingType === 'video' ? 'default' : 'outline'}
+                    onClick={() => setMeetingType('video')}
+                    className="justify-center"
+                  >
+                    <Video className="h-4 w-4 mr-2" />
+                    Video κλήση
+                  </Button>
+                </div>
+              </div>
+
               <div className="flex justify-center">
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={(date) => {
-                    setSelectedDate(date);
-                    setSelectedTime(null);
-                  }}
+                  onSelect={handleSelectDate}
                   disabled={(date) => !isDateAvailable(date)}
                   fromDate={new Date()}
                   toDate={addDays(new Date(), 60)}
-                  className="rounded-md border"
+                  className="rounded-md border pointer-events-auto"
                   locale={el}
                 />
               </div>
 
-              {selectedDate && availableTimes.length > 0 && (
+              {selectedDate && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">
-                    Διαθέσιμες Ώρες για {format(selectedDate, 'EEEE d MMMM', { locale: el })}
-                  </p>
-                  <div className="grid grid-cols-4 gap-2">
-                    {availableTimes.map((time) => (
-                      <Button
-                        key={time}
-                        variant={selectedTime === time ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setSelectedTime(time)}
-                      >
-                        {time}
-                      </Button>
-                    ))}
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">
+                      Διαθέσιμες Ώρες — {format(selectedDate, 'EEEE d MMMM', { locale: el })}
+                    </p>
+                    {slotsLoading && (
+                      <span className="text-xs text-muted-foreground">Ενημέρωση...</span>
+                    )}
                   </div>
+                  {remoteSlots.length === 0 && !slotsLoading ? (
+                    <div className="text-center py-4 bg-muted/30 rounded-lg">
+                      <p className="text-muted-foreground text-sm">
+                        Δεν υπάρχουν διαθέσιμες ώρες για αυτή την ημερομηνία
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-4 gap-2">
+                      {remoteSlots.map((s) => (
+                        <Button
+                          key={s.start}
+                          variant={selectedSlot?.start === s.start ? 'default' : 'outline'}
+                          size="sm"
+                          disabled={!s.available}
+                          onClick={() => handleSelectSlot(s)}
+                          className={cn(!s.available && 'opacity-40 line-through')}
+                        >
+                          {s.label}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
-              {selectedDate && availableTimes.length === 0 && (
-                <div className="text-center py-4 bg-muted/30 rounded-lg">
-                  <p className="text-muted-foreground text-sm">
-                    Δεν υπάρχουν διαθέσιμες ώρες για αυτή την ημερομηνία
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Επιλέξτε άλλη ημερομηνία ή επικοινωνήστε απευθείας
+              {lockExpiresAt && secondsLeft > 0 && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <Timer className="h-4 w-4 text-primary" />
+                  <p className="text-xs text-foreground">
+                    Η ώρα είναι κρατημένη για εσάς για ακόμη{' '}
+                    <span className="font-semibold text-primary">
+                      {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, '0')}
+                    </span>
                   </p>
                 </div>
               )}
-
-              <Button
-                className="w-full"
-                size="lg"
-                disabled={!selectedDate || !selectedTime}
-                onClick={handleBookingClick}
-              >
-                <CalendarCheck className="h-5 w-5 mr-2" />
-                {selectedDate && selectedTime 
-                  ? `Κράτηση για ${format(selectedDate, 'd MMM', { locale: el })} στις ${selectedTime}`
-                  : 'Επιλέξτε Ημερομηνία & Ώρα'
-                }
-              </Button>
             </>
           )}
         </CardContent>
@@ -553,13 +637,13 @@ const ProviderDetail = () => {
       </div>
 
       {/* Booking Confirmation Dialog */}
-      {selectedDate && selectedTime && (
+      {selectedSlot && (
         <BookingConfirmationDialog
           open={showConfirmation}
-          onOpenChange={setShowConfirmation}
+          onOpenChange={handleDialogChange}
           provider={provider}
-          selectedDate={selectedDate}
-          selectedTime={selectedTime}
+          selectedDate={new Date(selectedSlot.start)}
+          selectedTime={selectedSlot.label}
           onConfirm={handleConfirmBooking}
           isLoading={booking}
           symptomSummary={symptomIntake ? {
