@@ -28,7 +28,28 @@ export default function PilotLanding() {
 
   useEffect(() => {
     fetchPilotStatus();
-  }, []);
+
+    // Realtime: increment counter when a new pilot enrollment is created
+    const channel = supabase
+      .channel('pilot-counter')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'pilot_enrollments' },
+        () => {
+          setEnrollmentCount((prev) => {
+            const next = prev + 1;
+            setIsPilotFull(next >= maxUsers);
+            return next;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxUsers]);
 
   const fetchPilotStatus = async () => {
     try {
