@@ -509,6 +509,209 @@ export type Database = {
           },
         ]
       }
+      biohacking_assessments: {
+        Row: {
+          afternoon_crash: boolean | null
+          alcohol_units_per_week: number | null
+          caffeine_cups_per_day: number | null
+          caffeine_cutoff_hour: number | null
+          completed_at: string | null
+          created_at: string
+          diet_type: string | null
+          energy_afternoon: number | null
+          energy_evening: number | null
+          energy_morning: number | null
+          energy_score: number | null
+          exercise_days_per_week: number | null
+          exercise_type: string | null
+          feel_rested: string | null
+          hrv_avg: number | null
+          hrv_device: string | null
+          hydration_liters: number | null
+          id: string
+          key_findings: Json | null
+          meditation_minutes_per_day: number | null
+          nature_time_weekly_hours: number | null
+          overall_performance_score: number | null
+          patient_id: string
+          persona_tag: string | null
+          primary_goal: string | null
+          priority_domains: string[] | null
+          recovery_activities: string[] | null
+          screen_time_hours: number | null
+          screens_before_bed: boolean | null
+          screens_minutes_before_bed: number | null
+          sleep_environment: string[] | null
+          sleep_hours_avg: number | null
+          sleep_latency_minutes: number | null
+          sleep_notes: string | null
+          sleep_quality: number | null
+          sleep_schedule_consistent: boolean | null
+          sleep_score: number | null
+          smoking: boolean | null
+          stress_level: number | null
+          stress_score: number | null
+          stress_sources: string[] | null
+          updated_at: string
+          version: number | null
+          wake_ups_per_night: number | null
+          work_hours_per_day: number | null
+        }
+        Insert: {
+          afternoon_crash?: boolean | null
+          alcohol_units_per_week?: number | null
+          caffeine_cups_per_day?: number | null
+          caffeine_cutoff_hour?: number | null
+          completed_at?: string | null
+          created_at?: string
+          diet_type?: string | null
+          energy_afternoon?: number | null
+          energy_evening?: number | null
+          energy_morning?: number | null
+          energy_score?: number | null
+          exercise_days_per_week?: number | null
+          exercise_type?: string | null
+          feel_rested?: string | null
+          hrv_avg?: number | null
+          hrv_device?: string | null
+          hydration_liters?: number | null
+          id?: string
+          key_findings?: Json | null
+          meditation_minutes_per_day?: number | null
+          nature_time_weekly_hours?: number | null
+          overall_performance_score?: number | null
+          patient_id: string
+          persona_tag?: string | null
+          primary_goal?: string | null
+          priority_domains?: string[] | null
+          recovery_activities?: string[] | null
+          screen_time_hours?: number | null
+          screens_before_bed?: boolean | null
+          screens_minutes_before_bed?: number | null
+          sleep_environment?: string[] | null
+          sleep_hours_avg?: number | null
+          sleep_latency_minutes?: number | null
+          sleep_notes?: string | null
+          sleep_quality?: number | null
+          sleep_schedule_consistent?: boolean | null
+          sleep_score?: number | null
+          smoking?: boolean | null
+          stress_level?: number | null
+          stress_score?: number | null
+          stress_sources?: string[] | null
+          updated_at?: string
+          version?: number | null
+          wake_ups_per_night?: number | null
+          work_hours_per_day?: number | null
+        }
+        Update: {
+          afternoon_crash?: boolean | null
+          alcohol_units_per_week?: number | null
+          caffeine_cups_per_day?: number | null
+          caffeine_cutoff_hour?: number | null
+          completed_at?: string | null
+          created_at?: string
+          diet_type?: string | null
+          energy_afternoon?: number | null
+          energy_evening?: number | null
+          energy_morning?: number | null
+          energy_score?: number | null
+          exercise_days_per_week?: number | null
+          exercise_type?: string | null
+          feel_rested?: string | null
+          hrv_avg?: number | null
+          hrv_device?: string | null
+          hydration_liters?: number | null
+          id?: string
+          key_findings?: Json | null
+          meditation_minutes_per_day?: number | null
+          nature_time_weekly_hours?: number | null
+          overall_performance_score?: number | null
+          patient_id?: string
+          persona_tag?: string | null
+          primary_goal?: string | null
+          priority_domains?: string[] | null
+          recovery_activities?: string[] | null
+          screen_time_hours?: number | null
+          screens_before_bed?: boolean | null
+          screens_minutes_before_bed?: number | null
+          sleep_environment?: string[] | null
+          sleep_hours_avg?: number | null
+          sleep_latency_minutes?: number | null
+          sleep_notes?: string | null
+          sleep_quality?: number | null
+          sleep_schedule_consistent?: boolean | null
+          sleep_score?: number | null
+          smoking?: boolean | null
+          stress_level?: number | null
+          stress_score?: number | null
+          stress_sources?: string[] | null
+          updated_at?: string
+          version?: number | null
+          wake_ups_per_night?: number | null
+          work_hours_per_day?: number | null
+        }
+        Relationships: []
+      }
+      biohacking_protocols: {
+        Row: {
+          ai_reasoning: string | null
+          assessment_id: string | null
+          created_at: string
+          domains: string[] | null
+          duration_weeks: number
+          end_date: string | null
+          id: string
+          patient_id: string
+          protocol_data: Json
+          start_date: string | null
+          status: string | null
+          tier: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_reasoning?: string | null
+          assessment_id?: string | null
+          created_at?: string
+          domains?: string[] | null
+          duration_weeks?: number
+          end_date?: string | null
+          id?: string
+          patient_id: string
+          protocol_data?: Json
+          start_date?: string | null
+          status?: string | null
+          tier?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_reasoning?: string | null
+          assessment_id?: string | null
+          created_at?: string
+          domains?: string[] | null
+          duration_weeks?: number
+          end_date?: string | null
+          id?: string
+          patient_id?: string
+          protocol_data?: Json
+          start_date?: string | null
+          status?: string | null
+          tier?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biohacking_protocols_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "biohacking_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_follows: {
         Row: {
           created_at: string | null
@@ -2697,6 +2900,71 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      protocol_interventions: {
+        Row: {
+          contraindications: string[] | null
+          created_at: string
+          description: string | null
+          domain: string | null
+          duration_minutes: number | null
+          evidence_level: string | null
+          frequency: string | null
+          id: string
+          is_mandatory: boolean | null
+          mechanism: string | null
+          protocol_id: string
+          reference_links: string[] | null
+          tier: number | null
+          title: string
+          week_end: number | null
+          week_start: number | null
+        }
+        Insert: {
+          contraindications?: string[] | null
+          created_at?: string
+          description?: string | null
+          domain?: string | null
+          duration_minutes?: number | null
+          evidence_level?: string | null
+          frequency?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          mechanism?: string | null
+          protocol_id: string
+          reference_links?: string[] | null
+          tier?: number | null
+          title: string
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Update: {
+          contraindications?: string[] | null
+          created_at?: string
+          description?: string | null
+          domain?: string | null
+          duration_minutes?: number | null
+          evidence_level?: string | null
+          frequency?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          mechanism?: string | null
+          protocol_id?: string
+          reference_links?: string[] | null
+          tier?: number | null
+          title?: string
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_interventions_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "biohacking_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       provider_blocked_dates: {
         Row: {
