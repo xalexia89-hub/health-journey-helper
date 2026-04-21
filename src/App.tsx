@@ -30,6 +30,9 @@ import Settings from "./pages/Settings";
 import Feed from "./pages/Feed";
 import Community from "./pages/Community";
 import Academy from "./pages/Academy";
+import BiohackingAssessment from "./pages/BiohackingAssessment";
+import BiohackingResults from "./pages/BiohackingResults";
+import BiohackingProtocol from "./pages/BiohackingProtocol";
 import NotFound from "./pages/NotFound";
 import DoctorRegistration from "./pages/DoctorRegistration";
 import PitchDeck from "./pages/PitchDeck";
@@ -172,6 +175,9 @@ const AppContent = () => {
             <Route path="/feed" element={<Feed />} />
             <Route path="/community" element={<Community />} />
             <Route path="/academy" element={<Academy />} />
+            <Route path="/biohacking/assessment" element={<BiohackingAssessment />} />
+            <Route path="/biohacking/results/:assessmentId" element={<BiohackingResults />} />
+            <Route path="/biohacking/protocol/:protocolId" element={<BiohackingProtocol />} />
           </Route>
 
           {/* Doctor routes */}

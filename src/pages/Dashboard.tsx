@@ -166,6 +166,7 @@ export default function Dashboard() {
     { icon: Calendar, label: "Τα Ραντεβού μου", path: "/appointments", color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400", description: "Διαχείριση ραντεβού" },
     { icon: Pill, label: "Υπενθυμίσεις Φαρμάκων", path: "/medications", color: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400", description: "Πρόγραμμα φαρμάκων" },
     { icon: FileText, label: "Ιατρικό Ιστορικό", path: "/records", color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400", description: "Πλήρες ιστορικό υγείας" },
+    { icon: Sparkles, label: "Biohacking", path: "/biohacking/assessment", color: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400", description: "Βελτιστοποίηση απόδοσης" },
   ];
 
   const firstName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'εκεί';
