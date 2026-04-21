@@ -757,6 +757,24 @@ export type Database = {
           },
         ]
       }
+      context_cache: {
+        Row: {
+          cached_at: string
+          context_data: Json
+          patient_id: string
+        }
+        Insert: {
+          cached_at?: string
+          context_data: Json
+          patient_id: string
+        }
+        Update: {
+          cached_at?: string
+          context_data?: Json
+          patient_id?: string
+        }
+        Relationships: []
+      }
       doctor_access_logs: {
         Row: {
           access_type: string
@@ -845,6 +863,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      drug_interaction_logs: {
+        Row: {
+          checked_at: string
+          current_medications: Json | null
+          id: string
+          interactions_found: Json | null
+          new_medication: string
+          patient_acknowledged: boolean
+          patient_id: string
+          severity: string | null
+        }
+        Insert: {
+          checked_at?: string
+          current_medications?: Json | null
+          id?: string
+          interactions_found?: Json | null
+          new_medication: string
+          patient_acknowledged?: boolean
+          patient_id: string
+          severity?: string | null
+        }
+        Update: {
+          checked_at?: string
+          current_medications?: Json | null
+          id?: string
+          interactions_found?: Json | null
+          new_medication?: string
+          patient_acknowledged?: boolean
+          patient_id?: string
+          severity?: string | null
+        }
+        Relationships: []
       }
       email_send_log: {
         Row: {
@@ -1041,6 +1092,33 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      health_scores: {
+        Row: {
+          calculated_at: string
+          factors: Json | null
+          id: string
+          patient_id: string
+          score: number
+          top_recommendations: Json | null
+        }
+        Insert: {
+          calculated_at?: string
+          factors?: Json | null
+          id?: string
+          patient_id: string
+          score: number
+          top_recommendations?: Json | null
+        }
+        Update: {
+          calculated_at?: string
+          factors?: Json | null
+          id?: string
+          patient_id?: string
+          score?: number
+          top_recommendations?: Json | null
         }
         Relationships: []
       }
@@ -2124,6 +2202,51 @@ export type Database = {
           updated_at?: string
           user_id?: string
           version?: number
+        }
+        Relationships: []
+      }
+      patient_health_profiles: {
+        Row: {
+          alcohol: string | null
+          created_at: string
+          diet_notes: string | null
+          exercise_frequency: string | null
+          id: string
+          sleep_hours: number | null
+          smoking: string | null
+          stress_level: string | null
+          updated_at: string
+          user_id: string
+          wearable_device: string | null
+          work_type: string | null
+        }
+        Insert: {
+          alcohol?: string | null
+          created_at?: string
+          diet_notes?: string | null
+          exercise_frequency?: string | null
+          id?: string
+          sleep_hours?: number | null
+          smoking?: string | null
+          stress_level?: string | null
+          updated_at?: string
+          user_id: string
+          wearable_device?: string | null
+          work_type?: string | null
+        }
+        Update: {
+          alcohol?: string | null
+          created_at?: string
+          diet_notes?: string | null
+          exercise_frequency?: string | null
+          id?: string
+          sleep_hours?: number | null
+          smoking?: string | null
+          stress_level?: string | null
+          updated_at?: string
+          user_id?: string
+          wearable_device?: string | null
+          work_type?: string | null
         }
         Relationships: []
       }
