@@ -53,6 +53,9 @@ const DoctorSchedule = () => {
   const { toast } = useToast();
   const [providerId, setProviderId] = useState<string | null>(null);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [newBlockedDate, setNewBlockedDate] = useState<Date | undefined>(undefined);
+  const [newBlockedReason, setNewBlockedReason] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -77,7 +80,7 @@ const DoctorSchedule = () => {
 
     if (provider) {
       setProviderId(provider.id);
-      await fetchSlots(provider.id);
+      await Promise.all([fetchSlots(provider.id), fetchBlocked(provider.id)]);
     }
     setLoading(false);
   };
@@ -91,6 +94,43 @@ const DoctorSchedule = () => {
       .order('start_time', { ascending: true });
 
     if (data) setSlots(data);
+  };
+
+  const fetchBlocked = async (provId: string) => {
+    const { data } = await supabase
+      .from('provider_blocked_dates')
+      .select('id, blocked_date, reason')
+      .eq('provider_id', provId)
+      .gte('blocked_date', format(new Date(), 'yyyy-MM-dd'))
+      .order('blocked_date', { ascending: true });
+    if (data) setBlockedDates(data);
+  };
+
+  const handleAddBlockedDate = async () => {
+    if (!providerId || !newBlockedDate) return;
+    const dateStr = format(newBlockedDate, 'yyyy-MM-dd');
+    const { error } = await supabase.from('provider_blocked_dates').insert({
+      provider_id: providerId,
+      blocked_date: dateStr,
+      reason: newBlockedReason.trim() || null,
+    });
+    if (error) {
+      toast({ title: 'Σφάλμα', description: 'Αποτυχία προσθήκης ημερομηνίας', variant: 'destructive' });
+    } else {
+      toast({ title: 'Ημερομηνία Μπλοκαρίστηκε', description: format(newBlockedDate, 'PPP', { locale: el }) });
+      setNewBlockedDate(undefined);
+      setNewBlockedReason('');
+      fetchBlocked(providerId);
+    }
+  };
+
+  const handleDeleteBlockedDate = async (blockedId: string) => {
+    const { error } = await supabase.from('provider_blocked_dates').delete().eq('id', blockedId);
+    if (error) {
+      toast({ title: 'Σφάλμα', description: 'Αποτυχία διαγραφής', variant: 'destructive' });
+    } else if (providerId) {
+      fetchBlocked(providerId);
+    }
   };
 
   const handleAddSlot = async () => {
