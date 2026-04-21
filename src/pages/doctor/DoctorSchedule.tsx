@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Plus, Trash2 } from 'lucide-react';
+import { Clock, Plus, Trash2, CalendarOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -16,7 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { el } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { AdvisorBanner } from '@/components/pilot/AdvisorBanner';
+
+interface BlockedDate {
+  id: string;
+  blocked_date: string;
+  reason: string | null;
+}
 
 interface AvailabilitySlot {
   id: string;
