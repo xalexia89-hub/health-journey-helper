@@ -132,25 +132,13 @@ export default function PilotLanding() {
             Γίνετε μέρος της πρώτης ομάδας χρηστών που δοκιμάζει το νέο σύστημα πλοήγησης υγείας
           </p>
 
-          {/* Progress Indicator */}
-          <div className="max-w-xs mx-auto mb-8">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Εγγεγραμμένοι Χρήστες</span>
-              <span className="font-medium">{loading ? '…' : `${enrollmentCount}/${maxUsers}`}</span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500"
-                style={{ width: `${Math.min((enrollmentCount / maxUsers) * 100, 100)}%` }}
-              />
-            </div>
-            {isPilotFull && (
-              <p className="text-warning text-sm mt-2 flex items-center justify-center gap-1">
-                <Clock className="h-4 w-4" />
-                Το pilot είναι πλήρες - εγγραφείτε στη λίστα αναμονής
-              </p>
-            )}
-          </div>
+          {/* Progress indicator removed - status tracked internally */}
+          {isPilotFull && (
+            <p className="text-warning text-sm mb-6 flex items-center justify-center gap-1">
+              <Clock className="h-4 w-4" />
+              Το pilot είναι πλήρες - εγγραφείτε στη λίστα αναμονής
+            </p>
+          )}
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
