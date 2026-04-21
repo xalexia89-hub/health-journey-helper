@@ -91,6 +91,20 @@ const Appointments = () => {
     if (user) fetchAppointments();
   }, [user, isDemo]);
 
+  // Realtime: refresh when this patient's appointments change (e.g., physician cancels)
+  useEffect(() => {
+    if (!user || isDemo) return;
+    const channel = supabase
+      .channel(`patient-appointments-${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'appointments', filter: `patient_id=eq.${user.id}` },
+        () => { fetchAppointments(); }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, isDemo]);
+
   const fetchAppointments = async () => {
     const { data } = await supabase
       .from('appointments')
