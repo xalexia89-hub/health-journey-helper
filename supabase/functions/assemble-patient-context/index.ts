@@ -37,10 +37,10 @@ serve(async (req) => {
       });
     }
 
-    const { patient_id, force_refresh } = await req.json();
-    const targetId = patient_id || userData.user.id;
+    const body = await req.json().catch(() => ({}));
+    const targetId: string = body.patient_id || userData.user.id;
+    const force_refresh: boolean = !!body.force_refresh;
 
-    // Cache check
     if (!force_refresh) {
       const { data: cached } = await supabase
         .from("context_cache")
@@ -49,8 +49,7 @@ serve(async (req) => {
         .maybeSingle();
 
       if (cached?.cached_at) {
-        const ageMin =
-          (Date.now() - new Date(cached.cached_at).getTime()) / 60000;
+        const ageMin = (Date.now() - new Date(cached.cached_at).getTime()) / 60000;
         if (ageMin < CACHE_MINUTES) {
           return new Response(
             JSON.stringify({ context: cached.context_data, cached: true }),
@@ -60,34 +59,32 @@ serve(async (req) => {
       }
     }
 
-    // Parallel fetch — RLS will block unauthorized rows automatically
     const [
       profileRes,
       healthFileRes,
       lifestyleRes,
       medicalRecordRes,
-      medicationsRes,
-      labsRes,
+      medsRes,
+      entriesRes,
       documentsRes,
-      familyRes,
       appointmentsRes,
-      symptomSessionsRes,
+      symptomEntriesRes,
     ] = await Promise.all([
       supabase.from("profiles").select("full_name, email").eq("id", targetId).maybeSingle(),
       supabase.from("health_files").select("*").eq("user_id", targetId).maybeSingle(),
       supabase.from("patient_health_profiles").select("*").eq("user_id", targetId).maybeSingle(),
       supabase.from("medical_records").select("*").eq("user_id", targetId).maybeSingle(),
-      supabase.from("medications").select("name, dosage, frequency, start_date, is_active").eq("user_id", targetId).eq("is_active", true).limit(50),
-      supabase.from("medical_entries").select("title, description, entry_date, entry_type, metadata").eq("user_id", targetId).in("entry_type", ["blood_test", "imaging", "diagnosis"]).order("entry_date", { ascending: false }).limit(20),
+      supabase.from("medication_reminders").select("medication_name, dosage, frequency, start_date, is_active").eq("user_id", targetId).eq("is_active", true).limit(50),
+      supabase.from("medical_entries").select("title, description, entry_date, entry_type, metadata").eq("user_id", targetId).order("entry_date", { ascending: false }).limit(40),
       supabase.from("medical_documents").select("file_name, document_category, uploaded_at").eq("user_id", targetId).order("uploaded_at", { ascending: false }).limit(20),
-      supabase.from("family_history").select("*").eq("user_id", targetId),
-      supabase.from("appointments").select("appointment_date, status, visit_type, providers(name, specialty)").eq("patient_id", targetId).order("appointment_date", { ascending: false }).limit(20),
-      supabase.from("symptom_intakes").select("primary_symptoms, urgency_level, created_at").eq("user_id", targetId).order("created_at", { ascending: false }).limit(20),
+      supabase.from("appointments").select("appointment_date, status, visit_type, notes, providers(name, specialty)").eq("patient_id", targetId).order("appointment_date", { ascending: false }).limit(20),
+      supabase.from("symptom_entries").select("symptoms, body_areas, suggested_specialty, urgency_level, created_at").eq("user_id", targetId).order("created_at", { ascending: false }).limit(20),
     ]);
 
-    const hf = healthFileRes.data || {};
-    const ls = lifestyleRes.data || {};
-    const mr = medicalRecordRes.data || {};
+    const hf: any = healthFileRes.data || {};
+    const ls: any = lifestyleRes.data || {};
+    const mr: any = medicalRecordRes.data || {};
+    const allEntries = entriesRes.data || [];
 
     let age: number | null = null;
     if (hf.date_of_birth) {
@@ -95,14 +92,12 @@ serve(async (req) => {
       age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
     }
 
-    // Hereditary risk flags (simple heuristic)
-    const family = familyRes.data || [];
+    // Family history (jsonb on medical_records)
+    const family: any[] = Array.isArray(mr.family_history) ? mr.family_history : [];
     const conditionCounts: Record<string, number> = {};
     for (const m of family) {
-      const conds: string[] = m.conditions || [];
-      for (const c of conds) {
-        conditionCounts[c] = (conditionCounts[c] || 0) + 1;
-      }
+      const conds: string[] = m?.conditions || [];
+      for (const c of conds) conditionCounts[c] = (conditionCounts[c] || 0) + 1;
     }
     const hereditary_risk_flags = Object.entries(conditionCounts).map(([condition, count]) => ({
       condition,
@@ -112,8 +107,8 @@ serve(async (req) => {
 
     // Symptom themes
     const allSymptoms: string[] = [];
-    for (const s of symptomSessionsRes.data || []) {
-      if (Array.isArray(s.primary_symptoms)) allSymptoms.push(...s.primary_symptoms);
+    for (const s of symptomEntriesRes.data || []) {
+      if (Array.isArray(s.symptoms)) allSymptoms.push(...s.symptoms);
     }
     const symptomCounts: Record<string, number> = {};
     for (const s of allSymptoms) symptomCounts[s] = (symptomCounts[s] || 0) + 1;
@@ -133,47 +128,47 @@ serve(async (req) => {
       .slice(0, 3)
       .map(([s]) => s);
 
+    const labs = allEntries.filter((e) => e.entry_type === "blood_test").slice(0, 10);
+    const diagnoses = allEntries.filter((e) => e.entry_type === "diagnosis").map((e) => e.title);
+
     const context = {
       patient_id: targetId,
       age,
       gender: hf.sex || null,
-      blood_type: mr.blood_type || null,
+      blood_type: null,
 
       chronic_conditions: mr.chronic_conditions || [],
-      past_diagnoses: (labsRes.data || []).filter((e) => e.entry_type === "diagnosis").map((e) => e.title),
+      past_diagnoses: diagnoses,
       past_surgeries: mr.past_surgeries || [],
-      current_medications: (medicationsRes.data || []).map((m) => ({
-        name: m.name,
+      current_medications: (medsRes.data || []).map((m: any) => ({
+        name: m.medication_name,
         dose: m.dosage,
         frequency: m.frequency,
         since: m.start_date,
       })),
       allergies: mr.allergies || [],
-      last_lab_results: (labsRes.data || [])
-        .filter((e) => e.entry_type === "blood_test")
-        .slice(0, 10)
-        .map((e) => ({
-          test: e.title,
-          value: (e.metadata as any)?.value || "",
-          unit: (e.metadata as any)?.unit || "",
-          date: e.entry_date,
-          flag: (e.metadata as any)?.flag || "normal",
-        })),
-      uploaded_files_summary: (documentsRes.data || []).map((d) => d.file_name),
+      last_lab_results: labs.map((e: any) => ({
+        test: e.title,
+        value: (e.metadata as any)?.value || "",
+        unit: (e.metadata as any)?.unit || "",
+        date: e.entry_date,
+        flag: (e.metadata as any)?.flag || "normal",
+      })),
+      uploaded_files_summary: (documentsRes.data || []).map((d: any) => d.file_name),
 
-      family_history: family.map((m) => ({
-        relation: m.relation,
-        conditions: m.conditions || [],
-        age_of_onset: m.age_of_onset,
-        deceased: m.deceased,
-        cause_of_death: m.cause_of_death,
+      family_history: family.map((m: any) => ({
+        relation: m?.relation,
+        conditions: m?.conditions || [],
+        age_of_onset: m?.age_of_onset,
+        deceased: m?.deceased,
+        cause_of_death: m?.cause_of_death,
       })),
       hereditary_risk_flags,
 
-      appointment_history: (appointmentsRes.data || []).map((a) => ({
-        specialty: (a as any).providers?.specialty || "unknown",
+      appointment_history: (appointmentsRes.data || []).map((a: any) => ({
+        specialty: a.providers?.specialty || "unknown",
         date: a.appointment_date,
-        reason: a.visit_type || "consultation",
+        reason: a.visit_type || a.notes || "consultation",
         status: a.status,
       })),
       most_visited_specialties,
@@ -198,7 +193,6 @@ serve(async (req) => {
       },
     };
 
-    // Upsert cache
     await supabase.from("context_cache").upsert({
       patient_id: targetId,
       context_data: context,
