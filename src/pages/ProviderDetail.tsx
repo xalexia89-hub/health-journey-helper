@@ -17,14 +17,8 @@ import { CallButtons } from '@/components/communication';
 import { cn } from '@/lib/utils';
 import { logger, getErrorMessage } from '@/lib/logger';
 
-interface RemoteSlot {
-  start: string;
-  end: string;
-  available: boolean;
-}
-
 interface SlotResponse {
-  slots?: RemoteSlot[];
+  slots?: Array<{ start: string; end: string; available: boolean }>;
 }
 
 interface LockResponse {
