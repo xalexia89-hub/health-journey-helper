@@ -15,6 +15,23 @@ import { useToast } from '@/hooks/use-toast';
 import { BookingConfirmationDialog } from '@/components/appointments/BookingConfirmationDialog';
 import { CallButtons } from '@/components/communication';
 import { cn } from '@/lib/utils';
+import { logger, getErrorMessage } from '@/lib/logger';
+
+interface RemoteSlot {
+  start: string;
+  end: string;
+  available: boolean;
+}
+
+interface SlotResponse {
+  slots?: RemoteSlot[];
+}
+
+interface LockResponse {
+  error?: string;
+  lock_id?: string;
+  locked_until?: string;
+}
 
 interface Provider {
   id: string;
