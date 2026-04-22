@@ -26,6 +26,7 @@ import {
   Camera
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { logger, getErrorMessage } from '@/lib/logger';
 import {
   AlertDialog,
   AlertDialogAction,

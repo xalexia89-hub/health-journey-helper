@@ -17,6 +17,7 @@ import ReactMarkdown from "react-markdown";
 import type { Database } from "@/integrations/supabase/types";
 import medithoAiIcon from "@/assets/medithos-ai-icon.png";
 import { PatternInsightWidget } from "./PatternInsightWidget";
+import { logger } from "@/lib/logger";
 
 type BodyArea = Database['public']['Enums']['body_area'];
 
