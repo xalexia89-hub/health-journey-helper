@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 import { logger, getErrorMessage } from '@/lib/logger';
 
 interface SlotResponse {
-  slots?: Array<{ start: string; end: string; available: boolean }>;
+  slots?: Array<{ start: string; end: string; label: string; available: boolean }>;
 }
 
 interface LockResponse {
