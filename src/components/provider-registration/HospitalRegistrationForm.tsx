@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { translateAuthError } from "@/lib/authErrors";
+import { logger } from "@/lib/logger";
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -151,11 +152,12 @@ export default function HospitalRegistrationForm({ onBack }: HospitalRegistratio
 
         navigate('/dashboard');
       }
-    } catch (error: any) {
-      console.error('Hospital signup error:', error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      logger.error('Hospital signup error:', error);
       toast({
         title: "Σφάλμα Εγγραφής",
-        description: translateAuthError(error.message),
+        description: translateAuthError(message),
         variant: "destructive",
       });
     } finally {

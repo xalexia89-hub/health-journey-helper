@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 // Types for Apple Health data
 interface HealthKitSample {
@@ -48,7 +49,7 @@ export const requestAppleHealthPermissions = async (): Promise<boolean> => {
     });
     return true;
   } catch (error) {
-    console.error('Apple Health permission error:', error);
+    logger.error('Apple Health permission error:', error);
     return false;
   }
 };
@@ -69,7 +70,7 @@ export const syncAppleHealthData = async (userId: string): Promise<{
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
 
-  const results: Record<string, any> = {};
+  const results: { heartRate?: number; steps?: number; spo2?: number; systolic?: number; diastolic?: number } = {};
 
   // Heart Rate - latest reading
   try {
@@ -93,7 +94,7 @@ export const syncAppleHealthData = async (userId: string): Promise<{
       });
     }
   } catch (e) {
-    console.warn('HR sync failed:', e);
+    logger.warn('HR sync failed:', e);
   }
 
   // Steps - today total
@@ -120,7 +121,7 @@ export const syncAppleHealthData = async (userId: string): Promise<{
       }, { onConflict: 'user_id,source,date' });
     }
   } catch (e) {
-    console.warn('Steps sync failed:', e);
+    logger.warn('Steps sync failed:', e);
   }
 
   // SpO2
@@ -144,7 +145,7 @@ export const syncAppleHealthData = async (userId: string): Promise<{
       });
     }
   } catch (e) {
-    console.warn('SpO2 sync failed:', e);
+    logger.warn('SpO2 sync failed:', e);
   }
 
   // Blood Pressure
@@ -177,7 +178,7 @@ export const syncAppleHealthData = async (userId: string): Promise<{
       });
     }
   } catch (e) {
-    console.warn('BP sync failed:', e);
+    logger.warn('BP sync failed:', e);
   }
 
   // Update wearable_connections

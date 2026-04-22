@@ -17,6 +17,7 @@ import ReactMarkdown from "react-markdown";
 import type { Database } from "@/integrations/supabase/types";
 import medithoAiIcon from "@/assets/medithos-ai-icon.png";
 import { PatternInsightWidget } from "./PatternInsightWidget";
+import { logger } from "@/lib/logger";
 
 type BodyArea = Database['public']['Enums']['body_area'];
 
@@ -399,7 +400,7 @@ export function UnifiedSymptomAssistant() {
         });
       }
     } catch (error) {
-      console.error("Chat error:", error);
+      logger.error("Chat error:", error);
       toast({
         title: "Σφάλμα",
         description: error instanceof Error ? error.message : "Αποτυχία αποστολής μηνύματος",
@@ -438,9 +439,9 @@ export function UnifiedSymptomAssistant() {
         .update({ notes: updatedNotes })
         .eq('user_id', user.id);
         
-      console.log("Recommendation logged to medical record");
+      logger.debug("Recommendation logged to medical record");
     } catch (error) {
-      console.error("Error logging recommendation:", error);
+      logger.error("Error logging recommendation:", error);
     }
   };
 
@@ -588,7 +589,7 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
         description: "Τα συμπτώματα αποθηκεύτηκαν αυτόματα στον ιατρικό φάκελό σας",
       });
     } catch (error) {
-      console.error("Error saving symptoms:", error);
+      logger.error("Error saving symptoms:", error);
       toast({
         title: "Σφάλμα",
         description: "Αποτυχία αποθήκευσης",

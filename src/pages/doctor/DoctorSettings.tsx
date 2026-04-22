@@ -26,6 +26,7 @@ import {
   Camera
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { logger, getErrorMessage } from '@/lib/logger';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,8 +140,8 @@ const DoctorSettings = () => {
 
       setProvider({ ...provider, avatar_url: publicUrl });
       toast({ title: 'Επιτυχία', description: 'Η φωτογραφία προφίλ ενημερώθηκε' });
-    } catch (error: any) {
-      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({ title: 'Σφάλμα', description: getErrorMessage(error), variant: 'destructive' });
     } finally {
       setUploadingAvatar(false);
     }
@@ -188,8 +189,8 @@ const DoctorSettings = () => {
 
       setGalleryImages([...galleryImages, data]);
       toast({ title: 'Επιτυχία', description: 'Η φωτογραφία προστέθηκε στη gallery' });
-    } catch (error: any) {
-      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({ title: 'Σφάλμα', description: getErrorMessage(error), variant: 'destructive' });
     } finally {
       setUploadingImage(false);
     }
@@ -206,8 +207,8 @@ const DoctorSettings = () => {
 
       setGalleryImages(galleryImages.filter(img => img.id !== imageId));
       toast({ title: 'Επιτυχία', description: 'Η φωτογραφία διαγράφηκε' });
-    } catch (error: any) {
-      toast({ title: 'Σφάλμα', description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({ title: 'Σφάλμα', description: getErrorMessage(error), variant: 'destructive' });
     }
   };
 

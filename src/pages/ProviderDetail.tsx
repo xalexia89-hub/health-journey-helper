@@ -15,6 +15,17 @@ import { useToast } from '@/hooks/use-toast';
 import { BookingConfirmationDialog } from '@/components/appointments/BookingConfirmationDialog';
 import { CallButtons } from '@/components/communication';
 import { cn } from '@/lib/utils';
+import { logger, getErrorMessage } from '@/lib/logger';
+
+interface SlotResponse {
+  slots?: Array<{ start: string; end: string; label: string; available: boolean }>;
+}
+
+interface LockResponse {
+  error?: string;
+  lock_id?: string;
+  locked_until?: string;
+}
 
 interface Provider {
   id: string;
@@ -192,9 +203,9 @@ const ProviderDetail = () => {
         body: { provider_id: id, date: format(date, 'yyyy-MM-dd') },
       });
       if (error) throw error;
-      setRemoteSlots((data as any)?.slots ?? []);
+      setRemoteSlots((data as SlotResponse)?.slots ?? []);
     } catch (e) {
-      console.error(e);
+      logger.error('loadRemoteSlots failed:', e);
       setRemoteSlots([]);
     } finally {
       setSlotsLoading(false);
@@ -225,8 +236,8 @@ const ProviderDetail = () => {
         body: { provider_id: id, slot_start: slot.start, slot_end: slot.end },
       });
       if (error) throw error;
-      const resp = data as any;
-      if (resp?.error) {
+      const resp = (data ?? {}) as LockResponse;
+      if (resp.error) {
         toast({
           title: 'Ώρα μη διαθέσιμη',
           description: 'Κάποιος άλλος μόλις την κράτησε. Επιλέξτε άλλη.',
@@ -235,12 +246,12 @@ const ProviderDetail = () => {
         if (selectedDate) loadRemoteSlots(selectedDate);
         return;
       }
-      setLockId(resp.lock_id);
-      setLockExpiresAt(new Date(resp.locked_until).getTime());
+      setLockId(resp.lock_id ?? null);
+      setLockExpiresAt(resp.locked_until ? new Date(resp.locked_until).getTime() : null);
       setSelectedSlot(slot);
       setShowConfirmation(true);
-    } catch (e: any) {
-      toast({ title: 'Σφάλμα', description: e?.message ?? 'Αποτυχία κράτησης ώρας', variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: 'Σφάλμα', description: getErrorMessage(e, 'Αποτυχία κράτησης ώρας'), variant: 'destructive' });
     }
   };
 
@@ -280,10 +291,10 @@ const ProviderDetail = () => {
       setLockId(null);
       setLockExpiresAt(null);
       navigate('/appointments');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Αποτυχία Κράτησης',
-        description: error?.message ?? 'Δοκιμάστε ξανά.',
+        description: getErrorMessage(error, 'Δοκιμάστε ξανά.'),
         variant: 'destructive',
       });
     } finally {

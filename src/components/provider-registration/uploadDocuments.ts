@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { UploadedDocument } from "./DocumentUploadSection";
 
 /**
@@ -37,7 +38,7 @@ export async function uploadProviderDocuments(
         });
 
       if (uploadError) {
-        console.error(`Failed to upload ${doc.type}:`, uploadError);
+        logger.error(`Failed to upload ${doc.type}:`, uploadError);
         failed++;
         continue;
       }
@@ -53,14 +54,14 @@ export async function uploadProviderDocuments(
         });
 
       if (dbError) {
-        console.error(`Failed to record ${doc.type} in DB:`, dbError);
+        logger.error(`Failed to record ${doc.type} in DB:`, dbError);
         failed++;
         continue;
       }
 
       uploaded++;
     } catch (err) {
-      console.error(`Unexpected error uploading ${doc.type}:`, err);
+      logger.error(`Unexpected error uploading ${doc.type}:`, err);
       failed++;
     }
   }
