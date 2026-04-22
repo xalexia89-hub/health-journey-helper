@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { translateAuthError } from "@/lib/authErrors";
+import { logger } from "@/lib/logger";
 import { 
   ArrowLeft, 
   ArrowRight, 
