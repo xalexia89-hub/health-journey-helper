@@ -151,11 +151,12 @@ export default function HospitalRegistrationForm({ onBack }: HospitalRegistratio
 
         navigate('/dashboard');
       }
-    } catch (error: any) {
-      console.error('Hospital signup error:', error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      logger.error('Hospital signup error:', error);
       toast({
         title: "Σφάλμα Εγγραφής",
-        description: translateAuthError(error.message),
+        description: translateAuthError(message),
         variant: "destructive",
       });
     } finally {

@@ -139,11 +139,12 @@ export default function NurseRegistrationForm({ onBack }: NurseRegistrationFormP
 
         navigate('/nurses');
       }
-    } catch (error: any) {
-      console.error('Nurse signup error:', error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      logger.error('Nurse signup error:', error);
       toast({
         title: "Σφάλμα Εγγραφής",
-        description: translateAuthError(error.message),
+        description: translateAuthError(message),
         variant: "destructive",
       });
     } finally {
