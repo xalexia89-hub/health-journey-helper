@@ -312,6 +312,57 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_actions: {
+        Row: {
+          action_data: Json | null
+          action_type: string
+          agent_type: string
+          created_at: string | null
+          human_approved: boolean | null
+          id: string
+          patient_id: string
+          reasoning: string | null
+          session_id: string | null
+        }
+        Insert: {
+          action_data?: Json | null
+          action_type: string
+          agent_type: string
+          created_at?: string | null
+          human_approved?: boolean | null
+          id?: string
+          patient_id: string
+          reasoning?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          action_data?: Json | null
+          action_type?: string
+          agent_type?: string
+          created_at?: string | null
+          human_approved?: boolean | null
+          id?: string
+          patient_id?: string
+          reasoning?: string | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_actions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_actions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "agent_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_sessions: {
         Row: {
           agent_type: string
@@ -2760,6 +2811,69 @@ export type Database = {
           },
         ]
       }
+      pending_agent_actions: {
+        Row: {
+          action_data: Json | null
+          action_type: string
+          agent_type: string
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          patient_id: string
+          reasoning: string | null
+          requires_approval_from: string
+          risk_level: string
+          status: string
+        }
+        Insert: {
+          action_data?: Json | null
+          action_type: string
+          agent_type: string
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          patient_id: string
+          reasoning?: string | null
+          requires_approval_from: string
+          risk_level: string
+          status?: string
+        }
+        Update: {
+          action_data?: Json | null
+          action_type?: string
+          agent_type?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          patient_id?: string
+          reasoning?: string | null
+          requires_approval_from?: string
+          risk_level?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_agent_actions_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_agent_actions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pilot_enrollments: {
         Row: {
           age_confirmed: boolean
@@ -3815,7 +3929,6 @@ export type Database = {
           day: string | null
           error_count: number | null
           model_used: string | null
-          success_rate: number | null
           task: string | null
           total_calls: number | null
           total_cost_usd: number | null
