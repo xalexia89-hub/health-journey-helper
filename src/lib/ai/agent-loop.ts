@@ -121,18 +121,20 @@ async function logAgentStep(args: {
   session_id?: string;
 }) {
   try {
-    await supabase.from("agent_actions").insert({
-      patient_id: args.patient_id,
-      agent_type: args.agent,
-      action_type: "memory_stored",
-      reasoning: args.thought,
-      action_data: {
-        step: args.step_index,
-        action: args.action,
-        observation: args.observation,
+    await supabase.from("agent_actions").insert([
+      {
+        patient_id: args.patient_id,
+        agent_type: args.agent,
+        action_type: "memory_stored",
+        reasoning: args.thought,
+        action_data: {
+          step: args.step_index,
+          action: args.action,
+          observation: args.observation,
+        } as never,
+        session_id: args.session_id ?? null,
       },
-      session_id: args.session_id ?? null,
-    });
+    ]);
   } catch (e) {
     logger.error("logAgentStep failed", e);
   }
