@@ -211,6 +211,26 @@ export default function Auth() {
                   Εγγραφή
                 </Button>
 
+                <p className="text-center text-xs text-muted-foreground leading-relaxed">
+                  Με την εγγραφή σας, αποδέχεστε τους{" "}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/terms')}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Όρους Χρήσης
+                  </button>
+                  {" "}και την{" "}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/privacy')}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Πολιτική Απορρήτου
+                  </button>
+                  .
+                </p>
+
                 <p className="text-center text-sm text-muted-foreground">
                   Έχετε ήδη λογαριασμό;{" "}
                   <button
