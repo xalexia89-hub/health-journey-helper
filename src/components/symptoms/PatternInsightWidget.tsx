@@ -46,9 +46,15 @@ export const PatternInsightWidget = ({ autoAnalyze = true, compact = false }: Pr
 
   const runAnalysis = async () => {
     if (!user || loading) return;
+    // Ensure we have an active session token before invoking (avoids 401 from anon-only requests)
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session?.access_token) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("analyze-symptom-patterns", { body: {} });
+      const { data, error } = await supabase.functions.invoke("analyze-symptom-patterns", {
+        body: {},
+        headers: { Authorization: `Bearer ${sessionData.session.access_token}` },
+      });
       if (error) throw error;
       setInsight({
         pattern_type: data.pattern_type,
