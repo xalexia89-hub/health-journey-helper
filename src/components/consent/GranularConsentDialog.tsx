@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shield, AlertTriangle, Brain, FlaskConical, ExternalLink } from "lucide-react";
-import { Link } from "react-router-dom";
 import { recordConsentBatch } from "@/lib/consent";
 import { useToast } from "@/hooks/use-toast";
 
@@ -131,7 +130,6 @@ export function GranularConsentDialog({
 
         <ScrollArea className="flex-1 pr-3">
           <div className="space-y-5">
-            {/* Step 1 */}
             <section className="space-y-3">
               <h4 className="text-sm font-semibold text-primary">{t.step1Title}</h4>
               <ConsentRow checked={age} onChange={setAge} id="c-age">
@@ -167,7 +165,6 @@ export function GranularConsentDialog({
               </ConsentRow>
             </section>
 
-            {/* Step 2 */}
             <section className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
@@ -179,7 +176,6 @@ export function GranularConsentDialog({
               </ConsentRow>
             </section>
 
-            {/* Step 3 */}
             <section className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
               <div className="flex items-start gap-2">
                 <Brain className="h-4 w-4 text-primary mt-0.5" />
@@ -191,7 +187,6 @@ export function GranularConsentDialog({
               </ConsentRow>
             </section>
 
-            {/* Step 4 */}
             <section className="space-y-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
               <div className="flex items-start gap-2">
                 <FlaskConical className="h-4 w-4 text-warning mt-0.5" />
@@ -224,12 +219,28 @@ function ConsentRow({
   onChange: (v: boolean) => void;
   children: React.ReactNode;
 }) {
+  const toggle = () => onChange(!checked);
+
   return (
-    <div className="flex items-start gap-3">
-      <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(v === true)} />
-      <label htmlFor={id} className="text-sm leading-relaxed cursor-pointer">
-        {children}
-      </label>
+    <div
+      className="flex cursor-pointer items-start gap-3"
+      onClick={toggle}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      }}
+    >
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={(v) => onChange(v === true)}
+        onClick={(e) => e.stopPropagation()}
+      />
+      <div className="text-sm leading-relaxed">{children}</div>
     </div>
   );
 }
