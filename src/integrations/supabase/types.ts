@@ -1118,6 +1118,45 @@ export type Database = {
           },
         ]
       }
+      consent_records: {
+        Row: {
+          consent_type: string
+          granted: boolean
+          granted_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          revoked_at: string | null
+          user_agent: string | null
+          user_id: string
+          version: string
+        }
+        Insert: {
+          consent_type: string
+          granted: boolean
+          granted_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          user_id: string
+          version?: string
+        }
+        Update: {
+          consent_type?: string
+          granted?: boolean
+          granted_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
       consents: {
         Row: {
           case_id: string | null
@@ -1183,6 +1222,39 @@ export type Database = {
           cached_at?: string
           context_data?: Json
           patient_id?: string
+        }
+        Relationships: []
+      }
+      data_deletion_requests: {
+        Row: {
+          completed_at: string | null
+          id: string
+          ip_address: string | null
+          reason: string | null
+          requested_at: string
+          scheduled_deletion_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          ip_address?: string | null
+          reason?: string | null
+          requested_at?: string
+          scheduled_deletion_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          ip_address?: string | null
+          reason?: string | null
+          requested_at?: string
+          scheduled_deletion_at?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1530,6 +1602,54 @@ export type Database = {
           patient_id?: string
           score?: number
           top_recommendations?: Json | null
+        }
+        Relationships: []
+      }
+      incident_log: {
+        Row: {
+          affected_data_categories: string[] | null
+          affected_users_count: number | null
+          category: string
+          created_at: string
+          description: string
+          detected_at: string
+          id: string
+          remediation_actions: string | null
+          reported_by: string | null
+          reported_to_dpa_at: string | null
+          severity: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          affected_data_categories?: string[] | null
+          affected_users_count?: number | null
+          category: string
+          created_at?: string
+          description: string
+          detected_at?: string
+          id?: string
+          remediation_actions?: string | null
+          reported_by?: string | null
+          reported_to_dpa_at?: string | null
+          severity: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          affected_data_categories?: string[] | null
+          affected_users_count?: number | null
+          category?: string
+          created_at?: string
+          description?: string
+          detected_at?: string
+          id?: string
+          remediation_actions?: string | null
+          reported_by?: string | null
+          reported_to_dpa_at?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -3126,11 +3246,13 @@ export type Database = {
           country: string | null
           created_at: string | null
           date_of_birth: string | null
+          deletion_requested_at: string | null
           email: string
           full_name: string | null
           gdpr_consent: boolean | null
           id: string
           phone: string | null
+          scheduled_deletion_at: string | null
           terms_accepted: boolean | null
           updated_at: string | null
         }
@@ -3142,11 +3264,13 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          deletion_requested_at?: string | null
           email: string
           full_name?: string | null
           gdpr_consent?: boolean | null
           id: string
           phone?: string | null
+          scheduled_deletion_at?: string | null
           terms_accepted?: boolean | null
           updated_at?: string | null
         }
@@ -3158,11 +3282,13 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          deletion_requested_at?: string | null
           email?: string
           full_name?: string | null
           gdpr_consent?: boolean | null
           id?: string
           phone?: string | null
+          scheduled_deletion_at?: string | null
           terms_accepted?: boolean | null
           updated_at?: string | null
         }
@@ -3942,6 +4068,7 @@ export type Database = {
         Args: { _accessor_id: string; _patient_id: string }
         Returns: boolean
       }
+      cancel_account_deletion: { Args: never; Returns: boolean }
       cancel_appointment_v2: {
         Args: {
           p_appointment_id: string
@@ -3970,6 +4097,10 @@ export type Database = {
           access_token: string
           refresh_token: string
         }[]
+      }
+      has_active_consent: {
+        Args: { _consent_type: string; _user_id: string }
+        Returns: boolean
       }
       has_role: {
         Args: {
@@ -4017,6 +4148,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      request_account_deletion: { Args: { _reason?: string }; Returns: string }
       store_wearable_tokens: {
         Args: {
           p_access_token: string

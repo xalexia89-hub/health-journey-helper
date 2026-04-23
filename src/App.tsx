@@ -64,6 +64,7 @@ import ResetPassword from "./pages/ResetPassword";
 import MetricsDashboard from "./pages/MetricsDashboard";
 import About from "./pages/About";
 import Unsubscribe from "./pages/Unsubscribe";
+import PrivacyDashboard from "./pages/PrivacyDashboard";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -172,6 +173,7 @@ const AppContent = () => {
             <Route path="/medications" element={<MedicationReminders />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/privacy" element={<PrivacyDashboard />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/community" element={<Community />} />
             <Route path="/academy" element={<Academy />} />
