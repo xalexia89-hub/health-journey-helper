@@ -312,6 +312,109 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_sessions: {
+        Row: {
+          agent_type: string
+          context_snapshot: Json | null
+          created_at: string | null
+          id: string
+          messages: Json | null
+          model_used: string | null
+          outcomes: Json | null
+          patient_id: string
+          session_end: string | null
+          session_start: string | null
+          tokens_used: number | null
+        }
+        Insert: {
+          agent_type: string
+          context_snapshot?: Json | null
+          created_at?: string | null
+          id?: string
+          messages?: Json | null
+          model_used?: string | null
+          outcomes?: Json | null
+          patient_id: string
+          session_end?: string | null
+          session_start?: string | null
+          tokens_used?: number | null
+        }
+        Update: {
+          agent_type?: string
+          context_snapshot?: Json | null
+          created_at?: string | null
+          id?: string
+          messages?: Json | null
+          model_used?: string | null
+          outcomes?: Json | null
+          patient_id?: string
+          session_end?: string | null
+          session_start?: string | null
+          tokens_used?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_sessions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_observability: {
+        Row: {
+          cost_usd: number | null
+          created_at: string | null
+          error: string | null
+          id: string
+          latency_ms: number | null
+          metadata: Json | null
+          model_used: string
+          patient_id: string | null
+          status: string | null
+          task: string
+          tokens_input: number | null
+          tokens_output: number | null
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          metadata?: Json | null
+          model_used: string
+          patient_id?: string | null
+          status?: string | null
+          task: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          metadata?: Json | null
+          model_used?: string
+          patient_id?: string | null
+          status?: string | null
+          task?: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_observability_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointment_slot_locks: {
         Row: {
           created_at: string
@@ -2507,6 +2610,56 @@ export type Database = {
         }
         Relationships: []
       }
+      patient_memory: {
+        Row: {
+          confidence: number | null
+          content: string
+          created_at: string | null
+          embedding: string | null
+          id: string
+          is_active: boolean | null
+          last_reinforced_at: string | null
+          memory_type: string
+          metadata: Json | null
+          patient_id: string
+          source: string
+        }
+        Insert: {
+          confidence?: number | null
+          content: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_reinforced_at?: string | null
+          memory_type: string
+          metadata?: Json | null
+          patient_id: string
+          source: string
+        }
+        Update: {
+          confidence?: number | null
+          content?: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_reinforced_at?: string | null
+          memory_type?: string
+          metadata?: Json | null
+          patient_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_memory_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -3656,7 +3809,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      agent_performance: {
+        Row: {
+          avg_latency_ms: number | null
+          day: string | null
+          error_count: number | null
+          model_used: string | null
+          success_rate: number | null
+          task: string | null
+          total_calls: number | null
+          total_cost_usd: number | null
+          total_tokens: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_access_patient_medical_data: {
@@ -3700,6 +3866,23 @@ export type Database = {
         Returns: boolean
       }
       is_pilot_full: { Args: never; Returns: boolean }
+      match_patient_memories: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          p_patient_id: string
+          query_embedding: string
+        }
+        Returns: {
+          confidence: number
+          content: string
+          created_at: string
+          id: string
+          memory_type: string
+          similarity: number
+          source: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
