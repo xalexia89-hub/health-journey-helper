@@ -119,8 +119,8 @@ export function GranularConsentDialog({
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col glass-strong border-primary/30 [&>button]:hidden">
-        <DialogHeader>
+      <DialogContent className="glass-strong flex h-[90vh] w-[calc(100vw-1.5rem)] max-w-lg flex-col overflow-hidden border-primary/30 p-0 [&>button]:hidden sm:max-h-[90vh] sm:h-auto">
+        <DialogHeader className="px-6 pt-6">
           <div className="flex items-center gap-2 text-primary">
             <Shield className="h-5 w-5" />
             <DialogTitle>{t.title}</DialogTitle>
@@ -128,8 +128,8 @@ export function GranularConsentDialog({
           <DialogDescription>{t.desc}</DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-3">
-          <div className="space-y-5">
+        <ScrollArea className="min-h-0 flex-1 px-6">
+          <div className="space-y-5 pb-4">
             <section className="space-y-3">
               <h4 className="text-sm font-semibold text-primary">{t.step1Title}</h4>
               <ConsentRow checked={age} onChange={setAge} id="c-age">
@@ -167,7 +167,7 @@ export function GranularConsentDialog({
 
             <section className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
               <div className="flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
                 <h4 className="text-sm font-semibold text-destructive">{t.step2Title}</h4>
               </div>
               <p className="text-xs text-muted-foreground">{t.step2Body}</p>
@@ -178,7 +178,7 @@ export function GranularConsentDialog({
 
             <section className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
               <div className="flex items-start gap-2">
-                <Brain className="h-4 w-4 text-primary mt-0.5" />
+                <Brain className="mt-0.5 h-4 w-4 text-primary" />
                 <h4 className="text-sm font-semibold text-primary">{t.step3Title}</h4>
               </div>
               <p className="text-xs text-muted-foreground">{t.step3Body}</p>
@@ -189,7 +189,7 @@ export function GranularConsentDialog({
 
             <section className="space-y-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
               <div className="flex items-start gap-2">
-                <FlaskConical className="h-4 w-4 text-warning mt-0.5" />
+                <FlaskConical className="mt-0.5 h-4 w-4 text-warning" />
                 <h4 className="text-sm font-semibold text-warning">{t.step4Title}</h4>
               </div>
               <p className="text-xs text-muted-foreground">{t.step4Body}</p>
@@ -200,9 +200,11 @@ export function GranularConsentDialog({
           </div>
         </ScrollArea>
 
-        <Button onClick={submit} disabled={!requiredOk || saving} className="w-full" size="lg">
-          {saving ? t.saving : t.button}
-        </Button>
+        <div className="border-t border-border/60 bg-background/95 px-6 pb-6 pt-4 backdrop-blur-sm">
+          <Button onClick={submit} disabled={!requiredOk || saving} className="w-full" size="lg">
+            {saving ? t.saving : t.button}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
