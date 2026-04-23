@@ -33,15 +33,15 @@ export async function recordConsent(input: ConsentInput): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Authentication required");
 
-  const { error } = await supabase.from("consent_records").insert({
+  const { error } = await supabase.from("consent_records").insert([{
     user_id: user.id,
     consent_type: input.type,
     granted: input.granted,
     version: input.version ?? CONSENT_VERSION,
     user_agent: navigator.userAgent,
-    metadata: input.metadata ?? {},
+    metadata: (input.metadata ?? {}) as never,
     revoked_at: input.granted ? null : new Date().toISOString(),
-  });
+  }]);
 
   if (error) {
     logger.error("recordConsent failed", error);
@@ -60,7 +60,7 @@ export async function recordConsentBatch(items: ConsentInput[]): Promise<void> {
     granted: i.granted,
     version: i.version ?? CONSENT_VERSION,
     user_agent: navigator.userAgent,
-    metadata: i.metadata ?? {},
+    metadata: (i.metadata ?? {}) as never,
     revoked_at: i.granted ? null : new Date().toISOString(),
   }));
 
