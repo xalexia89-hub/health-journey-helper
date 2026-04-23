@@ -138,16 +138,32 @@ export function GranularConsentDialog({
                 {t.age}
               </ConsentRow>
               <ConsentRow checked={terms} onChange={setTerms} id="c-terms">
-                <Link to="/terms" target="_blank" className="text-primary hover:underline inline-flex items-center gap-1">
+                <span className="inline-flex flex-wrap items-center gap-1">
                   {t.terms}
-                  <ExternalLink className="h-3 w-3" />
-                </Link>
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-primary hover:underline inline-flex items-center gap-0.5"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </span>
               </ConsentRow>
               <ConsentRow checked={privacy} onChange={setPrivacy} id="c-privacy">
-                <Link to="/privacy" target="_blank" className="text-primary hover:underline inline-flex items-center gap-1">
+                <span className="inline-flex flex-wrap items-center gap-1">
                   {t.privacy}
-                  <ExternalLink className="h-3 w-3" />
-                </Link>
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-primary hover:underline inline-flex items-center gap-0.5"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </span>
               </ConsentRow>
             </section>
 
