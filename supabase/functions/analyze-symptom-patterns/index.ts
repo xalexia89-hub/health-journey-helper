@@ -147,6 +147,36 @@ ${JSON.stringify(signals, null, 2)}
 
     if (saveErr) console.error("save error", saveErr);
 
+    // 4. Push as notification (use service role to bypass RLS)
+    try {
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+      const labelMap: Record<string, string> = {
+        health_anxiety: "Άγχος υγείας",
+        real_concern: "Πιθανό κλινικό θέμα",
+        mixed: "Μικτό μοτίβο",
+        normal: "Φυσιολογική χρήση",
+      };
+      const pType = parsed.pattern_type ?? "normal";
+      const title = `AI Pattern Insight · ${labelMap[pType] ?? "Ενημέρωση"}`;
+      const message = [
+        parsed.empathetic_message,
+        parsed.ai_recommendation ? `💡 ${parsed.ai_recommendation}` : null,
+      ].filter(Boolean).join("\n\n");
+
+      await admin.from("notifications").insert({
+        user_id: user.id,
+        title,
+        message,
+        type: "pattern_insight",
+        is_read: false,
+      });
+    } catch (notifyErr) {
+      console.error("notification insert failed", notifyErr);
+    }
+
     return json({ ...parsed, signals, saved });
   } catch (e) {
     console.error(e);
