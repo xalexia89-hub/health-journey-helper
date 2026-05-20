@@ -277,12 +277,7 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        {/* AI Pattern Insight */}
-        {!isDemo && (
-          <section className="animate-slide-up" style={{ animationDelay: '80ms' }}>
-            <PatternInsightWidget />
-          </section>
-        )}
+        {/* AI Pattern Insight μεταφέρθηκε στις ειδοποιήσεις (NotificationBell) */}
 
         {/* Hologram Hub with Orbital Actions */}
         <section className="animate-slide-up relative flex items-center justify-center" style={{ animationDelay: '100ms' }}>
