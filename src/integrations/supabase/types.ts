@@ -3902,7 +3902,6 @@ export type Database = {
       }
       wearable_connections: {
         Row: {
-          access_token: string | null
           access_token_encrypted: string | null
           created_at: string
           external_user_id: string | null
@@ -3910,7 +3909,6 @@ export type Database = {
           is_active: boolean
           last_sync_at: string | null
           provider: string
-          refresh_token: string | null
           refresh_token_encrypted: string | null
           scopes: string[] | null
           sync_error: string | null
@@ -3920,7 +3918,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          access_token?: string | null
           access_token_encrypted?: string | null
           created_at?: string
           external_user_id?: string | null
@@ -3928,7 +3925,6 @@ export type Database = {
           is_active?: boolean
           last_sync_at?: string | null
           provider: string
-          refresh_token?: string | null
           refresh_token_encrypted?: string | null
           scopes?: string[] | null
           sync_error?: string | null
@@ -3938,7 +3934,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          access_token?: string | null
           access_token_encrypted?: string | null
           created_at?: string
           external_user_id?: string | null
@@ -3946,7 +3941,6 @@ export type Database = {
           is_active?: boolean
           last_sync_at?: string | null
           provider?: string
-          refresh_token?: string | null
           refresh_token_encrypted?: string | null
           scopes?: string[] | null
           sync_error?: string | null
