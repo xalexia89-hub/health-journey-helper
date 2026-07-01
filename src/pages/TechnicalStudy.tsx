@@ -1,5 +1,6 @@
 import { ArrowLeft, Download, Server, Database, Brain, Shield, Lock, Eye, FileText, Activity, Network, Cpu, Globe, Layers, Users, AlertTriangle, CheckCircle2, Zap, Heart, Building2, Key, RotateCcw, Bell } from "lucide-react";
-import html2pdf from "html2pdf.js";
+import html2pdfLib from "html2pdf.js";
+const html2pdf: any = html2pdfLib as any;
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
@@ -8,7 +9,7 @@ export default function TechnicalStudy() {
   const navigate = useNavigate();
 
   const handleDownloadPDF = () => {
-    const element = document.querySelector('.study-body');
+    const element = document.querySelector('.study-body') as HTMLElement | null;
     if (!element) return;
     const opt = {
       margin: [10, 10, 10, 10],

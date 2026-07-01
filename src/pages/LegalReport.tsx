@@ -11,8 +11,8 @@ export default function LegalReport() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
-      const html2pdfModule = await import('html2pdf.js');
-      const html2pdf = html2pdfModule.default || html2pdfModule;
+      const html2pdfModule: any = await import('html2pdf.js');
+      const html2pdf: any = html2pdfModule.default || html2pdfModule;
       const element = document.getElementById('legal-report-content');
       if (!element) {
         console.error('Element not found');

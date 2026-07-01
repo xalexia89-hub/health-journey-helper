@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Database, Users, Shield, Layers, Server, Code, Lock, Eye, FileText, Activity, AlertTriangle, Key, Network } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import html2pdf from "html2pdf.js";
+import html2pdfLib from "html2pdf.js";
+const html2pdf: any = html2pdfLib as any;
 
 const SystemDocumentation = () => {
   const navigate = useNavigate();
 
   const handleDownloadPDF = () => {
-    const element = document.querySelector('.documentation-body');
+    const element = document.querySelector('.documentation-body') as HTMLElement | null;
     if (!element) return;
     html2pdf().set({
       margin: [15, 15, 15, 15],
