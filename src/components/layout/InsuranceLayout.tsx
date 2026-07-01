@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
-import html2pdf from 'html2pdf.js';
+import html2pdfLib from 'html2pdf.js';
+const html2pdf: any = html2pdfLib as any;
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -37,7 +38,7 @@ export const InsuranceLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleDownloadPDF = useCallback(() => {
-    const element = document.querySelector('.insurance-content');
+    const element = document.querySelector('.insurance-content') as HTMLElement | null;
     if (!element) return;
     html2pdf().set({
       margin: [10, 10, 10, 10],

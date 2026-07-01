@@ -86,11 +86,16 @@ const DoctorSettings = () => {
   const fetchProvider = async () => {
     const { data } = await supabase
       .from('providers')
-      .select('*')
+      .select('id,user_id,type,name,specialty,description,qualifications,services,address,city,country,latitude,longitude,price_min,price_max,rating,review_count,avatar_url,is_verified,is_active,created_at,updated_at,license_number,registration_status')
       .eq('user_id', user?.id)
       .maybeSingle();
 
-    if (data) setProvider(data);
+    if (data) {
+      // email/phone are not bulk-readable — fetch via secure RPC.
+      const { data: contact } = await supabase.rpc('get_provider_contact', { _provider_id: (data as any).id });
+      const row = contact && contact[0] ? contact[0] : { email: null, phone: null };
+      setProvider({ ...(data as any), email: row.email, phone: row.phone });
+    }
     setLoading(false);
   };
 

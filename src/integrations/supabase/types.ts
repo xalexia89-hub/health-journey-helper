@@ -4076,6 +4076,7 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -4085,6 +4086,13 @@ export type Database = {
         Returns: Json
       }
       get_pilot_enrollment_count: { Args: never; Returns: number }
+      get_provider_contact: {
+        Args: { _provider_id: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
+      }
       get_wearable_tokens: {
         Args: { p_connection_id: string }
         Returns: {
