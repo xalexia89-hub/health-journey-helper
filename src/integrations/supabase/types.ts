@@ -4086,6 +4086,13 @@ export type Database = {
         Returns: Json
       }
       get_pilot_enrollment_count: { Args: never; Returns: number }
+      get_provider_contact: {
+        Args: { _provider_id: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
+      }
       get_wearable_tokens: {
         Args: { p_connection_id: string }
         Returns: {
