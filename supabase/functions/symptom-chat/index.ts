@@ -373,6 +373,7 @@ reason: <σύντομη εξήγηση>
 urgency: <low/medium/high>
 [/SPECIALTY_RECOMMENDATION]
 
+${navigationDirective}
 ${medicalContext ? `\n## ΠΛΗΡΗΣ ΦΑΚΕΛΟΣ ΧΡΗΣΤΗ\nΠροσάρμοσε τις απαντήσεις σου με βάση ΟΛΑ αυτά τα δεδομένα — αναζήτησε συσχετίσεις, μοτίβα και ολιστικές συνδέσεις:\n${medicalContext}` : ''}`;
 }
 
