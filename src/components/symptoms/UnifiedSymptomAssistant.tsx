@@ -18,6 +18,8 @@ import type { Database } from "@/integrations/supabase/types";
 import medithoAiIcon from "@/assets/medithos-ai-icon.png";
 import { PatternInsightWidget } from "./PatternInsightWidget";
 import { logger } from "@/lib/logger";
+import { NextStepCard } from "./NextStepCard";
+import { parseNavigationHeader, type NavigationSignal } from "@/lib/healthNavigation";
 
 type BodyArea = Database['public']['Enums']['body_area'];
 
@@ -167,6 +169,8 @@ export function UnifiedSymptomAssistant() {
   const [showProviderSuggestions, setShowProviderSuggestions] = useState(false);
   const [userConfirmedBooking, setUserConfirmedBooking] = useState(false);
   const [triageInfo, setTriageInfo] = useState<TriageInfo | null>(null);
+  // Deterministic navigation decision (produced server-side, outside the LLM)
+  const [navigationSignal, setNavigationSignal] = useState<NavigationSignal | null>(null);
 
   // Voice input
   const {
@@ -318,6 +322,10 @@ export function UnifiedSymptomAssistant() {
         const errorData = await response.json();
         throw new Error(errorData.error || "Αποτυχία σύνδεσης");
       }
+
+      // Safety / Routing layer result travels outside the generative stream
+      const navSignal = parseNavigationHeader(response.headers);
+      if (navSignal) setNavigationSignal(navSignal);
 
       if (!response.body) throw new Error("No response body");
 
