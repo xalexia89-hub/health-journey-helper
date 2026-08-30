@@ -394,7 +394,8 @@ ${summary.recommendations.map(r => `• ${r}`).join('\n')}
                 </div>
               </div>
             ))}
-            
+
+            {navigationSignal && <NextStepCard signal={navigationSignal} />}
           </div>
         </ScrollArea>
 
