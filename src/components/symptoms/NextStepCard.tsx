@@ -76,7 +76,7 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
 
       {signal.safetyNet?.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-muted-foreground">Πότε να κλιμακώσετε</p>
+          <p className="text-xs font-semibold text-muted-foreground">Πότε να κλιμακώσετε — προσαρμοσμένο στην κατάστασή σας</p>
           <ul className="space-y-1">
             {signal.safetyNet.map((s, i) => (
               <li key={i} className="text-xs text-muted-foreground flex gap-2">
@@ -88,12 +88,22 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
         </div>
       )}
 
+      {signal.missingCriticalInfo?.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-muted-foreground">Τι θα βοηθούσε να διευκρινιστεί</p>
+          <p className="text-xs text-muted-foreground">
+            {signal.missingCriticalInfo.map(missingInfoLabel).join(" · ")}
+          </p>
+        </div>
+      )}
+
       {signal.uncertainty !== "LOW" && (
         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
           <HelpCircle className="h-3.5 w-3.5" />
           {UNCERTAINTY_LABELS_EL[signal.uncertainty]} — η πρόταση είναι συντηρητική για λόγους ασφάλειας.
         </p>
       )}
+
 
       <p className="text-[11px] leading-snug text-muted-foreground border-t border-border/50 pt-2">
         Πλοήγηση υγείας — δεν αποτελεί διάγνωση ούτε ιατρική συμβουλή. Δεν αντικαθιστά την εκτίμηση από επαγγελματία υγείας.
