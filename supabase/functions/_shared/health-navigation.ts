@@ -666,7 +666,7 @@ export function evaluateNavigation(
     missingCriticalInfo,
     keyQuestions,
     uncertainty,
-    safetyNet: scenario.safetyNet,
+    safetyNet: buildAdaptiveSafetyNet(scenario, routing, redFlags, relationships, missingCriticalInfo, uncertainty, ctx),
     deterministicFloor: routing,
     emergencyPathway: routing === "EMERGENCY",
     timestamp: new Date().toISOString(),
