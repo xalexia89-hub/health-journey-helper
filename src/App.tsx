@@ -81,6 +81,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminInterestExpressions from "./pages/admin/AdminInterestExpressions";
 import AdminContentModeration from "./pages/admin/AdminContentModeration";
+import AdminNavigationAudit from "./pages/admin/AdminNavigationAudit";
 
 // Insurance Pages
 import { InsuranceLayout } from "./components/layout/InsuranceLayout";
@@ -210,6 +211,7 @@ const AppContent = () => {
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/interest" element={<AdminInterestExpressions />} />
             <Route path="/admin/moderation" element={<AdminContentModeration />} />
+            <Route path="/admin/navigation-audit" element={<AdminNavigationAudit />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
