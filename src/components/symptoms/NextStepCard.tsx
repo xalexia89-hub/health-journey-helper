@@ -49,11 +49,18 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
             <Badge className={cn("text-xs font-bold", config.badge)}>
               {ROUTING_LABELS_EL[signal.routing]}
             </Badge>
+            <Badge variant="outline" className="text-[10px]">
+              Χρονικό πλαίσιο: {URGENCY_LABELS_EL[signal.urgency]}
+            </Badge>
           </div>
           <p className={cn("text-sm font-medium", config.text)}>
             {ROUTING_DESCRIPTIONS_EL[signal.routing]}
           </p>
+          <p className="text-[11px] text-muted-foreground">
+            Θεματική: {scenarioLabel(signal.scenario)}
+          </p>
         </div>
+
       </div>
 
       {config.emergency && (
