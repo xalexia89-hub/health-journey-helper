@@ -1,10 +1,59 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  evaluateNavigation,
+  buildNavigationDirective,
+  ROUTING_LABELS_EL,
+  type PatientContextState,
+} from "../_shared/health-navigation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Expose-Headers": "X-Medithos-Navigation",
 };
+
+// === PATIENT CONTEXT STATE (structured, for the deterministic rules layer) ===
+async function buildPatientContextState(client: any, userId: string): Promise<PatientContextState> {
+  const state: PatientContextState = {
+    age: null,
+    sex: null,
+    chronicConditions: [],
+    medications: [],
+    allergies: [],
+    recentEpisodes: [],
+  };
+
+  try {
+    const [hfRes, mrRes, medRes, sxRes] = await Promise.all([
+      client.from('health_files').select('date_of_birth, sex').eq('user_id', userId).maybeSingle(),
+      client.from('medical_records').select('chronic_conditions, current_medications, allergies').eq('user_id', userId).maybeSingle(),
+      client.from('medication_reminders').select('medication_name').eq('user_id', userId).eq('is_active', true).limit(20),
+      client.from('symptom_entries').select('ai_summary, urgency_level, created_at').eq('user_id', userId)
+        .order('created_at', { ascending: false }).limit(10),
+    ]);
+
+    const hf = hfRes?.data;
+    if (hf?.date_of_birth) {
+      state.age = Math.floor((Date.now() - new Date(hf.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    }
+    state.sex = hf?.sex ?? null;
+
+    const mr = mrRes?.data;
+    state.chronicConditions = mr?.chronic_conditions ?? [];
+    state.allergies = mr?.allergies ?? [];
+    state.medications = [
+      ...(mr?.current_medications ?? []),
+      ...((medRes?.data ?? []).map((m: any) => m.medication_name)),
+    ];
+    state.recentEpisodes = (sxRes?.data ?? []).map((s: any) => `${s.created_at}:${s.urgency_level ?? ''}`);
+  } catch (err) {
+    console.error("buildPatientContextState error:", err);
+  }
+
+  return state;
+}
+
 
 // === HELPER: Fetch wellness & medical context ===
 async function fetchFullContext(client: any, userId: string): Promise<string> {
