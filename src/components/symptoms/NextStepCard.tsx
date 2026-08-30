@@ -6,9 +6,13 @@ import {
   ROUTING_DESCRIPTIONS_EL,
   ROUTING_LABELS_EL,
   UNCERTAINTY_LABELS_EL,
+  URGENCY_LABELS_EL,
+  scenarioLabel,
+  missingInfoLabel,
   type NavigationSignal,
   type RoutingCategory,
 } from "@/lib/healthNavigation";
+
 
 const styles: Record<RoutingCategory, { icon: typeof Siren; bg: string; text: string; badge: string; emergency: boolean }> = {
   EMERGENCY: { icon: Siren, bg: "bg-destructive/15 border-destructive", text: "text-destructive", badge: "bg-destructive text-destructive-foreground", emergency: true },
