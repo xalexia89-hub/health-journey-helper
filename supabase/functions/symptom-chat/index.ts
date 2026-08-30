@@ -276,7 +276,7 @@ async function fetchFullContext(client: any, userId: string): Promise<string> {
 }
 
 // === SYSTEM PROMPT ===
-function buildSystemPrompt(medicalContext: string): string {
+function buildSystemPrompt(medicalContext: string, navigationDirective = ""): string {
   return `Είσαι το **MEDITHOS AI** — ο Συνδεδεμένος Σύντροφος Υγείας (Connected Health Companion).
 
 ## ΤΑΥΤΟΤΗΤΑ
