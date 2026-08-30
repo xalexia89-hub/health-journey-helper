@@ -96,14 +96,15 @@ interface RedFlagRule {
   match: (t: string, ctx: PatientContextState) => boolean;
 }
 
-const CHEST_TERMS = ["πονος στο στηθος", "ponos sto stithos", "chest pain", "σφιξιμο στο στηθος", "βαρος στο στηθος", "πιεση στο στηθος"];
-const DYSPNEA_TERMS = ["δυσπνοια", "δυσκολια στην αναπνοη", "δεν μπορω να αναπνευσω", "λαχανιασμα", "shortness of breath", "cannot breathe"];
+const CHEST_TERMS = ["στηθος", "στηθους", "θωρακ", "chest"];
+const CHEST_QUALIFIERS = ["πονο", "πονος", "πονα", "πιεσ", "σφιξ", "βαρος", "καψιμο", "ενοχλ", "pain", "pressure", "tightness"];
+const DYSPNEA_TERMS = ["δυσπνοι", "δυσκολια στην αναπνοη", "δεν μπορω να αναπνευσω", "λαχανιασμα", "shortness of breath", "cannot breathe"];
 const NEURO_TERMS = ["στραβωσε το στομα", "δεν μιλαω καθαρα", "δυσαρθρια", "μπερδευω τα λογια", "αδυναμια στο μισο σωμα", "μουδιασμα στο μισο", "παραλυση", "facial droop", "slurred speech"];
-const SYNCOPE_TERMS = ["λιποθυμια", "λιποθυμησα", "εχασα τις αισθησεις", "συγχυση", "αποπροσανατολισμος", "fainting", "loss of consciousness"];
-const BLEEDING_TERMS = ["αιμορραγια", "αιμα", "εμετος με αιμα", "μαυρα κοπρανα", "bleeding", "vomiting blood"];
-const SUICIDE_TERMS = ["αυτοκτονια", "να δωσω τελος", "να τελειωνω", "αυτοτραυματισμος", "δεν θελω να ζω", "suicide", "kill myself", "self harm"];
+const SYNCOPE_TERMS = ["λιποθυμ", "εχασα τις αισθησεις", "συγχυση", "αποπροσανατολισμος", "fainting", "loss of consciousness"];
+const BLEEDING_TERMS = ["αιμορραγ", "αιμα", "εμετος με αιμα", "μαυρα κοπρανα", "bleeding", "vomiting blood"];
+const SUICIDE_TERMS = ["αυτοκτον", "να δωσω τελος", "να τελειωνω", "αυτοτραυματισμος", "δεν θελω να ζω", "suicide", "kill myself", "self harm"];
 const ANAPHYLAXIS_TERMS = ["πρηστηκε ο λαιμος", "πρηζεται η γλωσσα", "δεν καταπινω", "αναφυλαξια", "anaphylaxis", "throat swelling"];
-const SEPSIS_TERMS = ["πυρετος με ριγη", "δεν συνερχεται", "πολυ αδυναμος με πυρετο", "αυχενικη δυσκαμψια", "stiff neck", "εξανθημα που δεν σβηνει"];
+const SEPSIS_TERMS = ["πυρετο με ριγη", "πυρετος με ριγη", "δεν συνερχεται", "πολυ αδυναμος με πυρετο", "αυχενικη δυσκαμψια", "stiff neck", "εξανθημα που δεν σβηνει"];
 
 const RED_FLAG_RULES: RedFlagRule[] = [
   {
@@ -111,7 +112,7 @@ const RED_FLAG_RULES: RedFlagRule[] = [
     label: "Πόνος στο στήθος / αίσθημα πίεσης",
     scenario: "chest_pain",
     routing: "EMERGENCY",
-    match: (t) => has(t, CHEST_TERMS),
+    match: (t) => has(t, CHEST_TERMS) && has(t, CHEST_QUALIFIERS),
   },
   {
     id: "RF_DYSPNEA",
@@ -168,8 +169,8 @@ const RED_FLAG_RULES: RedFlagRule[] = [
     scenario: "abdominal_pain",
     routing: "URGENT_ASSESSMENT",
     match: (t) =>
-      has(t, ["κοιλια", "κοιλιακος πονος", "abdominal pain", "στομαχι"]) &&
-      has(t, ["αφορητος", "πολυ εντονος", "ξαφνικος", "αιφνιδιος", "δεν αντεχω", "severe", "sudden"]),
+      has(t, ["κοιλ", "abdominal", "στομαχ"]) &&
+      has(t, ["αφορητ", "πολυ εντον", "ξαφνικ", "αιφνιδι", "δεν αντεχω", "severe", "sudden"]),
   },
 ];
 
@@ -190,7 +191,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "chest_pain",
     label: "Θωρακικό ενόχλημα",
-    match: (t) => has(t, [...CHEST_TERMS, "στηθος", "θωρακας"]),
+    match: (t) => has(t, CHEST_TERMS),
     baselineRouting: "URGENT_ASSESSMENT",
     keyQuestions: [
       "Πότε ξεκίνησε ο πόνος και πόσο διαρκεί;",
@@ -206,7 +207,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "neurological",
     label: "Νευρολογικά συμπτώματα",
-    match: (t) => has(t, [...NEURO_TERMS, ...SYNCOPE_TERMS, "πονοκεφαλος", "ζαλη", "headache", "dizziness"]),
+    match: (t) => has(t, [...NEURO_TERMS, ...SYNCOPE_TERMS, "πονοκεφαλ", "ζαλ", "headache", "dizz"]),
     baselineRouting: "DOCTOR_PRIMARY_CARE",
     keyQuestions: [
       "Το σύμπτωμα εμφανίστηκε ξαφνικά ή σταδιακά;",
@@ -222,7 +223,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "respiratory",
     label: "Αναπνευστικό",
-    match: (t) => has(t, [...DYSPNEA_TERMS, "βηχας", "cough", "συναχι", "πονολαιμος"]),
+    match: (t) => has(t, [...DYSPNEA_TERMS, "βηχ", "cough", "συναχ", "πονολαιμ", "καταρρο"]),
     baselineRouting: "DOCTOR_PRIMARY_CARE",
     keyQuestions: [
       "Υπάρχει δυσκολία στην αναπνοή σε ηρεμία;",
@@ -238,7 +239,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "abdominal_pain",
     label: "Κοιλιακό άλγος",
-    match: (t) => has(t, ["κοιλια", "στομαχι", "abdominal", "ναυτια", "εμετος", "διαρροια"]),
+    match: (t) => has(t, ["κοιλ", "στομαχ", "abdominal", "ναυτι", "εμετ", "διαρροι"]),
     baselineRouting: "DOCTOR_PRIMARY_CARE",
     keyQuestions: [
       "Πού ακριβώς εντοπίζεται ο πόνος και από πότε;",
@@ -254,7 +255,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "fever",
     label: "Πυρετός / λοίμωξη",
-    match: (t) => has(t, ["πυρετος", "θερμοκρασια", "fever", "ριγη"]),
+    match: (t) => has(t, ["πυρετ", "θερμοκρασ", "fever", "ριγ"]),
     baselineRouting: "TELEMEDICINE",
     keyQuestions: [
       "Πόσο είναι η θερμοκρασία και πόσες ημέρες διαρκεί;",
@@ -270,7 +271,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "musculoskeletal",
     label: "Μυοσκελετικό",
-    match: (t) => has(t, ["μεση", "πλατη", "αυχενας", "γονατο", "ωμος", "αρθρωση", "back pain", "joint"]),
+    match: (t) => has(t, ["μεση ", "μεση", "μεσης", "πλατ", "αυχεν", "γονατ", "ωμο", "αρθρ", "back pain", "joint"]),
     baselineRouting: "SCHEDULED_CARE",
     keyQuestions: [
       "Υπήρξε τραυματισμός ή πτώση;",
@@ -286,7 +287,7 @@ export const SCENARIOS: ScenarioDefinition[] = [
   {
     id: "mental_health_crisis",
     label: "Ψυχική υγεία",
-    match: (t) => has(t, [...SUICIDE_TERMS, "αγχος", "καταθλιψη", "πανικος", "anxiety", "depression"]),
+    match: (t) => has(t, [...SUICIDE_TERMS, "αγχ", "καταθλιψ", "πανικ", "anxiety", "depression"]),
     baselineRouting: "SPECIALIST",
     keyQuestions: [
       "Υπάρχουν σκέψεις αυτοτραυματισμού;",
@@ -337,7 +338,7 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
     routing: "URGENT_ASSESSMENT",
     match: (t, ctx) =>
       (ctx.age ?? 0) >= 65 &&
-      has(t, ["ξαφνικα", "αιφνιδιο", "εντονο", "χειροτερευει", "sudden", "worse"]),
+      has(t, ["ξαφνικ", "αιφνιδι", "εντον", "χειροτερ", "sudden", "worse"]),
   },
   {
     id: "REL_BLEEDING_ON_ANTICOAG",
@@ -352,7 +353,7 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
     label: "Θωρακικό ενόχλημα σε άτομο με καρδιολογικό ιστορικό",
     routing: "EMERGENCY",
     match: (t, ctx) =>
-      has(t, [...CHEST_TERMS, "στηθος"]) &&
+      has(t, CHEST_TERMS) &&
       ctx.chronicConditions.some((c) => has(normalize(c), CARDIAC_HISTORY)),
   },
   {
@@ -360,7 +361,7 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
     label: "Πυρετός σε ανοσοκατεσταλμένο άτομο",
     routing: "URGENT_ASSESSMENT",
     match: (t, ctx) =>
-      has(t, ["πυρετος", "fever"]) &&
+      has(t, ["πυρετ", "fever"]) &&
       (ctx.chronicConditions.some((c) => has(normalize(c), IMMUNOSUPPRESSION)) ||
         ctx.medications.some((m) => has(normalize(m), IMMUNOSUPPRESSION))),
   },
@@ -369,14 +370,14 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
     label: "Λοίμωξη ή πληγή σε άτομο με διαβήτη",
     routing: "DOCTOR_PRIMARY_CARE",
     match: (t, ctx) =>
-      has(t, ["πυρετος", "πληγη", "ελκος", "λοιμωξη", "wound", "infection"]) &&
+      has(t, ["πυρετ", "πληγ", "ελκος", "λοιμωξ", "wound", "infection"]) &&
       ctx.chronicConditions.some((c) => has(normalize(c), DIABETES)),
   },
   {
     id: "REL_PROGRESSIVE_WORSENING",
     label: "Προοδευτική επιδείνωση με την πάροδο του χρόνου",
     routing: "DOCTOR_PRIMARY_CARE",
-    match: (t) => has(t, ["χειροτερευει", "επιδεινωνεται", "καθε μερα χειροτερα", "getting worse", "worsening"]),
+    match: (t) => has(t, ["χειροτερευ", "επιδεινων", "καθε μερα χειροτερα", "getting worse", "worsening"]),
   },
   {
     id: "REL_RECURRENT_EPISODE",
@@ -388,13 +389,13 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
     id: "REL_PROLONGED_DURATION",
     label: "Παρατεταμένη διάρκεια συμπτώματος (>2 εβδομάδες)",
     routing: "DOCTOR_PRIMARY_CARE",
-    match: (t) => has(t, ["εβδομαδες", "μηνες", "πολυ καιρο", "weeks", "months"]),
+    match: (t) => has(t, ["εβδομαδ", "μηνες", "πολυ καιρο", "weeks", "months"]),
   },
   {
     id: "REL_PREGNANCY",
     label: "Εγκυμοσύνη — χαμηλότερο κατώφλι παραπομπής",
     routing: "SPECIALIST",
-    match: (t, ctx) => ctx.pregnancy === true || has(t, ["εγκυος", "εγκυμοσυνη", "pregnant"]),
+    match: (t, ctx) => ctx.pregnancy === true || has(t, ["εγκυ", "pregnant"]),
   },
 ];
 
@@ -403,25 +404,193 @@ const RELATIONSHIP_RULES: RelationshipRule[] = [
 // ---------------------------------------------------------------------------
 const FIELD_DETECTORS: Record<string, (t: string, ctx: PatientContextState) => boolean> = {
   onset: (t) => has(t, ["ξεκινησε", "απο χθες", "σημερα", "πριν", "εδω και", "started", "since", "ago"]),
-  duration: (t) => has(t, ["μερες", "ωρες", "εβδομαδες", "μηνες", "λεπτα", "days", "hours", "weeks"]),
-  severity: (t) => has(t, ["ηπιος", "εντονος", "αφορητος", "δυνατος", "στα 10", "mild", "severe", "/10"]),
-  progression: (t) => has(t, ["χειροτερευει", "καλυτερα", "σταθερο", "ιδιο", "worse", "better", "stable"]),
+  duration: (t) => has(t, ["μερες", "ωρες", "εβδομαδ", "μηνες", "λεπτα", "days", "hours", "weeks"]),
+  severity: (t) => has(t, ["ηπι", "εντον", "αφορητ", "δυνατ", "στα 10", "mild", "severe", "/10"]),
+  progression: (t) => has(t, ["χειροτερευ", "επιδεινων", "καλυτερα", "σταθερ", "ιδιο", "worse", "better", "stable"]),
   location: (t) => has(t, ["δεξια", "αριστερα", "πανω", "κατω", "γυρω", "left", "right", "upper", "lower"]),
   associated_symptoms: (t) => has(t, ["μαζι", "επισης", "συνοδευεται", "also", "along with"]),
-  fever: (t) => has(t, ["πυρετος", "θερμοκρασια", "fever", "χωρις πυρετο"]),
+  fever: (t) => has(t, ["πυρετ", "θερμοκρασ", "fever"]),
   temperature: (t) => /\b(3[5-9]|4[0-2])([.,]\d)?\b/.test(t),
-  trauma: (t) => has(t, ["τραυμα", "πτωση", "χτυπησα", "ατυχημα", "injury", "fall"]),
+  trauma: (t) => has(t, ["τραυμα", "πτωση", "επεσα", "χτυπησα", "ατυχημα", "injury", "fall"]),
   cardiac_history: (_t, ctx) => ctx.chronicConditions.length > 0,
   neuro_signs: (t) => has(t, ["μουδιασμα", "αδυναμια", "ομιλια", "οραση", "numbness", "weakness"]),
   focal_signs: (t) => has(t, ["μουδιασμα", "αδυναμια", "ομιλια", "οραση", "numbness", "weakness"]),
   dyspnea_at_rest: (t) => has(t, ["ηρεμια", "ξαπλωμενος", "αναπνοη", "at rest", "breath"]),
-  systemic_signs: (t) => has(t, ["αδυναμια", "ριγη", "συγχυση", "εξανθημα", "weakness", "chills"]),
+  systemic_signs: (t) => has(t, ["αδυναμ", "ριγ", "συγχυσ", "εξανθημ", "weakness", "chills"]),
   oral_intake: (t) => has(t, ["υγρα", "νερο", "τρωω", "πινω", "fluids", "eating"]),
   self_harm_risk: (t) => has(t, [...SUICIDE_TERMS, "οχι σκεψεις", "no thoughts"]),
   support: (t) => has(t, ["οικογενεια", "φιλοι", "μονος", "family", "alone"]),
   main_symptom: (t) => t.trim().length > 12,
   medications: (_t, ctx) => ctx.medications.length > 0,
 };
+
+// Human-readable Greek labels for critical information fields.
+export const MISSING_INFO_LABELS_EL: Record<string, string> = {
+  onset: "πότε ξεκίνησε",
+  duration: "πόσο διαρκεί",
+  severity: "πόσο έντονο είναι",
+  progression: "αν επιδεινώνεται ή βελτιώνεται",
+  location: "πού ακριβώς εντοπίζεται",
+  associated_symptoms: "ποια άλλα συμπτώματα συνυπάρχουν",
+  fever: "αν υπάρχει πυρετός",
+  temperature: "η τιμή της θερμοκρασίας",
+  trauma: "αν προηγήθηκε τραυματισμός ή πτώση",
+  cardiac_history: "το καρδιολογικό ιστορικό",
+  neuro_signs: "αν υπάρχουν νευρολογικά σημεία",
+  focal_signs: "αν υπάρχουν εστιακά νευρολογικά σημεία",
+  dyspnea_at_rest: "αν υπάρχει δύσπνοια σε ηρεμία",
+  systemic_signs: "αν υπάρχουν σημεία συστηματικής επιβάρυνσης",
+  oral_intake: "αν λαμβάνετε υγρά κανονικά",
+  self_harm_risk: "αν υπάρχουν σκέψεις αυτοτραυματισμού",
+  support: "αν υπάρχει υποστηρικτικό περιβάλλον",
+  main_symptom: "ποιο είναι το κύριο σύμπτωμα",
+  medications: "η τρέχουσα φαρμακευτική αγωγή",
+};
+
+export function missingInfoLabel(field: string): string {
+  return MISSING_INFO_LABELS_EL[field] ?? field;
+}
+
+/**
+ * D2. ADAPTIVE SAFETY NET
+ * Builds escalation triggers that reflect the actual detected risk state
+ * (red flags, relationships, routing) and the specific missing information,
+ * instead of a static per-scenario list.
+ */
+export function buildAdaptiveSafetyNet(
+  scenario: ScenarioDefinition,
+  routing: RoutingCategory,
+  redFlags: RedFlagHit[],
+  relationships: RelationshipHit[],
+  missingCriticalInfo: string[],
+  uncertainty: UncertaintyState,
+  ctx: PatientContextState,
+): string[] {
+  const out: string[] = [];
+  const push = (s: string) => { if (s && !out.includes(s)) out.push(s); };
+
+  // 1. Routing-state specific first line.
+  if (routing === "EMERGENCY") {
+    push("Καλέστε ΤΩΡΑ 166 ή 112. Μην οδηγήσετε μόνοι σας και μην περιμένετε να δείτε αν θα περάσει.");
+  } else if (routing === "URGENT_ASSESSMENT") {
+    push("Αν τα συμπτώματα ενταθούν ή προστεθεί δύσπνοια, σύγχυση ή λιποθυμία, καλέστε άμεσα 166/112.");
+  }
+
+  // 2. Red-flag driven triggers.
+  const rfIds = new Set(redFlags.map((r) => r.id));
+  if (rfIds.has("RF_SUICIDAL_IDEATION")) {
+    push("Αν οι σκέψεις εντείνονται, καλέστε 1018 (Γραμμή Ζωής) ή 112 — μην μείνετε μόνοι.");
+  }
+  if (rfIds.has("RF_CHEST_PAIN_ACUTE")) {
+    push("Πόνος στο στήθος >15 λεπτά, με εφίδρωση, ναυτία ή αντανάκλαση σε χέρι/σιαγόνα → 166/112.");
+  }
+  if (rfIds.has("RF_DYSPNEA")) {
+    push("Δύσπνοια σε ηρεμία, κυάνωση χειλιών ή αδυναμία ολοκλήρωσης πρότασης → 166/112.");
+  }
+  if (rfIds.has("RF_NEURO_DEFICIT") || rfIds.has("RF_SYNCOPE")) {
+    push("Διαταραχή λόγου, αδυναμία στο ένα ημιμόριο, πτώση προσώπου ή νέα απώλεια συνείδησης → 166/112 χωρίς καθυστέρηση.");
+  }
+  if (rfIds.has("RF_ACTIVE_BLEEDING")) {
+    push("Αν η αιμορραγία δεν σταματά με πίεση 10 λεπτών ή εμφανιστεί ωχρότητα/ζάλη → 166/112.");
+  }
+  if (rfIds.has("RF_ANAPHYLAXIS")) {
+    push("Οίδημα λαιμού/γλώσσας, δυσκολία κατάποσης ή αναπνοής → 112 άμεσα.");
+  }
+  if (rfIds.has("RF_SEPSIS_PATTERN")) {
+    push("Αυχενική δυσκαμψία, εξάνθημα που δεν σβήνει στην πίεση ή σύγχυση με πυρετό → 166/112.");
+  }
+  if (rfIds.has("RF_SEVERE_ABDOMEN")) {
+    push("Σκληρή/ευαίσθητη κοιλιά, επίμονοι έμετοι ή πυρετός με τον πόνο → άμεση εκτίμηση.");
+  }
+
+  // 3. Relationship / context driven triggers.
+  const relIds = new Set(relationships.map((r) => r.id));
+  if (relIds.has("REL_BLEEDING_ON_ANTICOAG")) {
+    push("Λαμβάνετε αντιπηκτική/αντιαιμοπεταλιακή αγωγή: ακόμη και μικρό χτύπημα στο κεφάλι χρειάζεται εκτίμηση σήμερα.");
+  }
+  if (relIds.has("REL_CHEST_WITH_CARDIAC_HX")) {
+    push("Με γνωστό καρδιολογικό ιστορικό, μην αναμένετε — αντιμετωπίστε κάθε νέο θωρακικό ενόχλημα ως επείγον.");
+  }
+  if (relIds.has("REL_FEVER_IMMUNOSUPPRESSED")) {
+    push("Με μειωμένη ανοσία, πυρετός ≥38°C χρειάζεται εκτίμηση εντός ωρών, όχι αναμονή.");
+  }
+  if (relIds.has("REL_DIABETES_INFECTION")) {
+    push("Με διαβήτη, πληγή που κοκκινίζει, μυρίζει ή δεν επουλώνεται χρειάζεται εκτίμηση χωρίς αναβολή.");
+  }
+  if (relIds.has("REL_AGE65_PLUS_ACUTE")) {
+    push("Νέα σύγχυση, πτώση ή απότομη αδυναμία → άμεση ιατρική εκτίμηση.");
+  }
+  if (relIds.has("REL_PREGNANCY")) {
+    push("Σε εγκυμοσύνη: κοιλιακός πόνος, αιμορραγία ή μείωση κινήσεων εμβρύου → άμεση επικοινωνία με μαιευτήρα ή εφημερεύον νοσοκομείο.");
+  }
+  if (relIds.has("REL_PROGRESSIVE_WORSENING")) {
+    push("Επειδή η εικόνα επιδεινώνεται, αν δεν σταθεροποιηθεί μέσα σε 24 ώρες ζητήστε εκτίμηση νωρίτερα.");
+  }
+  if (relIds.has("REL_PROLONGED_DURATION")) {
+    push("Επειδή το σύμπτωμα διαρκεί καιρό, μην το αναβάλετε άλλο αν προστεθεί απώλεια βάρους, πυρετός ή νυχτερινή εφίδρωση.");
+  }
+  if (relIds.has("REL_RECURRENT_EPISODE")) {
+    push("Καταγράψτε κάθε νέο επεισόδιο (ώρα, διάρκεια, έναυσμα) — το μοτίβο βοηθά την εκτίμηση από ειδικό.");
+  }
+
+  // 4. Missing-information driven monitoring instructions.
+  for (const field of missingCriticalInfo.slice(0, 3)) {
+    switch (field) {
+      case "onset":
+      case "duration":
+        push("Σημειώστε πότε ακριβώς ξεκίνησε και πόσο διαρκεί — αν ξεπεράσει τις 24 ώρες χωρίς βελτίωση, ζητήστε εκτίμηση.");
+        break;
+      case "severity":
+        push("Βαθμολογήστε την ένταση στα 10· αν ανέβει πάνω από 7 ή γίνει αφόρητη, κλιμακώστε άμεσα.");
+        break;
+      case "progression":
+        push("Παρακολουθήστε την εξέλιξη· κάθε επιδείνωση από ώρα σε ώρα αποτελεί λόγο άμεσης εκτίμησης.");
+        break;
+      case "fever":
+      case "temperature":
+        push("Μετρήστε θερμοκρασία 2 φορές την ημέρα· ≥39°C ή πυρετός >3 ημέρες → ιατρική εκτίμηση.");
+        break;
+      case "oral_intake":
+        push("Αν δεν μπορείτε να κρατήσετε υγρά για >12 ώρες ή μειωθεί η ούρηση, ζητήστε εκτίμηση.");
+        break;
+      case "focal_signs":
+      case "neuro_signs":
+        push("Αν εμφανιστεί μούδιασμα, αδυναμία, θόλωση όρασης ή δυσκολία ομιλίας → 166/112.");
+        break;
+      case "dyspnea_at_rest":
+        push("Αν λαχανιάζετε ενώ κάθεστε ή ξαπλώνετε, μην περιμένετε — καλέστε 166/112.");
+        break;
+      case "systemic_signs":
+        push("Αν προστεθούν ρίγη, έντονη αδυναμία ή σύγχυση, κλιμακώστε άμεσα.");
+        break;
+      case "trauma":
+        push("Αν προηγήθηκε πτώση ή χτύπημα, ειδικά στο κεφάλι, χρειάζεται εκτίμηση σήμερα.");
+        break;
+      case "self_harm_risk":
+        push("Αν εμφανιστούν σκέψεις αυτοτραυματισμού, καλέστε 1018 ή 112 άμεσα.");
+        break;
+      case "location":
+        push("Σημειώστε αν ο πόνος μετακινείται ή αντανακλά αλλού — αυτό αλλάζει την επείγουσα εκτίμηση.");
+        break;
+      default:
+        break;
+    }
+  }
+
+  // 5. Uncertainty statement (never hide uncertainty).
+  if (uncertainty === "HIGH") {
+    push(`Οι διαθέσιμες πληροφορίες είναι περιορισμένες (λείπει: ${missingCriticalInfo.slice(0, 3).map(missingInfoLabel).join(", ")}) — γι' αυτό η πρόταση είναι συντηρητική. Σε κάθε αμφιβολία, ζητήστε εκτίμηση.`);
+  } else if (uncertainty === "MODERATE" && missingCriticalInfo.length) {
+    push(`Θα βοηθούσε να διευκρινιστεί: ${missingCriticalInfo.slice(0, 3).map(missingInfoLabel).join(", ")}.`);
+  }
+
+  // 6. Scenario baseline + universal fallback.
+  for (const s of scenario.safetyNet) push(s);
+  push("Αν προστεθούν νέα ή απροσδόκητα συμπτώματα, επανεκτιμήστε την κατάσταση από την αρχή.");
+
+  return out.slice(0, 6);
+}
+
 
 // ---------------------------------------------------------------------------
 // E. ROUTING ENGINE
@@ -498,7 +667,7 @@ export function evaluateNavigation(
     missingCriticalInfo,
     keyQuestions,
     uncertainty,
-    safetyNet: scenario.safetyNet,
+    safetyNet: buildAdaptiveSafetyNet(scenario, routing, redFlags, relationships, missingCriticalInfo, uncertainty, ctx),
     deterministicFloor: routing,
     emergencyPathway: routing === "EMERGENCY",
     timestamp: new Date().toISOString(),

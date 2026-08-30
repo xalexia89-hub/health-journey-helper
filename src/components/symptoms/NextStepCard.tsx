@@ -6,9 +6,13 @@ import {
   ROUTING_DESCRIPTIONS_EL,
   ROUTING_LABELS_EL,
   UNCERTAINTY_LABELS_EL,
+  URGENCY_LABELS_EL,
+  scenarioLabel,
+  missingInfoLabel,
   type NavigationSignal,
   type RoutingCategory,
 } from "@/lib/healthNavigation";
+
 
 const styles: Record<RoutingCategory, { icon: typeof Siren; bg: string; text: string; badge: string; emergency: boolean }> = {
   EMERGENCY: { icon: Siren, bg: "bg-destructive/15 border-destructive", text: "text-destructive", badge: "bg-destructive text-destructive-foreground", emergency: true },
@@ -45,11 +49,18 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
             <Badge className={cn("text-xs font-bold", config.badge)}>
               {ROUTING_LABELS_EL[signal.routing]}
             </Badge>
+            <Badge variant="outline" className="text-[10px]">
+              Χρονικό πλαίσιο: {URGENCY_LABELS_EL[signal.urgency]}
+            </Badge>
           </div>
           <p className={cn("text-sm font-medium", config.text)}>
             {ROUTING_DESCRIPTIONS_EL[signal.routing]}
           </p>
+          <p className="text-[11px] text-muted-foreground">
+            Θεματική: {scenarioLabel(signal.scenario)}
+          </p>
         </div>
+
       </div>
 
       {config.emergency && (
@@ -65,7 +76,7 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
 
       {signal.safetyNet?.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-muted-foreground">Πότε να κλιμακώσετε</p>
+          <p className="text-xs font-semibold text-muted-foreground">Πότε να κλιμακώσετε — προσαρμοσμένο στην κατάστασή σας</p>
           <ul className="space-y-1">
             {signal.safetyNet.map((s, i) => (
               <li key={i} className="text-xs text-muted-foreground flex gap-2">
@@ -77,12 +88,22 @@ export function NextStepCard({ signal, className }: NextStepCardProps) {
         </div>
       )}
 
+      {signal.missingCriticalInfo?.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-muted-foreground">Τι θα βοηθούσε να διευκρινιστεί</p>
+          <p className="text-xs text-muted-foreground">
+            {signal.missingCriticalInfo.map(missingInfoLabel).join(" · ")}
+          </p>
+        </div>
+      )}
+
       {signal.uncertainty !== "LOW" && (
         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
           <HelpCircle className="h-3.5 w-3.5" />
           {UNCERTAINTY_LABELS_EL[signal.uncertainty]} — η πρόταση είναι συντηρητική για λόγους ασφάλειας.
         </p>
       )}
+
 
       <p className="text-[11px] leading-snug text-muted-foreground border-t border-border/50 pt-2">
         Πλοήγηση υγείας — δεν αποτελεί διάγνωση ούτε ιατρική συμβουλή. Δεν αντικαθιστά την εκτίμηση από επαγγελματία υγείας.

@@ -60,3 +60,48 @@ export const UNCERTAINTY_LABELS_EL: Record<NavigationSignal["uncertainty"], stri
   MODERATE: "Μερικώς επαρκείς πληροφορίες",
   HIGH: "Περιορισμένες πληροφορίες",
 };
+
+export const URGENCY_LABELS_EL: Record<NavigationSignal["urgency"], string> = {
+  emergency: "Άμεσα",
+  urgent: "Επείγον",
+  soon: "Σύντομα",
+  routine: "Χωρίς βιασύνη",
+};
+
+export const SCENARIO_LABELS_EL: Record<string, string> = {
+  chest_pain: "Θωρακικό ενόχλημα",
+  neurological: "Νευρολογικά συμπτώματα",
+  respiratory: "Αναπνευστικό",
+  abdominal_pain: "Κοιλιακό άλγος",
+  fever: "Πυρετός / λοίμωξη",
+  musculoskeletal: "Μυοσκελετικό",
+  mental_health_crisis: "Ψυχική υγεία",
+  bleeding: "Αιμορραγία",
+  allergic_reaction: "Αλλεργική αντίδραση",
+  general: "Γενικό ερώτημα υγείας",
+};
+
+export const MISSING_INFO_LABELS_EL: Record<string, string> = {
+  onset: "πότε ξεκίνησε",
+  duration: "πόσο διαρκεί",
+  severity: "πόσο έντονο είναι",
+  progression: "αν επιδεινώνεται ή βελτιώνεται",
+  location: "πού ακριβώς εντοπίζεται",
+  associated_symptoms: "ποια άλλα συμπτώματα συνυπάρχουν",
+  fever: "αν υπάρχει πυρετός",
+  temperature: "η τιμή της θερμοκρασίας",
+  trauma: "αν προηγήθηκε τραυματισμός ή πτώση",
+  cardiac_history: "το καρδιολογικό ιστορικό",
+  neuro_signs: "αν υπάρχουν νευρολογικά σημεία",
+  focal_signs: "αν υπάρχουν εστιακά νευρολογικά σημεία",
+  dyspnea_at_rest: "αν υπάρχει δύσπνοια σε ηρεμία",
+  systemic_signs: "αν υπάρχουν σημεία συστηματικής επιβάρυνσης",
+  oral_intake: "αν λαμβάνετε υγρά κανονικά",
+  self_harm_risk: "αν υπάρχουν σκέψεις αυτοτραυματισμού",
+  support: "αν υπάρχει υποστηρικτικό περιβάλλον",
+  main_symptom: "ποιο είναι το κύριο σύμπτωμα",
+  medications: "η τρέχουσα φαρμακευτική αγωγή",
+};
+
+export const scenarioLabel = (id: string) => SCENARIO_LABELS_EL[id] ?? id;
+export const missingInfoLabel = (f: string) => MISSING_INFO_LABELS_EL[f] ?? f;
