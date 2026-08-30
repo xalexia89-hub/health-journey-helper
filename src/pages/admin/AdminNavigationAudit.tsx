@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { RefreshCw, ShieldAlert, Activity, HelpCircle, Compass } from "lucide-react";
 import { format } from "date-fns";
 import { el } from "date-fns/locale";
-import { ROUTING_LABELS_EL, type RoutingCategory } from "@/lib/healthNavigation";
+import { ROUTING_LABELS_EL, URGENCY_LABELS_EL, UNCERTAINTY_LABELS_EL, scenarioLabel, missingInfoLabel, type NavigationSignal, type RoutingCategory } from "@/lib/healthNavigation";
 
 interface RuleHit { id: string; label: string }
 
@@ -73,7 +73,7 @@ export default function AdminNavigationAudit() {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Compass className="h-6 w-6 text-primary" />
-            Health Navigation — Reasoning Audit
+            Πλοήγηση Υγείας — Έλεγχος Συλλογιστικής
           </h1>
           <p className="text-sm text-muted-foreground">
             Δομημένα αποτελέσματα του επιπέδου πλοήγησης υγείας (χωρίς εσωτερική συλλογιστική μοντέλου).
@@ -86,11 +86,11 @@ export default function AdminNavigationAudit() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Activity className="h-4 w-4" /> Συνολικά events</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Activity className="h-4 w-4" /> Συνολικές καταγραφές</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold">{events.length}</CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Emergency pathway</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Διαδρομή έκτακτης ανάγκης</CardTitle></CardHeader>
           <CardContent className="text-2xl font-bold text-destructive">{emergencies}</CardContent>
         </Card>
         <Card>
@@ -100,18 +100,18 @@ export default function AdminNavigationAudit() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Routing Decisions</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">Αποφάσεις Δρομολόγησης</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Ημερομηνία</TableHead>
                 <TableHead>Σενάριο</TableHead>
-                <TableHead>Routing</TableHead>
-                <TableHead>Urgency</TableHead>
-                <TableHead>Uncertainty</TableHead>
-                <TableHead>Red flags</TableHead>
-                <TableHead>Missing info</TableHead>
+                <TableHead>Δρομολόγηση</TableHead>
+                <TableHead>Επείγον</TableHead>
+                <TableHead>Αβεβαιότητα</TableHead>
+                <TableHead>Κανόνες ασφαλείας</TableHead>
+                <TableHead>Ελλείπουσες πληροφορίες</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -120,14 +120,14 @@ export default function AdminNavigationAudit() {
                   <TableCell className="whitespace-nowrap text-xs">
                     {format(new Date(e.created_at), "dd/MM/yyyy HH:mm", { locale: el })}
                   </TableCell>
-                  <TableCell className="text-xs">{e.scenario}</TableCell>
+                  <TableCell className="text-xs">{scenarioLabel(e.scenario)}</TableCell>
                   <TableCell className="text-xs">
                     {ROUTING_LABELS_EL[e.routing_category as RoutingCategory] ?? e.routing_category}
                   </TableCell>
                   <TableCell>
-                    <Badge className={urgencyVariant[e.urgency] ?? ""}>{e.urgency}</Badge>
+                    <Badge className={urgencyVariant[e.urgency] ?? ""}>{URGENCY_LABELS_EL[e.urgency as NavigationSignal["urgency"]] ?? e.urgency}</Badge>
                   </TableCell>
-                  <TableCell className="text-xs">{e.uncertainty}</TableCell>
+                  <TableCell className="text-xs">{UNCERTAINTY_LABELS_EL[e.uncertainty as NavigationSignal["uncertainty"]] ?? e.uncertainty}</TableCell>
                   <TableCell className="text-xs">{e.red_flags?.length ?? 0}</TableCell>
                   <TableCell className="text-xs">{e.missing_critical_info?.length ?? 0}</TableCell>
                 </TableRow>
@@ -149,42 +149,42 @@ export default function AdminNavigationAudit() {
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2 text-sm">
             <section>
-              <h3 className="font-semibold mb-1">Patient Context (aggregated)</h3>
+              <h3 className="font-semibold mb-1">Πλαίσιο ασθενούς (συγκεντρωτικά)</h3>
               <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto">
                 {JSON.stringify(selected.context_used, null, 2)}
               </pre>
             </section>
             <section>
-              <h3 className="font-semibold mb-1">Safety Rules Triggered</h3>
+              <h3 className="font-semibold mb-1">Κανόνες ασφαλείας που ενεργοποιήθηκαν</h3>
               <ul className="text-xs space-y-1">
                 {(selected.red_flags ?? []).map((r) => <li key={r.id}>• {r.label}</li>)}
                 {(selected.red_flags ?? []).length === 0 && <li className="text-muted-foreground">Κανένας κανόνας</li>}
               </ul>
             </section>
             <section>
-              <h3 className="font-semibold mb-1">Risk Relationships</h3>
+              <h3 className="font-semibold mb-1">Σχέσεις κινδύνου (συνδυασμοί)</h3>
               <ul className="text-xs space-y-1">
                 {(selected.relationships ?? []).map((r) => <li key={r.id}>• {r.label}</li>)}
                 {(selected.relationships ?? []).length === 0 && <li className="text-muted-foreground">Καμία</li>}
               </ul>
             </section>
             <section>
-              <h3 className="font-semibold mb-1">Missing Critical Information</h3>
+              <h3 className="font-semibold mb-1">Κρίσιμες ελλείπουσες πληροφορίες</h3>
               <ul className="text-xs space-y-1">
-                {(selected.missing_critical_info ?? []).map((m) => <li key={m}>• {m}</li>)}
+                {(selected.missing_critical_info ?? []).map((m) => <li key={m}>• {missingInfoLabel(m)}</li>)}
                 {(selected.missing_critical_info ?? []).length === 0 && <li className="text-muted-foreground">Καμία</li>}
               </ul>
             </section>
             <section>
-              <h3 className="font-semibold mb-1">Questions Asked</h3>
+              <h3 className="font-semibold mb-1">Ερωτήσεις που τέθηκαν</h3>
               <ul className="text-xs space-y-1">
                 {(selected.questions_asked ?? []).map((q) => <li key={q}>• {q}</li>)}
               </ul>
             </section>
             <section>
-              <h3 className="font-semibold mb-1">Routing Decision</h3>
+              <h3 className="font-semibold mb-1">Απόφαση δρομολόγησης</h3>
               <p className="text-xs">
-                {ROUTING_LABELS_EL[selected.routing_category as RoutingCategory] ?? selected.routing_category} · {selected.urgency} · uncertainty: {selected.uncertainty}
+                {ROUTING_LABELS_EL[selected.routing_category as RoutingCategory] ?? selected.routing_category} · {URGENCY_LABELS_EL[selected.urgency as NavigationSignal["urgency"]] ?? selected.urgency} · αβεβαιότητα: {UNCERTAINTY_LABELS_EL[selected.uncertainty as NavigationSignal["uncertainty"]] ?? selected.uncertainty}
               </p>
               <p className="text-xs text-muted-foreground mt-1">Αιτιολόγηση: {selected.routing_reason || "—"}</p>
             </section>
