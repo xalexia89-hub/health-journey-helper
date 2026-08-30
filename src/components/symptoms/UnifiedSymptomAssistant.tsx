@@ -756,7 +756,12 @@ ${symptomEntries.map(e => `• ${bodyAreaLabels[e.bodyArea]}: ${e.description ||
                   </div>
                 </div>
               ))}
-              
+
+              {/* Deterministic Health Navigation next step */}
+              {navigationSignal && !showSummary && (
+                <NextStepCard signal={navigationSignal} />
+              )}
+
 
               {/* Inline Specialty Recommendation Card */}
               {showProviderSuggestions && specialtyRecommendation && !showSummary && (
