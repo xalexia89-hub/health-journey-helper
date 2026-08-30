@@ -1,10 +1,59 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  evaluateNavigation,
+  buildNavigationDirective,
+  ROUTING_LABELS_EL,
+  type PatientContextState,
+} from "../_shared/health-navigation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Expose-Headers": "X-Medithos-Navigation",
 };
+
+// === PATIENT CONTEXT STATE (structured, for the deterministic rules layer) ===
+async function buildPatientContextState(client: any, userId: string): Promise<PatientContextState> {
+  const state: PatientContextState = {
+    age: null,
+    sex: null,
+    chronicConditions: [],
+    medications: [],
+    allergies: [],
+    recentEpisodes: [],
+  };
+
+  try {
+    const [hfRes, mrRes, medRes, sxRes] = await Promise.all([
+      client.from('health_files').select('date_of_birth, sex').eq('user_id', userId).maybeSingle(),
+      client.from('medical_records').select('chronic_conditions, current_medications, allergies').eq('user_id', userId).maybeSingle(),
+      client.from('medication_reminders').select('medication_name').eq('user_id', userId).eq('is_active', true).limit(20),
+      client.from('symptom_entries').select('ai_summary, urgency_level, created_at').eq('user_id', userId)
+        .order('created_at', { ascending: false }).limit(10),
+    ]);
+
+    const hf = hfRes?.data;
+    if (hf?.date_of_birth) {
+      state.age = Math.floor((Date.now() - new Date(hf.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    }
+    state.sex = hf?.sex ?? null;
+
+    const mr = mrRes?.data;
+    state.chronicConditions = mr?.chronic_conditions ?? [];
+    state.allergies = mr?.allergies ?? [];
+    state.medications = [
+      ...(mr?.current_medications ?? []),
+      ...((medRes?.data ?? []).map((m: any) => m.medication_name)),
+    ];
+    state.recentEpisodes = (sxRes?.data ?? []).map((s: any) => `${s.created_at}:${s.urgency_level ?? ''}`);
+  } catch (err) {
+    console.error("buildPatientContextState error:", err);
+  }
+
+  return state;
+}
+
 
 // === HELPER: Fetch wellness & medical context ===
 async function fetchFullContext(client: any, userId: string): Promise<string> {
@@ -227,7 +276,7 @@ async function fetchFullContext(client: any, userId: string): Promise<string> {
 }
 
 // === SYSTEM PROMPT ===
-function buildSystemPrompt(medicalContext: string): string {
+function buildSystemPrompt(medicalContext: string, navigationDirective = ""): string {
   return `Είσαι το **MEDITHOS AI** — ο Συνδεδεμένος Σύντροφος Υγείας (Connected Health Companion).
 
 ## ΤΑΥΤΟΤΗΤΑ
@@ -324,6 +373,7 @@ reason: <σύντομη εξήγηση>
 urgency: <low/medium/high>
 [/SPECIALTY_RECOMMENDATION]
 
+${navigationDirective}
 ${medicalContext ? `\n## ΠΛΗΡΗΣ ΦΑΚΕΛΟΣ ΧΡΗΣΤΗ\nΠροσάρμοσε τις απαντήσεις σου με βάση ΟΛΑ αυτά τα δεδομένα — αναζήτησε συσχετίσεις, μοτίβα και ολιστικές συνδέσεις:\n${medicalContext}` : ''}`;
 }
 
@@ -416,7 +466,59 @@ serve(async (req) => {
 
     // === FETCH FULL CONTEXT ===
     const medicalContext = await fetchFullContext(serviceClient, user.id);
-    const systemPrompt = buildSystemPrompt(medicalContext);
+
+    // === SYSTEMIC HEALTH NAVIGATION: deterministic safety + routing layer ===
+    const contextState = await buildPatientContextState(serviceClient, user.id);
+    const conversationText = messages.filter((m: any) => m.role === 'user').map((m: any) => m.content).join("\n");
+    const latestUserText = [...messages].reverse().find((m: any) => m.role === 'user')?.content ?? "";
+    const decision = evaluateNavigation(conversationText, latestUserText, contextState);
+
+    const routingReason = [
+      ...decision.redFlags.map((r) => r.label),
+      ...decision.relationships.map((r) => r.label),
+    ].join(" | ") || `Baseline σεναρίου ${decision.scenario}`;
+
+    // === AUDIT LAYER (best effort — never blocks the response) ===
+    try {
+      await serviceClient.from('navigation_audit_events').insert({
+        user_id: user.id,
+        scenario: decision.scenario,
+        routing_category: decision.routing,
+        urgency: decision.urgency,
+        uncertainty: decision.uncertainty,
+        red_flags: decision.redFlags,
+        relationships: decision.relationships,
+        missing_critical_info: decision.missingCriticalInfo,
+        questions_asked: decision.keyQuestions,
+        context_used: {
+          age: contextState.age,
+          sex: contextState.sex,
+          chronic_conditions_count: contextState.chronicConditions.length,
+          medications_count: contextState.medications.length,
+          allergies_count: contextState.allergies.length,
+          recent_episodes_count: contextState.recentEpisodes.length,
+        },
+        routing_reason: routingReason,
+        emergency_triggered: decision.emergencyPathway,
+      });
+    } catch (auditErr) {
+      console.error("navigation audit insert failed:", auditErr);
+    }
+
+    const systemPrompt = buildSystemPrompt(medicalContext, buildNavigationDirective(decision));
+
+    const navigationHeader = encodeURIComponent(JSON.stringify({
+      scenario: decision.scenario,
+      routing: decision.routing,
+      routingLabel: ROUTING_LABELS_EL[decision.routing],
+      urgency: decision.urgency,
+      uncertainty: decision.uncertainty,
+      emergencyPathway: decision.emergencyPathway,
+      safetyNet: decision.safetyNet,
+      missingCriticalInfo: decision.missingCriticalInfo,
+      redFlagCount: decision.redFlags.length,
+      timestamp: decision.timestamp,
+    }));
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -453,7 +555,11 @@ serve(async (req) => {
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/event-stream",
+        "X-Medithos-Navigation": navigationHeader,
+      },
     });
   } catch (error) {
     console.error("symptom-chat error:", error);

@@ -2613,6 +2613,57 @@ export type Database = {
         }
         Relationships: []
       }
+      navigation_audit_events: {
+        Row: {
+          context_used: Json
+          created_at: string
+          emergency_triggered: boolean
+          id: string
+          missing_critical_info: Json
+          questions_asked: Json
+          red_flags: Json
+          relationships: Json
+          routing_category: string
+          routing_reason: string | null
+          scenario: string
+          uncertainty: string
+          urgency: string
+          user_id: string
+        }
+        Insert: {
+          context_used?: Json
+          created_at?: string
+          emergency_triggered?: boolean
+          id?: string
+          missing_critical_info?: Json
+          questions_asked?: Json
+          red_flags?: Json
+          relationships?: Json
+          routing_category: string
+          routing_reason?: string | null
+          scenario: string
+          uncertainty: string
+          urgency: string
+          user_id: string
+        }
+        Update: {
+          context_used?: Json
+          created_at?: string
+          emergency_triggered?: boolean
+          id?: string
+          missing_critical_info?: Json
+          questions_asked?: Json
+          red_flags?: Json
+          relationships?: Json
+          routing_category?: string
+          routing_reason?: string | null
+          scenario?: string
+          uncertainty?: string
+          urgency?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
