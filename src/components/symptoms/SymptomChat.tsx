@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
+import { NextStepCard } from "./NextStepCard";
+import { parseNavigationHeader, type NavigationSignal } from "@/lib/healthNavigation";
 
 interface Message {
   role: "user" | "assistant";
@@ -42,6 +44,7 @@ export function SymptomChat() {
   const [showSummary, setShowSummary] = useState(false);
   const [executiveSummary, setExecutiveSummary] = useState<ExecutiveSummary | null>(null);
   const [triageInfo, setTriageInfo] = useState<TriageInfo | null>(null);
+  const [navigationSignal, setNavigationSignal] = useState<NavigationSignal | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -147,6 +150,9 @@ export function SymptomChat() {
       }
 
       if (!response.body) throw new Error("No response body");
+
+      const navSignal = parseNavigationHeader(response.headers);
+      if (navSignal) setNavigationSignal(navSignal);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
